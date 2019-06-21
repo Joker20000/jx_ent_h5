@@ -1,6 +1,6 @@
-# jx_user_h5
+# jx_ent_h5
 
-> 嘉薪用户端
+> 嘉薪企业端
 
 ## Build Setup
 
