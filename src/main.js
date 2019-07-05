@@ -67,13 +67,7 @@ router.beforeEach((to,from,next)=>{
 
   var Authorization = window.localStorage.getItem('Authorization');//Authorization数据
 
-
-  if(Authorization){
-
-
-  } else {
-
-  }
+  next();
 })
 
 

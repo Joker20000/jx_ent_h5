@@ -1,0 +1,117 @@
+.mine{
+  padding-top: 1px;
+  .person_information{
+    position: relative;
+    margin: 15px 20px;
+    border-radius: 10px;
+    border-top-right-radius: 28px;
+    background: url("../../../../static/image/mine_background.png"),linear-gradient(0deg, #257eff, #82b5ff);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    padding: 30px 25px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 4px #06abff50;
+    &:after, &:before{
+      content: '';
+      display: block;
+      height: 1px;
+      width: 10px;
+      border-top: 1px solid white;
+      position: absolute;
+      right: 30px;
+      top: 50%;
+      transform-origin: right;
+    }
+    &:after{
+      transform: rotate(-30deg);
+    }
+    &:before{
+      transform: rotate(30deg);
+    }
+    .img{
+      width: 50px;
+      height: 50px;
+      margin-right: 18px;
+      img{
+        height: 100%;
+        width: 100%;
+      }
+    }
+    .person{
+      .name{
+        font-size: 16px;
+        color: white;
+        margin-bottom: 5px;
+      }
+      .tel{
+        color: white;
+        opacity: 0.7;
+      }
+    }
+  }
+  .banner{
+    margin: 10px 20px;
+    img{
+      width: 100%;
+      height: calc(~'(100vw - 40px) * 136 / 674');
+    }
+  }
+  .list{
+    background: white;
+    padding: 0 15px;
+    &>div{
+      padding: 15px 0;
+      position: relative;
+      .title{
+        &:after, &:before{
+          content: '';
+          display: block;
+          height: 1px;
+          width: 7px;
+          border-top: 1px solid #dddddd;
+          position: absolute;
+          right: 0;
+          top: 50%;
+          transform-origin: right;
+        }
+        &:after{
+          transform: rotate(-30deg);
+        }
+        &:before{
+          transform: rotate(30deg);
+        }
+        img{
+          width: 18px;
+          height: 18px;
+          vertical-align: middle;
+          margin-right: 5px;
+        }
+        span{
+          font-size: 16px;
+          vertical-align: middle;
+        }
+      }
+    }
+    div+div:before{
+      content: '';
+      display: block;
+      height: 1px;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-top: 1px solid #f5f5f5;
+
+    }
+    .message{
+      .new_message{
+        position: absolute;
+        color: #ff5050;
+        top: 50%;
+        right: 20px;
+        transform: translateY(-50%);
+      }
+    }
+  }
+}

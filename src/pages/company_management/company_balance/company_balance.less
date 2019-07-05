@@ -1,0 +1,71 @@
+.company_balance{
+
+  .title{
+    width: 100%;
+    padding: 20px 0 40px;
+    box-sizing: border-box;
+    height: calc(~'100vw / 375 * 180');
+    background-image: url("../../../../static/image/homepage_background.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    &>div{
+      color: white;
+    }
+    .money_title{
+      font-size: 16px;
+      opacity: 0.7;
+    }
+    .money_number{
+      font-size: 45px;
+    }
+  }
+
+  .company_list{
+    margin: 10px 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 0 8px #dddddd;
+    background: white;
+    padding: 0 15px;
+    .company{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 15px 14px 5px;
+      position: relative;
+      &:after{
+        content: '';
+        display: block;
+        width: 5px;
+        height: 5px;
+        border-top: 1px solid #ababab;
+        border-right: 1px solid #ababab;
+        transform: rotate(45deg);
+        position: absolute;
+        right: 0;
+      }
+      .company_name{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 80%;
+        color: #8a8a8a;
+        margin-right: 10px;
+      }
+    }
+    .company + .company:before{
+      content: '';
+      display: block;
+      width: 100%;
+      height: 1px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-top: 1px solid #eeeeee;
+    }
+  }
+
+}
