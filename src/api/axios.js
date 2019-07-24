@@ -12,8 +12,6 @@ axios.install = (Vue) => {
 
     Vue.prototype.$http = axios;
 
-    Vue.prototype._http = _axios;
-
 }
 
   axios.defaults.withCredentiantials = true;
@@ -43,11 +41,11 @@ axios.install = (Vue) => {
 // http response 拦截器
   axios.interceptors.response.use(function (res) {
 
-    if(!!res.headers.authorization){
+    if(!!res.data.token){
 
-      axios.defaults.headers.common['Authorization'] = res.headers.authorization;
+      axios.defaults.headers.common['Authorization'] = res.data.token.access_token;
 
-      localStorage.setItem('Authorization',res.headers.authorization);
+      localStorage.setItem('Authorization',res.data.token.access_token);
 
     }
 
@@ -58,16 +56,7 @@ axios.install = (Vue) => {
 
     console.log(error);
 
-    if((error.response.data.code=='3001'||error.response.data.code=='3003') && !location.href.includes('loadingPage')) {
-
-      localStorage.setItem('loadingShow',1);
-
-  /*    Toast({
-
-        message: error.response.data.msg,
-        duration: 500
-
-      })*/
+    if((error.response.data.code=='3001'||error.response.data.code=='3003')) {
 
       localStorage.clear();
 
@@ -81,7 +70,7 @@ axios.install = (Vue) => {
 
       setTimeout(function () {
 
-        router.push('/');
+        router.push('/login');
 
         window.location.reload();
 

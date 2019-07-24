@@ -5,7 +5,7 @@
 
         <div class="money_title">账户可用总额（元）</div>
 
-        <div class="money_number">12445.00</div>
+        <div class="money_number">{{amount}}</div>
 
       </div>
 
@@ -57,9 +57,57 @@
 </template>
 
 <script>
-    export default {
-        name: "homepage.vue"
+  export default {
+    name: "homepage.vue",
+
+    data () {
+
+      return {
+
+        amount: ''
+
+      }
+
+    },
+
+    mounted () {
+
+      this.$store.state.workDeskState = 'homepage';
+
+      this.getData();
+
+    },
+
+    methods: {
+
+      getData: function () {
+
+        /**
+         * 接口：获取企业账户发薪单位总额
+         * 请求方式：GET
+         * 接口：ent/balance/allbalance
+         * 入参：null
+         **/
+        this.$http({
+
+          method: 'get',
+
+          url:process.env.API_ROOT+'ent/balance/allbalance',
+
+        }).then(res=>{
+
+          if(res.data.code === '0000'){
+
+            this.amount = res.data.data.amount;
+
+          }
+
+        })
+
+      },
+
     }
+  }
 </script>
 
 <style scoped lang="less">

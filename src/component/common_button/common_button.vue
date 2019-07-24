@@ -2,7 +2,7 @@
 
   <div class="common_button">
 
-    <div v-on:click="submit">{{btnName}}</div>
+    <div v-on:click="submit" class="background_linear_gradient">{{btnName}}</div>
 
   </div>
 

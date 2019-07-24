@@ -1,5 +1,7 @@
 .transaction_detail{
-  padding-top: 45px;
+  .company_choose{
+    height: 45px;
+  }
   .company_show{
     position: fixed;
     top: 0;
@@ -105,6 +107,7 @@
             height: 24px;
             width: 25px;
             margin-right: 15px;
+            flex-shrink: 0;
             img{
               width: 100%;
               height: 100%;
@@ -124,9 +127,25 @@
           text-align: right;
           .money_count{
             margin-bottom: 5px;
+            .cut{
+              display: inline-block;
+            }
+            .plus{
+              display: none;
+            }
+            &.add{
+              color: #ff5050;
+              .cut{
+                display: none;
+              }
+              .plus{
+                display: inline-block;
+              }
+            }
           }
           .time{
             color: #ababab;
+            white-space: nowrap;
           }
         }
       }

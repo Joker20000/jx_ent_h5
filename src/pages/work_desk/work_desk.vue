@@ -5,7 +5,7 @@
 
     <div class="foot">
 
-      <div class="button" v-on:click="$router.push('/workDesk/homepage')">
+      <div class="button" v-bind:class="{'color_text': $store.state.workDeskState === 'homepage'}" v-on:click="$router.push('/workDesk/homepage')">
 
         <div><i class="iconfont icongongzuotai"></i></div>
         <div>工作台</div>
@@ -24,7 +24,7 @@
 
       </div>
 
-      <div class="button color_text" v-on:click="$router.push('/workDesk/mine')">
+      <div class="button" v-bind:class="{'color_text': $store.state.workDeskState === 'mine'}" v-on:click="$router.push('/workDesk/mine')">
 
         <div><i class="iconfont iconwode"></i></div>
         <div>我的</div>
@@ -40,7 +40,7 @@
 <script>
   export default {
 
-    name: 'workDesk'
+    name: 'workDesk',
 
   }
 </script>

@@ -5,11 +5,25 @@ Vue.use(Vuex);
 
 const state = {
 
-  personInformation: {},
+  seconds: 61,
 
-  imageUrl: '',
+  countdown: function () {
 
-  popupShow: false
+    var countdownFn = setInterval(function () {
+
+      this.seconds--;
+
+      if(this.seconds<=0){
+
+        clearInterval(countdownFn);
+
+      }
+
+    }.bind(this),1000);
+
+  },
+
+  workDeskState: '',
 
 };
 
