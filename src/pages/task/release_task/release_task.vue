@@ -18,55 +18,64 @@
           <div class="content"><mt-switch v-model="sendContract"></mt-switch></div>
         </div>
 
-        <div class="list must_input">
+        <div class="list must_input" v-on:click="pickerSelect('ent')">
           <div class="title">企业名称</div>
-          <div class="content select">请选择企业名称</div>
+          <div class="content select" v-if="this.ent.length === 0">请选择企业名称</div>
+          <div class="content select data" v-else>{{this.ent[0]}}</div>
         </div>
 
         <div class="list must_input">
           <div class="title">发布企业名称</div>
           <div class="content">
             <div class="company_name">
-              <input type="text" placeholder="请输入企业名称，2-32个字符" maxlength="32" minlength="2">
+              <input type="text" placeholder="请输入企业名称，2-32个字符" maxlength="32" minlength="2" v-model="entName">
             </div>
             <div class="hide_name">
-              <input type="checkbox">
+              <input type="checkbox" class="ent_name">
               <span>隐藏昵称</span>
             </div>
           </div>
         </div>
 
-        <div class="list must_input">
+        <div class="list must_input" v-on:click="pickerSelect('type')">
           <div class="title">任务类型</div>
-          <div class="content select">请选择任务类型</div>
+          <div class="content select" v-if="this.type.length === 0">请选择任务类型</div>
+          <div class="content select data" v-else>{{this.type.join('>')}}</div>
         </div>
 
-        <div class="list must_input">
+        <div class="list must_input" v-on:click="pickerSelect('place')">
           <div class="title">工作地区</div>
-          <div class="content select">请选择工作地区</div>
+          <div class="content select" v-if="this.place.length === 0">请选择工作地区</div>
+          <div class="content select data" v-else>{{this.place.join(' ')}}</div>
         </div>
 
         <div class="list must_input">
           <div class="title">任务名称</div>
           <div class="content">
-            <input type="text" placeholder="请输入任务名称，4-50个字符">
+            <input type="text" placeholder="请输入任务名称，4-50个字符" maxlength="50" minlength="4" v-model="taskName">
           </div>
         </div>
 
         <div class="list must_input">
-          <div class="title">任务名称</div>
-          <div class="content look_mould">查看模板</div>
+          <div class="title">任务描述</div>
+          <div class="content look_mould" v-on:click="mouldShow = true">查看模板</div>
           <div class="task_detail">
             <textarea cols="30" rows="10" v-model="taskDetail" placeholder="请填写任务需求描述，4-10000个字符
 例如 1、本项目是一个骑手配送任务；需要由骑手自己配备智能手机和电动车；2、骑手能够熟练使用智能手机接单、导航、驾驶电动车，年龄在18-50周岁"></textarea>
           </div>
         </div>
 
-        <div class="list must_input">
+        <div class="list">
           <div class="title">上传附件<span class="ps">（最多上传5个附件，大小不超过8M，不支持.exe格式）</span></div>
           <div class="file_list">
+            <div class="add_file" v-for="file in taskFiles">
+              <div class="add_file_img">
+                <img src="../../../../static/image/jx_add_file.png">
+              </div>
+              <div class="file_name">{{file.name}}</div>
+            </div>
             <div class="add_file">
-              <input type="file">
+              <input type="file" v-on:change="fileInput">
               <div class="add_file_img">
                 <img src="../../../../static/image/jx_add_file.png">
               </div>
@@ -82,9 +91,10 @@
 
         <div class="list must_input">
           <div class="title">报名截止时间</div>
-          <div class="content select">选择报名截止时间</div>
+          <div class="content select" v-on:click="$refs.datetime.open()" v-if="!this.endDateShow">选择报名截止时间</div>
+          <div class="content select data" v-on:click="$refs.datetime.open()" v-else>{{endDateShow}}</div>
           <div class="no_choose">
-            <input type="checkbox">
+            <input type="checkbox" class="sign_up_time">
             <span>不限</span>
           </div>
         </div>
@@ -92,73 +102,90 @@
         <div class="list must_input">
           <div class="title">任务总预算（元）</div>
           <div class="content">
-            <input type="text" placeholder="请输入任务预算总金额">
+            <input type="text" placeholder="请输入任务预算总金额" v-model="taskMoney">
           </div>
         </div>
 
         <div class="list must_input">
           <div class="title">任务单价</div>
           <div class="content max_min_spend">
-            <input type="text" placeholder="最低单价">
+            <input type="text" placeholder="最低单价" v-model="taskMinMoney">
             <div class="line"></div>
-            <input type="text" placeholder="最高单价">
+            <input type="text" placeholder="最高单价" v-model="taskMaxMoney">
           </div>
         </div>
 
         <div class="list must_input">
           <div class="title">需要人数</div>
           <div class="content">
-            <input type="text" placeholder="请输入任务所需人数">
+            <input type="number" placeholder="请输入任务所需人数" v-model="needPerson">
           </div>
           <div class="no_choose">
-            <input type="checkbox">
+            <input type="checkbox" class="need_person">
             <span>不限</span>
           </div>
         </div>
 
       </div>
 
-      <div class="module_title">合同及发票</div>
+      <div class="module_title" v-if="sendContract">合同及发票</div>
 
-      <div class="task_information">
+      <div class="task_information" v-if="sendContract">
 
-        <div class="list must_input">
+        <div class="list must_input" v-on:click="pickerSelect('invoice')">
           <div class="title">发票类型</div>
-          <div class="content select">请选择发票类型</div>
+          <div class="content select" v-if="this.invoice.length === 0">请选择发票类型</div>
+          <div class="content select data" v-else>{{this.invoice[0]}}</div>
         </div>
 
-        <div class="list must_input">
+        <div class="list must_input" v-on:click="pickerSelect('templet')">
           <div class="title">合同模板</div>
-          <div class="content select">请选择合同模板</div>
+          <div class="content select" v-if="this.templet.length === 0">请选择合同模板</div>
+          <div class="content select data" v-else>{{this.templet[0]}}</div>
         </div>
 
         <div class="list must_input">
           <div class="title">合同名称</div>
           <div class="content">
-            <input type="text" placeholder="请输入合同名称，不超过50个字">
+            <input type="text" placeholder="请输入合同名称，不超过50个字" max="50" v-model="templetName">
           </div>
         </div>
 
-        <div class="list must_input">
+        <div class="list must_input" v-on:click="pickerSelect('ext')">
           <div class="title">业务合作企业</div>
-          <div class="content select">请选择业务合作企业</div>
+          <div class="content select" v-if="this.ext.length === 0">请选择业务合作企业</div>
+          <div class="content select data" v-else>{{this.ext[0]}}</div>
         </div>
 
       </div>
 
       <div class="sign_agreement">
-        <input type="checkbox">
+        <input type="checkbox" class="agree">
         <span>我已阅读并同意<span v-on:click="$router.push('signAgreement')">《快捷签署服务委托协议书》</span></span>
       </div>
 
       <div class="button">
-        <div class="save">保存</div>
-        <div class="publish">发布</div>
+        <div class="save" v-on:click="publishTask(false)">保存</div>
+        <div class="publish" v-on:click="publishTask(true)">发布</div>
       </div>
+
+      <mt-popup v-model="pickerShow" position="bottom" v-bind:closeOnClickModal="false">
+        <div class="picker_button">
+          <div class="picker_cancel" v-on:click="pickerCancel">取消</div>
+          <div class="picker_confirm color_text" v-on:click="pickerConfirm">确定</div>
+        </div>
+        <mt-picker :slots="slots" @change="onValueChange" ref="picker"></mt-picker>
+      </mt-popup>
+
+      <mt-datetime-picker ref="datetime" v-on:confirm="selectTime" type="date" v-bind:startDate="startDate" v-model="endDate"></mt-datetime-picker>
+
+      <lookMould v-if="mouldShow" v-on:close="closeFn" v-on:useMould="useMouldFn"></lookMould>
+
     </div>
 </template>
 
 <script>
+  import lookMould from '../../../component/look_mould/look_mould'
   export default {
     name: "release_task.vue",
 
@@ -170,7 +197,116 @@
 
         sendContract: false,
 
-        taskDetail: ''
+        taskDetail: '',
+
+        companyList: [],
+
+        entId: '',
+
+        typeList: [],
+
+        industry: [],
+
+        provinceList: [],
+
+        cityList: [],
+
+        invoiceList: ['人力资源服务','现代服务'],
+
+        templetList: [],
+
+        cooperate: [],
+
+        slots: [],
+
+        slot1: {
+          flex: 1,
+          values: [],
+          textAlign: 'center'
+        },
+
+        slot2: {
+          flex: 1,
+          values: [],
+          textAlign: 'center'
+        },
+
+        pickerShow: false,
+
+        lastPickerClick: '',
+
+        _value: '',
+
+        _type: '',
+
+        type:[],
+
+        _place: '',
+
+        place: [],
+
+        _ent: '',
+
+        ent: [],
+
+        _invoice: '',
+
+        invoice: [],
+
+        _templet: '',
+
+        templet: [],
+
+        _ext: '',
+
+        ext: [],
+
+        pickerType: false,
+
+        entName: '',
+
+        taskName: '',
+
+        taskFiles: [],
+
+        taskMoney: '',
+
+        taskMaxMoney: '',
+
+        taskMinMoney: '',
+
+        needPerson: '',
+
+        templetName: '',
+
+        startDate: new Date(),
+
+        endDate: new Date(),
+
+        endDateShow: '',
+
+        filesUrl: [],
+
+        filesName: [],
+
+        mouldShow: false
+      }
+
+    },
+
+    components: {
+
+      lookMould
+
+    },
+
+    mounted () {
+
+      this.getData();
+
+      if(sessionStorage.getItem('change') === '1'){
+
+        this.setTaskData();
 
       }
 
@@ -178,9 +314,908 @@
 
     methods: {
 
-    },
+      getData: function () {
 
-    mounted () {
+        this.getCompanyList();
+
+        this.getTaskList(0);
+
+        this.getProvince();
+
+        this.getTempletList();
+
+        this.getAllCooperateInfo();
+
+      },
+
+      getCompanyList: function () {
+
+        this.entId = localStorage.getItem('entId');
+
+        /**
+         * 接口：发薪企业查询
+         * 请求方式：GET
+         * 接口：jx/common/salaryentbusiness
+         * 入参：entId, verifyState, signState, businessType
+         **/
+        this.$http({
+
+          method: 'get',
+          url: process.env.API_ROOT + 'jx/common/salaryentbusiness',
+          params: {
+            entId: this.entId,
+            verifyState: 3,
+            signState: 1,
+            businessType: '05'
+          }
+
+        }).then(res=>{
+
+          if(res.data.code === '-1'){
+
+            this.$toast({
+
+              message: res.data.msg,
+              position: 'middle',
+              duration: 1500
+
+            });
+
+          }else if(res.data.code === '0000'){
+
+            this.companyList = res.data.data;
+
+          }
+
+        });
+
+      },
+
+      getTaskList: function (nodeId) {
+
+        /*
+        * 接口： 获取任务类型
+        * 请求方式： GET
+        * 接口： getindustrytype
+        * 入参： parentId
+        * */
+        this.$http({
+
+          url: process.env.API_ROOT + 'getindustrytype',
+          method: 'get',
+          params: {
+            parentId: nodeId
+          }
+
+        }).then(res=>{
+
+          (nodeId) ? (this.typeList = res.data.data) : (this.industry = res.data.data);
+
+          (!!this.typeList) && (this.slot2.values = this.getArray(this.typeList, 'name'));
+
+        })
+
+      },
+
+
+      getProvince: function () {
+
+        /*
+        * 接口： 获取省地址
+        * 请求方式： GET
+        * 接口： jx/common/provinces
+        * 入参： null
+        * */
+        this.$http({
+
+          url: process.env.API_ROOT + 'jx/common/provinces',
+          method: 'get',
+
+        }).then(res=>{
+
+          this.provinceList = res.data.data;
+
+        });
+
+      },
+
+
+      getCity: function (province) {
+
+        /*
+        * 接口： 获取市地址
+        * 请求方式： GET
+        * 接口： jx/common/citys
+        * 入参： provinceId, province
+        * */
+        this.$http({
+
+          url: process.env.API_ROOT + 'jx/common/citys',
+          method: 'get',
+          params: {
+            province: province
+          }
+
+        }).then(res=>{
+
+          this.cityList = res.data.data;
+
+          this.slot2.values = this.getArray(res.data.data, 'addrName');
+
+        })
+
+      },
+
+      getTempletList: function () {
+
+        /*
+        * 接口： 查看模板列表
+        * 请求方式： POST
+        * 接口： get/ssh/templetList
+        * 入参： null
+        * */
+        this.$http({
+
+          url: process.env.API_ROOT + 'get/ssh/templetList',
+          method: 'post'
+
+        }).then(res=>{
+
+          this.templetList = res.data.data.list;
+
+        })
+
+      },
+
+
+      getAllCooperateInfo: function () {
+
+        /*
+        * 接口： 获取业务合作企业信息
+        * 请求方式： POST
+        * 接口： contract/manage/getallcooperateinfo
+        * 入参： null
+        * */
+        this.$http({
+
+          url: process.env.API_ROOT + 'contract/manage/getallcooperateinfo',
+          method: 'post'
+
+        }).then(res=>{
+
+          this.cooperate = res.data.data;
+
+        });
+
+      },
+
+
+      onValueChange: function () {
+
+        if(!this.lastPickerClick) return;
+
+        if(this.lastPickerClick === 'type'){
+
+          this.typePickerChange();
+
+        }else if(this.lastPickerClick === 'place'){
+
+          this.placePickerChange();
+
+        }
+
+      },
+
+
+      getArray: function (obj, key) {
+
+        let arr = [];
+
+        obj.forEach((res)=>{
+
+          arr.push(res[key]);
+
+        });
+
+        return arr;
+
+      },
+
+
+      pickerSelect: function (clickType) {
+
+        this.pickerType = true;
+
+        if(this.lastPickerClick !== clickType){
+
+          this.slots = [];
+
+          switch (clickType) {
+
+            case 'ent':
+
+              this.entSelect();
+
+              break;
+
+            case 'type':
+
+              this.typeSelect();
+
+              break;
+
+            case 'place':
+
+              this.placeSelect();
+
+              break;
+
+            case 'invoice':
+
+              this.invoiceSelect();
+
+              break;
+
+            case 'templet':
+
+              this.templetSelect();
+
+              break;
+
+            case 'ext':
+
+              this.extSelect();
+
+              break;
+
+          }
+
+        }
+
+        this.lastPickerClick = clickType;
+
+        this.pickerShow = true;
+
+        this.pickerType = false;
+
+      },
+
+      entSelect: function () {
+
+        this.slot1.values = this.getArray(this.companyList, 'entName');
+
+        this.slots.push(this.slot1);
+
+        (this._ent && !this.ent) && (this.$refs.picker.setSlotValue(0, this._ent[0]));
+
+        (this.ent) && (this.$refs.picker.setSlotValue(0, this.ent[0]));
+
+      },
+
+      typeSelect: function () {
+
+        this.slot1.values = this.getArray(this.industry, 'name');
+
+        this.slots.push(this.slot1);
+
+        this.slot2.values = this.getArray(this.typeList, 'name');
+
+        this.slots.push(this.slot2);
+
+        if(this.type) {
+
+          this.$refs.picker.setSlotValue(0, this.type[0]);
+
+          this.$refs.picker.setSlotValue(1, this.type[1]);
+
+        }else if(this._type) {
+
+          this.$refs.picker.setSlotValue(0, this._type[0]);
+
+          this.$refs.picker.setSlotValue(1, this._type[1]);
+
+        }
+
+      },
+
+      placeSelect: function () {
+
+        this.slot1.values = this.getArray(this.provinceList, 'addrName');
+
+        this.slot1.values.unshift('不限');
+
+        this.slots.push(this.slot1);
+
+        this.slot2.values = this.getArray(this.cityList, 'addrName');
+
+        this.slots.push(this.slot2);
+
+        if(this.place) {
+
+          this.$refs.picker.setSlotValue(0, this.place[0]);
+
+          this.$refs.picker.setSlotValue(1, this.place[1]);
+
+        }else if(this._place){
+
+          this.$refs.picker.setSlotValue(0, this._place[0]);
+
+          this.$refs.picker.setSlotValue(1, this._place[1]);
+
+        }
+
+      },
+
+
+      invoiceSelect: function () {
+
+        this.slot1.values = this.invoiceList;
+
+        this.slots.push(this.slot1);
+
+        (this._invoice && !this.invoice) && (this.$refs.picker.setSlotValue(0, this._invoice[0]));
+
+        (this.invoice) && (this.$refs.picker.setSlotValue(0, this.invoice[0]));
+
+      },
+
+      templetSelect: function () {
+
+        this.slot1.values = this.getArray(this.templetList, 'templetName');
+
+        this.slots.push(this.slot1);
+
+        (this._templet && !this.templet) && (this.$refs.picker.setSlotValue(0, this._templet[0]));
+
+        (this.templet) && (this.$refs.picker.setSlotValue(0, this.templet[0]));
+
+      },
+
+      extSelect: function () {
+
+        this.slot1.values = this.getArray(this.cooperate, 'cooperateEntName');
+
+        this.slots.push(this.slot1);
+
+        (this._ext && !this.ext) && (this.$refs.picker.setSlotValue(0, this._ext[0]));
+
+        (this.ext) && (this.$refs.picker.setSlotValue(0, this.ext[0]));
+
+      },
+
+
+      typePickerChange: function () {
+
+        if(this.pickerType) return;
+
+        var industry = this.$refs.picker.getSlotValue(0);
+
+        var obj = this.industry.filter(res=>{
+
+          return res.name === industry;
+
+        });
+
+        var nodeId = obj[0].nodeId;
+
+        if(this.$refs.picker.getSlotValue(1) === undefined){
+
+          this.getTaskList(nodeId);
+
+        }else {
+
+          (this.typeList[0].parentId !== nodeId) && (this.getTaskList(nodeId));
+
+        }
+
+        this._type = [this.$refs.picker.getSlotValue(0), this.$refs.picker.getSlotValue(1)];
+
+      },
+
+      placePickerChange: function () {
+
+        if(this.pickerType) return;
+
+        var province = this.$refs.picker.getSlotValue(0);
+
+        if(province === '不限'){
+
+          this.slot2.values = [];
+
+        }else{
+
+          var obj = this.provinceList.filter(res=>{
+
+            return res.addrName === province;
+
+          });
+
+          var parentId = obj[0].addrId;
+
+          if(this.$refs.picker.getSlotValue(1) === undefined){
+
+            this.getCity(province);
+
+          }else {
+
+            (parentId !== this.cityList[0].prientId) && (this.getCity(province));
+
+          }
+
+        }
+
+        this._place = [this.$refs.picker.getSlotValue(0), this.$refs.picker.getSlotValue(1)];
+
+      },
+
+
+      pickerCancel: function () {
+
+        this.pickerShow = false;
+
+        this['_'+ this.lastPickerClick] = [this.$refs.picker.getSlotValue(0)];
+
+        (!!this.$refs.picker.getSlotValue(1)) && (this['_'+ this.lastPickerClick].push(this.$refs.picker.getSlotValue(1)));
+
+      },
+
+
+      pickerConfirm: function () {
+
+        this.pickerShow = false;
+
+        this[this.lastPickerClick] = [this.$refs.picker.getSlotValue(0)];
+
+        (!!this.$refs.picker.getSlotValue(1)) && (this[this.lastPickerClick].push(this.$refs.picker.getSlotValue(1)));
+
+      },
+
+
+      fileInput: function () {
+
+        var file = event.currentTarget.files[0];
+
+        var message;
+
+        var input;
+
+        if(file.name.split('.')[1] === 'exe'){
+
+          message = '不支持ext格式文件';
+
+          input = false;
+
+        }else if(file.size > 8*1024*1024) {
+
+          message = '文件过大，无法上传，请压缩后重新上传';
+
+          input = false;
+
+        }else {
+
+          var param = new FormData(); //创建form对象
+
+          param.append('file',file,file.name);//通过append向form对象添加数据
+
+          message = '文件上传中';
+
+          input = true;
+          /*
+          * 接口： 图片上传
+          * 请求方式： POST
+          * 接口： jx/upload/oss
+          * 入参： file
+          * */
+          this.$http({
+
+            url: process.env.API_ROOT + 'jx/upload/oss',
+            method: 'post',
+            data: param
+
+          }).then(res=>{
+
+            toast.close();
+
+            if(res.data.code === '0000'){
+
+              message = '上传成功';
+
+              var thisfile = {};
+
+              thisfile.name = file.name;
+
+              thisfile.url = res.data.data.url;
+
+              this.filesUrl.push(res.data.data.url);
+
+              this.filesName.push(file.name);
+
+              this.taskFiles.push(thisfile);
+
+            }else {
+
+              message = res.data.msg;
+
+            }
+
+            this.$toast({
+
+              message: message,
+              position: 'middle',
+              duration: 1500
+
+            });
+
+          });
+
+        }
+
+        var toast = this.$toast({
+
+          message: message,
+          position: 'middle',
+          duration: input? 15000 : 1500
+
+        });
+
+        event.currentTarget.value = '';
+
+      },
+
+
+      checkAll: function () {
+
+        var message;
+
+        if(!this.ent) {
+
+          message = '请选择企业名称';
+
+        }else if(!this.entName) {
+
+          message = '请输入企业名称';
+
+        }else if(this.entName.length < 2 || this.entName.length > 32){
+
+          message = '企业名称为2-32个字符';
+
+        }else if(!this.type) {
+
+          message = '请选择任务类型';
+
+        }else if(!this.place) {
+
+          message = '请选择工作地区';
+
+        }else if(!this.taskName) {
+
+          message = '请输入任务名称';
+
+        }else if(this.taskName.length < 4 || this.taskName.length > 50 || !Number.isNaN(+this.taskName)){
+
+          message = '任务名称为4-50个字符';
+
+        }else if(!this.taskDetail) {
+
+          message = '请填写任务需求描述';
+
+        }else if(this.taskDetail.length < 4 || this.taskDetail.length > 10000){
+
+          message = '任务需求为4-10000个字符';
+
+        }else if(!this.taskMoney) {
+
+          message = '请输入任务预算总金额';
+
+        }else if(Number.isNaN(+this.taskMoney)){
+
+          message = '任务预算总金额需为纯数字';
+
+        }else if(!this.taskMinMoney){
+
+          message = '请输入最低金额';
+
+        }else if(!this.taskMaxMoney) {
+
+          message = '请输入最高金额';
+
+        }else if(Number.isNaN(+this.taskMinMoney)){
+
+          message = '最低金额需为纯数字';
+
+        }else if(!this.endDateShow && !document.getElementsByClassName('sign_up_time')[0].checked){
+
+          message = '请选择报名截止时间';
+
+        }else if(Number.isNaN(+this.taskMaxMoney)){
+
+          message = '最高金额需为纯数字';
+
+        }else if(+this.taskMinMoney > +this.taskMaxMoney){
+
+          message = '最低金额不得大于最高金额';
+
+        }else if(!this.needPerson && !document.getElementsByClassName('need_person')[0].checked){
+
+          message = '请输入任务所需人数或者选择不限';
+
+        }else if(this.sendContract){
+
+          if(!this.invoice) {
+
+            message = '请选择发票类型';
+
+          }else if(!this.templet) {
+
+            message = '请选择合同模板';
+
+          }else if(!this.templetName){
+
+            message = '请输入合同名称';
+
+          }else if(!this.ext) {
+
+            message = '请选择业务合作企业';
+
+          }else if(!document.getElementsByClassName('agree')[0].checked){
+
+            message = '请同意《快捷签署服务委托协议书》';
+
+          }else {
+
+            return true;
+
+          }
+
+        }else {
+
+          return true;
+
+        }
+
+        this.$toast({
+
+          message: message,
+          position: 'middle',
+          duration: 1500
+
+        });
+
+        return false;
+
+      },
+
+
+      publishTask: function (submit) {
+
+        if(!this.checkAll()) return;
+
+        var params = {};
+
+        params.entId = localStorage.getItem('entId');
+
+        params.entName = this.ent[0];
+
+        params.nickname = this.entName;
+
+        var hideEntName = document.getElementsByClassName('ent_name')[0].checked ? '1' : '0';
+
+        params.nicknameHide = hideEntName;
+
+        this.industry.some(obj=>{
+
+          (obj.name === this.type[0]) && (params.industry = obj.nodeId);
+
+        });
+
+        this.typeList.some(obj=>{
+
+          (obj.name === this.type[1]) && (params.type = obj.nodeId);
+
+        });
+
+        params.taskName = this.taskName;
+
+        params.taskDetails = this.taskDetail;
+
+        params.abortDate = this.endDateShow;
+
+        (document.getElementsByClassName('sign_up_time')[0].checked) && (params.abortDate = '不限');
+
+        params.taskAmount = this.taskMoney;
+
+        params.taskMinUnit = this.taskMinMoney;
+
+        params.taskMaxUnit = this.taskMaxMoney;
+
+        params.peopleCount = this.needPerson;
+
+        (document.getElementsByClassName('need_person')[0].checked) && (params.peopleCount = '不限');
+
+        params.isShow = this.showTask? '1': '0';
+
+        params.isSendContract = this.sendContract? '1' : '2';
+
+        this.templetList.some(obj=>{
+
+          (obj.templetName === this.templet[0]) && (params.templateId = obj.tempId);
+
+        });
+
+        params.contractName = this.templetName;
+
+        this.cooperate.some(obj=>{
+
+          (obj.cooperateEntName === this.ext[0]) && (params.extEntId = obj.cooperateEntId);
+
+        });
+
+        params.invoiceType = (this.invoice[0] === '人力资源服务') ? ('1') : ('2');
+
+        params.submit = submit;
+
+        if(this.place[0] !== '不限'){
+
+          params.province = this.place[0];
+
+          params.city = this.place[1];
+
+        }else {
+
+          params.province = '不限';
+
+          params.city = '不限';
+
+        }
+
+        (!!this.filesUrl) && (params.taskFile = this.filesUrl.join(',')) && (params.originalFileNames = this.filesName.join(','));
+
+        /*
+        * 接口： 企业众包任务发布
+        * 请求方式： POST
+        * 接口： pulluptask
+        * 入参： 好多
+        * */
+        this.$http({
+
+          url: process.env.API_ROOT + 'pulluptask',
+          method: 'post',
+          params: params
+
+        }).then(res=>{
+
+          if(res.data.code === '0000'){
+
+            this.$router.push('/taskList');
+
+          }else {
+
+            this.$toast({
+
+              message: res.data.msg,
+              position: 'middle',
+              duration: 1500
+
+            });
+
+          }
+
+        });
+
+      },
+
+
+      selectTime: function () {
+
+        this.endDateShow = this.changeTime(this.endDate, '-');
+
+      },
+
+      changeTime: function (date, symbol) {
+
+        var year = date.getFullYear();
+
+        var month = date.getMonth() + 1;
+
+        var day = date.getDate();
+
+        return year + symbol +  (month + '').padStart(2,'0') + symbol + (day + '').padStart(2,'0');
+
+      },
+
+
+      setTaskData: function () {
+
+        sessionStorage.removeItem('change');
+
+        var taskInfo = JSON.parse(sessionStorage.getItem('taskInfo'));
+
+        sessionStorage.removeItem('taskInfo');
+
+        (!taskInfo.abortDate) ? (document.getElementsByClassName('sign_up_time')[0].checked = true) : (this.endDateShow = this.changeTime(new Date(taskInfo.abortDate), '-'));
+
+        this.ent.push(taskInfo.entName);
+
+        this.taskDetail = taskInfo.taskDetails;
+
+        this.entName = taskInfo.nickname;
+
+        this.filesUrl = taskInfo.taskFile;
+
+        this.filesName = taskInfo.originalFileNames;
+
+        (taskInfo.province === '不限') ? (this.place.push('不限')) : (this.place.push(taskInfo.province) && this.place.push(taskInfo.city));
+
+        this.getCity(taskInfo.province);
+
+        (taskInfo.peopleCount === '不限') ? (document.getElementsByClassName('need_person')[0].checked = true) : (this.needPerson = taskInfo.peopleCount);
+
+        this.taskMoney = taskInfo.taskAmount;
+
+        this.taskMaxMoney = taskInfo.taskMaxUnit;
+
+        this.taskMinMoney = taskInfo.taskMinUnit;
+
+        this.taskName = taskInfo.taskName;
+
+        this.templet.push(taskInfo.templateName);
+
+        this.type.push(taskInfo.industryName);
+
+        this.getTaskList(taskInfo.industry);
+
+        this.type.push(taskInfo.typeName);
+
+        this.ext.push(taskInfo.extEntName);
+
+        document.getElementsByClassName('ent_name')[0].checked = (taskInfo.nicknameHide === '1') ? (true) : (false);
+
+        this.sendContract = (taskInfo.isSendContract === '1') ? (true) : (false);
+
+        this.showTask = (taskInfo.isShow === '1') ? (true) : (false);
+
+        this.invoice.push(taskInfo.templateName);
+
+        this.templetName = taskInfo.contractName;
+
+        if(!!taskInfo.taskFile) {
+
+          var fileArr = taskInfo.taskFile.split(',');
+
+          var fileNameArr = taskInfo.originalFileNames.split(',');
+
+          var length = fileArr.length;
+
+          while(length-- ) {
+
+            var file = {};
+
+            file.url = fileArr[length];
+
+            file.name = fileNameArr[length];
+
+            this.taskFiles.push(file);
+
+          }
+
+        }
+
+      },
+
+
+      closeFn: function () {
+
+        this.mouldShow = false;
+
+      },
+
+      useMouldFn: function (mouldArr) {
+
+        this.taskDetail = mouldArr.join('\n');
+
+        this.mouldShow = false;
+
+      }
 
     }
   }
@@ -201,5 +1236,8 @@
   .release_task .task_information .mint-switch .mint-switch-core:after{
     width: 20px;
     height: 20px;
+  }
+  .release_task .mint-popup{
+    width: 100vw;
   }
 </style>

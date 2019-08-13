@@ -18,6 +18,13 @@ import changePassword from '@/pages/mine/change_password/change_password'
 import helpList from '@/pages/mine/help_list/help_list'
 import helpDetail from '@/pages/mine/help_detail/help_detail'
 import feedbackList from '@/pages/mine/feedback_list/feedback_list'
+import companyList from '@/pages/company_management/company_list/company_list'
+import companyDetail from '@/pages/company_management/company_detail/company_detail'
+import taskList from '@/pages/task_management/task_list/task_list'
+import taskManagement from '@/pages/task_management/task_management'
+import taskDetail from '@/pages/task_management/task_detail/task_detail'
+import feedback from '@/pages/mine/feedback/feedback'
+import additionInput from '@/pages/task_management/addition_input/addition_input'
 
 
 Vue.use(Router)
@@ -166,6 +173,62 @@ export default new Router({
         title: '消息'
       },
       component: feedbackList
+    },
+    {
+      path: '/feedback',
+      name: 'feedback',
+      meta: {
+        title: '工资条'
+      },
+      component: feedback
+    },
+    {
+      path: '/companyList',
+      name: 'companyList',
+      meta: {
+        title: '企业管理'
+      },
+      component: companyList
+    },
+    {
+      path: '/companyDetail',
+      name: 'companyDetail',
+      meta: {
+        title: '企业信息'
+      },
+      component: companyDetail
+    },
+    {
+      path: '/taskManagement',
+      name: 'taskManagement',
+      component: taskManagement,
+      children: [
+        {
+          path: '/taskList',
+          name: 'taskList',
+          meta: {
+            title: '任务管理'
+          },
+          component: taskList
+        },
+        {
+          path: '/taskDetail',
+          name: 'taskDetail',
+          meta: {
+            title: '任务详情'
+          },
+          component: taskDetail
+        },
+        {
+          path: '/additionInput',
+          name: 'additionInput',
+          meta: {
+            title: '补充任务需求'
+          },
+          component: additionInput
+        }
+      ]
+
     }
   ]
 })

@@ -1,0 +1,97 @@
+.company_detail{
+  .ps{
+    background-color: #ffebeb;
+    color: #8a8a8a;
+    font-size: 12px;
+    padding: 10px 20px;
+  }
+  .company_information{
+    margin: 10px;
+    border-radius: 8px;
+    background-color: white;
+    padding: 0 15px;
+    .list{
+      padding: 10px 0;
+      color: #4a4a4a;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: relative;
+      img{
+        width: 50px;
+        height: 75px;
+      }
+      input{
+        outline: none;
+        border: none;
+        color: #4a4a4a;
+        text-align: right;
+      }
+      span{
+        color: #ff4646;
+      }
+    }
+    .list+.list:before{
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      width: 100%;
+      height: 1px;
+      border-top: 1px solid #f5f5f5;
+    }
+  }
+  .popup{
+    .popup_bg{
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      background-color: black;
+      opacity: 0.2;
+    }
+    .popup_box{
+      position: fixed;
+      width: 80%;
+      padding: 0 15px;
+      box-sizing: border-box;
+      background-color: white;
+      border-radius: 10px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      .title{
+        padding: 10px 0;
+        text-align: center;
+        font-size: 16px;
+        color: #4a4a4a;
+      }
+      .content{
+        text-align: center;
+        padding: 5px 0 20px;
+        color: #8a8a8a;
+        font-size: 14px;
+        a{
+          text-decoration: none;
+        }
+      }
+      .button{
+        padding: 15px 0;
+        text-align: center;
+        position: relative;
+        &:before{
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          display: block;
+          width: 100%;
+          height: 1px;
+          border-top: 1px solid #f5f5f5;
+        }
+      }
+    }
+  }
+}

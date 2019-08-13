@@ -19,7 +19,7 @@
 
       <div class="account">
 
-        <div class="task_management">
+        <div class="task_management" v-on:click="$router.push('/taskList')">
 
           <div class="img"><img src="../../../../static/image/task_management.jpg"></div>
 
@@ -43,7 +43,7 @@
 
         </div>
 
-        <div class="company_management">
+        <div class="company_management" v-on:click="$router.push('/companyList')">
 
           <div class="img"><img src="../../../../static/image/company_management.jpg"></div>
 

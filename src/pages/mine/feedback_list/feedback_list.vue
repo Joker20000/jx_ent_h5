@@ -1,30 +1,36 @@
 <template>
     <div class="feedback_list">
 
-      <div class="list" v-for="feedback in feedbackList">
+      <div class="list" v-for="feedback in feedbackList" v-on:click="jumpTo(feedback.type, feedback.msgId)">
 
         <div class="title">
           <div class="img">
-            <img src="../../../../static/image/jx_feedback_list_feedback.png" v-if="feedback.type === 1">
-            <img src="../../../../static/image/jx_feedback_list_message.png" v-if="feedback.type === 2">
+            <img src="../../../../static/image/jx_feedback_list_feedback.png" v-if="feedback.type === '1'">
+            <img src="../../../../static/image/jx_feedback_list_message.png" v-if="feedback.type === '2'">
           </div>
 
           <div class="message_title">
-            <div class="type_feedback" v-if="feedback.type === 1">
-              <span>小明</span>
-              <span>2019-04</span>
+            <div class="type_feedback" v-if="feedback.type === '1'">
+              <span>{{feedback.userName}}</span>
+              <span>{{feedback.sendDate | fmtDateStr2}}</span>
               <span>工资</span>
             </div>
-            <div class="type_message" v-if="feedback.type === 2">众包任务提醒</div>
+            <div class="type_message" v-if="feedback.type === '2'">
+              <span v-if="feedback.businessType === '0'">众包任务提醒</span>
+              <span v-else-if="feedback.businessType === '1'">合同签约提醒</span>
+              <span v-else-if="feedback.businessType === '2'">用户信息修改</span>
+            </div>
           </div>
+
+          <div class="new_feedback" v-if="feedback.isEntHaveNew === '1'">NEW</div>
 
         </div>
 
-        <div class="information" v-bind:class="feedback.type === 1 ? 'feedback' : 'message'">收到收到收到收到收到收到收到收到收到收到收到收到收到收到收到收到收到收到收到收到收到收到收到收到收到收到收到</div>
+        <div class="information" v-bind:class="feedback.type === '1' ? 'feedback' : 'message'">{{feedback.msgContent}}</div>
 
         <div class="foot">
-          <div class="company" v-show="feedback.type === 1">嘉福集团</div>
-          <div class="time">2018-09-08 14:20:50</div>
+          <div class="company" v-show="feedback.type === '1'">{{feedback.entName}}</div>
+          <div class="time">{{feedback.createDate | fmtTimeStr2}}</div>
         </div>
 
       </div>
@@ -40,11 +46,45 @@
 
       return {
 
-        feedbackList: [
-          {type: 1},
-          {type: 2},
-          {type: 1}
-        ]
+        feedbackList: []
+
+      }
+
+    },
+
+    mounted () {
+
+      this.getData();
+
+    },
+
+
+
+    methods: {
+
+      getData: function () {
+
+        this.$http({
+
+          url: process.env.API_ROOT + 'table/record/h5sysmsglist',
+
+          method: 'get',
+
+        }).then(res=>{
+
+          this.feedbackList = res.data.data;
+
+        })
+
+      },
+
+      jumpTo: function (type, msgId) {
+
+        if(type === '1'){
+
+          this.$router.push({path: '/feedback', query: {msgId: msgId}});
+
+        }
 
       }
 

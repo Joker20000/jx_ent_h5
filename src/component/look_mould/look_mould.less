@@ -1,0 +1,100 @@
+.look_mould{
+  .mould_bg{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: black;
+    opacity: 0.3;
+    z-index: 10;
+  }
+  .mould_box{
+    position: fixed;
+    top: 15%;
+    left: 10%;
+    width: 80vw;
+    background-color: white;
+    z-index: 15;
+    overflow: hidden;
+    border-radius: 10px;
+    .close{
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      height: 20px;
+      width: 20px;
+      background-color: black;
+      opacity: 0.3;
+      border-radius: 50%;
+      img{
+        height: 100%;
+        width: 100%;
+      }
+    }
+    .swiper-slide{
+      padding: 30px 10px 5px 25px;
+      box-sizing: border-box;
+      height: 350px;
+      overflow: auto;
+      .mould_title{
+        text-align: center;
+        font-size: 16px;
+      }
+      &>div{
+        font-size: 12px;
+        .name{
+          display: inline-block;
+          position: relative;
+          color: #8a8a8a;
+          padding-left: 5px;
+          &:before, &:after{
+            content: '';
+            display: block;
+            position: absolute;
+            border-radius: 50%;
+            transform: translateX(-100%);
+          }
+          &:before{
+            height: 14px;
+            width: 14px;
+            bottom: 0;
+            left: 0;
+            background-color: #80b0f0;
+          }
+          &:after{
+            height: 8px;
+            width: 8px;
+            bottom: 0;
+            left: 0;
+            background-color: #9bd6fa;
+          }
+        }
+        .detail_list, .need_list{
+          margin: 8px 0;
+        }
+      }
+      .title, .need{
+        margin: 15px 0;
+      }
+    }
+    .swiper-container{
+      .swiper-wrapper{
+        display: flex;
+        align-items: flex-start;
+        &>div{
+          flex-shrink: 0;
+        }
+      }
+    }
+    .button{
+      width: 200px;
+      line-height: 40px;
+      font-size: 15px;
+      color: #fff;
+      border-radius: 20px;
+      text-align: center;
+      margin: 15px auto 30px;
+    }
+  }
+}

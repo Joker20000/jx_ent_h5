@@ -1,0 +1,518 @@
+<template>
+  <div class="task_detail">
+
+    <div class="task_id">任务编号：{{taskInfo.taskId}}</div>
+
+    <div class="task_title">
+      <div class="task_name">{{taskInfo.taskName}}</div>
+      <div class="type_place">
+        <div class="type">
+          <img src="../../../../static/image/jx_task_type.png">
+          <span>{{taskInfo.industryName}}</span>
+        </div>
+        <div class="place">
+          <img src="../../../../static/image/jx_task_place.png">
+          <span>{{taskInfo.province}}</span>
+        </div>
+      </div>
+      <div class="task_money_state">
+        <div class="task_money">
+          <div>￥<span v-if="!!taskInfo.taskMaxUnit">{{taskInfo.taskMaxUnit}}-</span>{{taskInfo.taskMinUnit}}</div>
+          <div>任务预算单价</div>
+        </div>
+        <div class="task_money_all">
+          <div>￥{{taskInfo.taskAmount}}</div>
+          <div>总预算</div>
+        </div>
+        <div class="state">
+          <div v-if="taskInfo.signupState === '1'">未开始</div>
+          <div v-else-if="taskInfo.signupState === '2'">报名中</div>
+          <div v-else-if="taskInfo.signupState === '3'">已结束</div>
+          <div>报名状态</div>
+        </div>
+      </div>
+      <div class="show_all">
+        <span>发布到任务广场</span>
+        <mt-switch v-model="taskShow"></mt-switch>
+      </div>
+      <div class="task_info">
+        <span>任务合同：</span><span v-if="taskInfo.isSendContract === '1'">自动发送合同</span><span v-else-if="taskInfo.isSendContract === '2'">不自动发送合同</span>
+      </div>
+      <div class="task_info" v-if="taskInfo.state !== '4'">
+        <span>需要人数：</span><span>{{taskInfo.peopleCount}}</span>
+      </div>
+      <div class="task_info" v-if="taskInfo.state === '1'">
+        <span>报名人数：</span><span>{{taskInfo.signUpTotal}}</span>
+      </div>
+      <div class="task_info" v-if="taskInfo.state === '2'">
+        <span>已录用人数：</span><span>{{taskInfo.hireTotal}}</span>
+      </div>
+      <div class="task_info" v-if="taskInfo.state === '3' || taskInfo.state === '4'">
+        <span>实际用工人数：</span><span>{{taskInfo.realHireTotal}}</span>
+      </div>
+      <div class="task_info" v-if="taskInfo.state === '4'">
+        <span>实际发放资金：</span><span>{{taskInfo.realAmountTotal}}</span>
+      </div>
+      <div class="task_info">
+        <span>报名截止时间：</span><span v-if="!!taskInfo.abortDate">{{taskInfo.abortDate | fmtDateStr2}}</span><span v-else>不限</span>
+      </div>
+      <div class="task_info">
+        <span>发布企业：</span><span>{{taskInfo.entName}}</span>
+      </div>
+      <div class="task_info">
+        <span>创建时间：</span><span>{{taskInfo.createDate | fmtTimeStr2}}</span>
+      </div>
+    </div>
+    <div class="task_content">
+      <div class="title">
+        <div class="box_name">任务内容</div>
+        <div class="add" v-on:click="$router.push('/additionInput')" v-if="taskInfo.state === '2'">
+          <img src="../../../../static/image/jx_task_additional.png">
+          <span>补充任务需求</span>
+        </div>
+      </div>
+      <div class="content_text" v-html="taskInfo.taskDetails"></div>
+      <div class="file_list" v-if="!!taskInfo.taskFile">
+        <a class="file" v-bind:href="fileSrc" v-for="(fileName, fileSrc) in fileList">
+          <div class="img">
+            <img src="../../../../static/image/jx_task_file.png">
+          </div>
+          <span>{{fileName}}</span>
+        </a>
+      </div>
+      <div class="addition_list" v-if="!!taskInfo.entTaskAddList">
+        <div class="additional" v-for="addTaskAdd in taskInfo.entTaskAddList">
+          <div class="title">
+            <div class="box_name">补充内容</div>
+            <div class="additional_time">{{addTaskAdd.createDate | fmtTimeStr2}}</div>
+          </div>
+          <div class="content_text">{{addTaskAdd.taskAddtionDetail}}</div>
+        </div>
+      </div>
+    </div>
+    <div class="task_state">
+
+      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 1 }">
+        <div class="img"><img src="../../../../static/image/jx_task_publish.png"></div>
+        <div>发布任务</div>
+      </div>
+      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 2 }">
+        <div class="img"><img src="../../../../static/image/jx_task_signup.png"></div>
+        <div>用户报告</div>
+      </div>
+      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 3 , 'close':taskInfo.stateForTask === '7'}">
+        <div class="img"><img src="../../../../static/image/jx_task_working.png"></div>
+        <div v-if="taskInfo.stateForTask !== '7'">用户工作中</div>
+        <div v-else>任务已关闭</div>
+      </div>
+      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 4 && taskInfo.stateForTask !== '7'}">
+        <div class="img"><img src="../../../../static/image/jx_task_check.png"></div>
+        <div>工作验收</div>
+      </div>
+      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 5 && taskInfo.stateForTask !== '7' }">
+        <div class="img"><img src="../../../../static/image/jx_task_check.png"></div>
+        <div>任务结算</div>
+      </div>
+      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 6 && taskInfo.stateForTask !== '7' }">
+        <div class="img"><img src="../../../../static/image/jx_task_finish.png"></div>
+        <div>完成</div>
+      </div>
+
+    </div>
+
+    <div class="button" v-if="taskInfo.state === '1'">
+      <div class="delete" v-on:click="deleteTask">删除任务</div>
+      <div class="publish" v-on:click="publishTask">继续发布</div>
+    </div>
+
+    <div class="button" v-else-if="taskInfo.state === '2'">
+      <div class="end" v-on:click="endTask">结束报名</div>
+      <div class="close" v-on:click="closeTask">关闭任务</div>
+      <div class="finish" v-on:click="finishTask">&nbsp;&nbsp;已完成&nbsp;&nbsp;</div>
+    </div>
+
+  </div>
+</template>
+
+<script>
+  export default {
+    name: "task_detail.vue",
+
+    data () {
+
+      return {
+
+        taskInfo: {},
+
+        taskShow: true,
+
+        fileList: {},
+
+        dataState: false
+
+      }
+
+    },
+
+    mounted () {
+
+      this.getData();
+
+    },
+
+
+    methods: {
+
+      getData: function () {
+
+        /*
+        * 接口： 企业众包任务详情查询
+        * 请求方式： POST
+        * 接口： gettaskinfosimple
+        * 传参：taskId
+        * */
+        this.$http({
+
+          url: process.env.API_ROOT + 'gettaskinfosimple',
+          method: 'post',
+          params: {
+            taskId: this.$route.query.taskId
+          }
+
+        }).then(res=>{
+
+          console.log(res);
+
+          (res.data.data.taskDetails.indexOf('\n') !== -1) && (res.data.data.taskDetails = res.data.data.taskDetails.split('\n').join('</br>'));
+
+          this.taskInfo = res.data.data;
+
+          this.taskShow = (res.data.data.isShow === '1');
+
+          if(this.taskInfo.taskFile){
+
+            this.getTaskFile(this.taskInfo.taskFile, this.taskInfo.originalFileNames);
+
+          }
+
+          setTimeout(function () {
+
+            this.dataState = true;
+
+          }.bind(this), 1);
+
+        });
+
+      },
+
+
+      getTaskFile: function (taskFile, originalFileNames) {
+
+        var fileList = taskFile.split(',');
+
+        var fileNameList = originalFileNames.split(',');
+
+        var fileObj = {};
+
+        var length = fileList.length;
+
+        while(length--) {
+
+          fileObj[fileList[length]] = fileNameList[length];
+
+        }
+
+        this.fileList = fileObj;
+
+      },
+
+
+      deleteTask: function () {
+
+        this.$messagebox({
+
+          title: '确认删除任务',
+          message: '删除任务后，该任务将不能继续发布，确认删除？',
+          showCancelButton:true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          closeOnClickModal: true,
+
+        }).then(res=>{
+
+          if(res === 'confirm') {
+
+            /*
+            * 接口： 删除任务
+            * 请求方式： GET
+            * 接口： deltask
+            * 入参： this.
+            * */
+            this.$http({
+
+              url: process.env.API_ROOT + 'deltask',
+              method: 'get',
+              params: {
+                taskId: this.$route.query.taskId
+              }
+
+            }).then(res=>{
+
+              if(res.data.code === '0000'){
+
+                sessionStorage.setItem('delete','1');
+
+                this.$router.go(-1);
+
+              }
+
+            })
+
+          }
+
+        })
+
+      },
+
+      publishTask: function () {
+
+        sessionStorage.setItem('change', '1');
+
+        sessionStorage.setItem('taskInfo', JSON.stringify(this.taskInfo));
+
+        this.$router.push('/releaseTask');
+
+      },
+
+
+      endTask: function () {
+
+        this.$messagebox({
+
+          title: '确认结束报名',
+          message: '结束报名后，任务将不再展示在任务广场，用户也不可再报名，确认结束？',
+          showCancelButton:true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          closeOnClickModal: true,
+
+        }).then(res=>{
+
+          if(res === 'confirm'){
+
+            /*
+            * 接口： 更新企业众包任务
+            * 请求方式： POST
+            * 接口： updateenttask
+            * 入参： signupState
+            * */
+            this.$http({
+
+              url: process.env.API_ROOT + 'updateenttask',
+              method: 'post',
+              params: {
+                taskId: this.$route.query.taskId,
+                signupState: 3
+              }
+
+            }).then(res=>{
+
+              if(res.data.code === '0000'){
+
+                sessionStorage.setItem('delete','1');
+
+                this.getData();
+
+                window.scrollTo(0,0)
+
+              }
+
+            });
+
+          }
+
+        })
+
+      },
+
+
+      closeTask: function () {
+
+        this.$messagebox({
+
+          title: '确认关闭任务',
+          message: '任务关闭后，任务将不在任务广场显示，同时所有报名将失效，确认关闭？',
+          showCancelButton:true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          closeOnClickModal: true,
+
+        }).then(res=>{
+
+          if(res === 'confirm'){
+
+            /*
+            * 接口： 更新企业众包任务
+            * 请求方式： POST
+            * 接口： updateenttask
+            * 入参： state
+            * */
+            this.$http({
+
+              url: process.env.API_ROOT + 'updateenttask',
+              method: 'post',
+              params: {
+                taskId: this.$route.query.taskId,
+                state: 4
+              }
+
+            }).then(res=>{
+
+              if(res.data.code === '0000'){
+
+                sessionStorage.setItem('delete','1');
+
+                this.getData();
+
+                window.scrollTo(0,0)
+
+              }
+
+            });
+
+          }
+
+        })
+
+      },
+
+
+      finishTask: function () {
+
+        this.$messagebox({
+
+          title: '确认结束任务',
+          message: '若存在用户为完成结算，因此产生的相关纠纷，平台不承担任何责任。',
+          showCancelButton:true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          closeOnClickModal: true,
+
+        }).then(res=>{
+
+          if(res === 'confirm'){
+
+            /*
+            * 接口： 更新企业众包任务
+            * 请求方式： POST
+            * 接口： updateenttask
+            * 入参： state
+            * */
+            this.$http({
+
+              url: process.env.API_ROOT + 'updateenttask',
+              method: 'post',
+              params: {
+                taskId: this.$route.query.taskId,
+                state: 3
+              }
+
+            }).then(res=>{
+
+              if(res.data.code === '0000'){
+
+                sessionStorage.setItem('delete','1');
+
+                this.getData();
+
+                window.scrollTo(0,0);
+
+              }
+
+            });
+
+          }
+
+        })
+
+      }
+
+    },
+
+
+    destroyed () {
+
+      this.$messagebox.close();
+
+    },
+
+    watch: {
+
+      taskShow: function () {
+
+        if(this.dataState) {
+
+          /*
+          * 接口： 更新企业众包任务
+          * 请求方式： POST
+          * 接口： updateenttask
+          * 入参： taskId， isShow
+          * */
+          this.$http({
+
+            url: process.env.API_ROOT + 'updateenttask',
+            method: 'post',
+            params: {
+              taskId: this.$route.query.taskId,
+              isShow: this.taskShow ? ('1') : ('0')
+            }
+
+          }).then(res=>{
+
+            this.$toast({
+
+              message: res.data.msg,
+              position: 'middle',
+              duration: 1500
+
+            });
+
+            if(res.data.code !== '0000'){
+
+              this.taskShow = !this.taskShow;
+
+            }
+
+          })
+
+        }
+
+      }
+
+    }
+
+  }
+</script>
+
+<style scoped lang="less">
+  @import "task_detail.less";
+</style>
+<style>
+  .task_detail .mint-switch .mint-switch-core{
+    height: 14px;
+    width: 27px;
+    border-radius: 7px;
+  }
+  .task_detail .mint-switch .mint-switch-core:after{
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+  }
+  .task_detail .mint-switch .mint-switch-core:before{
+    width: 27px;
+    height: 14px;
+  }
+  .task_detail .mint-switch .mint-switch-input:checked +  .mint-switch-core::after{
+    transform: translateX(13px);
+  }
+</style>

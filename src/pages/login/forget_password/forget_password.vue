@@ -11,11 +11,10 @@
       <div class="code">
         <img src="../../../../static/image/login_pen.png">
         <input type="text" placeholder="请输入验证码" v-model="code">
-        <div class="get_code"
-             v-bind:class="codeShow ? 'background_linear_gradient' : 'gray_background'"
-             v-on:click="getCodeCheck">
-          <span v-if="codeShow">{{codeText}}</span>
-          <span v-else>{{$store.state.seconds}}s后再次获取</span>
+        <div class="get_code" v-on:click="getCodeCheck"
+             v-bind:class="(seconds === '' || seconds === 0) ? 'background_linear_gradient' : 'gray_background'">
+          <span v-if="(seconds === '' || seconds === 0)">{{codeText}}</span>
+          <span v-else>{{seconds}}s后再次获取</span>
         </div>
       </div>
 
@@ -33,7 +32,7 @@
 
     <commonButton v-bind:btnName="btnName" v-on:clickEvent="submit"></commonButton>
 
-    <div class="get_sound_code">没有收到验证码？请尝试获取 <span class="color_text">语音验证码</span></div>
+    <div class="get_sound_code">没有收到验证码？请尝试获取 <span class="color_text" v-on:click="getVoiceCode">语音验证码</span></div>
 
   </div>
 </template>
@@ -62,9 +61,20 @@
 
         passwordAgain: '',
 
-        codeText: '获取验证码'
+        codeText: '获取验证码',
+
+        seconds: '',
+
+        getVoiceCode: ''
 
       }
+
+    },
+
+
+    created () {
+
+      this.getVoiceCode = this.getVoiceCodeCountDown();
 
     },
 
@@ -103,9 +113,7 @@
 
       getCodeCheck: function () {
 
-        if(!this.checkMobile()) return;
-
-        if(this.codeShow){
+        if(this.checkMobile() && (this.seconds === 0 || this.seconds === '')){
 
           this.getCode();
 
@@ -116,11 +124,21 @@
 
       countDown: function () {
 
-        this.$store.state.seconds = 60;
+        this.seconds = 60;
 
-        this.codeText = '再次获取';
+        var countdown = setInterval(()=>{
 
-        this.$store.state.countdown();
+          this.seconds--;
+
+          if(this.seconds <= 0){
+
+            clearInterval(countdown);
+
+            this.codeText = '再次获取';
+
+          }
+
+        },1000);
 
       },
 
@@ -273,24 +291,89 @@
 
         return false;
 
+      },
+
+
+      getVoiceCodeCountDown: function () {
+
+        var _this = this;
+
+        var seconds = 60;
+
+        var _getVoiceCode = function (){
+
+          if(!_this.checkMobile()) return;
+
+          if(seconds !== 0 && seconds !== 60){
+
+            _this.$toast({
+
+              message: '请勿在1分钟内多次发送短信',
+              position: 'middle',
+              duration: 1500
+
+            });
+
+            return;
+
+          }else {
+
+            seconds = 60;
+
+            /*
+            * 接口： 忘记密码-发送语音短信
+            * 请求方式： GET
+            * 接口： jx/action/forgetmsgaudio
+            * 入参： mobile
+            * */
+
+            _this.$http({
+
+              url: process.env.API_ROOT + 'jx/action/forgetmsgaudio',
+
+              method: 'get',
+
+              params: {
+
+                mobile: _this.mobile
+
+              }
+
+            }).then(res=>{
+
+              _this.$toast({
+
+                message: res.data.msg,
+                position: 'middle',
+                duration: 1500
+
+              });
+
+              if(res.data.code === '0000'){
+
+                var countdown = setInterval(()=>{
+
+                  seconds--;
+
+                  if(seconds <= 0){
+
+                    clearInterval(countdown);
+
+                  }
+
+                },1000);
+
+              }
+
+            })
+
+          }
+
+        };
+
+        return _getVoiceCode;
+
       }
-
-    },
-
-
-    computed: {
-
-      codeShow: function () {
-
-        return ((this.$store.state.seconds === 0) || (this.$store.state.seconds === 61)) ? true: false;
-
-      }
-
-    },
-
-    destroyed () {
-
-      this.$toast.close();
 
     }
 

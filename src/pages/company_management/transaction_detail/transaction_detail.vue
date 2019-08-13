@@ -115,11 +115,11 @@
 
     mounted () {
 
-      this.getData();
-
       this.entId = this.$route.query.entId;
 
       (!this.$route.query.entId) && (this.getCompanyList());
+
+      this.getData();
 
     },
 
@@ -154,15 +154,7 @@
 
             this.dataList = this.dataList.concat(res.data.data.list);
 
-            if(res.data.data.list.length >= 10){
-
-              this.moreData = true;
-
-            }else {
-
-              this.moreData = false;
-
-            }
+            (res.data.data.list.length >= 10) ? (this.moreData = true) : (this.moreData = false);
 
           }
 
@@ -202,16 +194,16 @@
           if(res.data.code === '0000'){
 
             /**
-             * 接口：获取发薪单位账户余额信息
-             * 请求方式：POST
-             * 接口：ent/balance/getbalance
+             * 接口：获取企业信息
+             * 请求方式：GET
+             * 接口：ent/info/getinfo
              * 入参：null
              **/
             this.$http({
 
-              method: 'post',
+              method: 'get',
 
-              url:process.env.API_ROOT+'ent/balance/getbalance',
+              url:process.env.API_ROOT+'ent/info/getinfo',
 
               params: {
 
@@ -253,6 +245,8 @@
           this.entName = entName;
 
         }
+
+        this.pageNum = 1;
 
         this.dataList = [];
 
