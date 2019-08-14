@@ -71,7 +71,7 @@
         tel:this.getStorage('mobile'),// 电话
       });
 
-      this.$store.state.workDeskState = 'mine';
+      this.$store.state.workDeskState = 'mine';//控制下方按钮状态
       this.adminName = localStorage.getItem('adminName');
       this.mobile = localStorage.getItem('mobile');
       (!!localStorage.getItem('logoPath')) && (this.logoPath = localStorage.getItem('logoPath'));
@@ -88,6 +88,7 @@
       },
 
 
+      //拨打电话
       call: function () {
 
         this.$messagebox({

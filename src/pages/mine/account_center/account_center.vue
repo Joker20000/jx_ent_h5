@@ -28,6 +28,7 @@
     <commonButton v-bind:btnName="btnName" v-on:clickEvent="logout"></commonButton>
 
     <div class="image_cut" v-if="cutShow">
+      <!--图片截取组件-->
       <VueCropper ref="cropper" :img="imgSrc" :output-size="option.size" :output-type="option.outputType" :info="true" :full="option.full"
                   :can-move="option.canMove" :can-move-box="option.canMoveBox" :fixed-box="option.fixedBox" :original="option.original"
                   :auto-crop="option.autoCrop" :auto-crop-width="option.autoCropWidth" :auto-crop-height="option.autoCropHeight" :center-box="option.centerBox"
@@ -57,15 +58,15 @@
 
       return {
 
-        btnName: '退出登录',
+        btnName: '退出登录',//按钮名称
 
-        adminName: '',
+        adminName: '',//用户名称
 
-        logoPath: '../../../../static/image/mine_person.png',
+        logoPath: '../../../../static/image/mine_person.png',//企业logo地址
 
-        mobile:  '',
+        mobile:  '',//用户账号
 
-        adminType: '',
+        adminType: '',//用户权限
 
         option: {
           size: 1,
@@ -84,11 +85,11 @@
           fixed: true
         },//图片处理插件数据
 
-        cutShow: false,
+        cutShow: false,//图片处理插件显示状态
 
-        imgSrc: '',
+        imgSrc: '',//待处理图片链接
 
-        largeTime: ''
+        largeTime: '',//处理图片放大缩小倍数
 
       }
 
@@ -106,6 +107,7 @@
 
     methods: {
 
+      //退出登录
       logout: function () {
 
         this.$messagebox({
@@ -134,6 +136,7 @@
       },
 
 
+      //上传图片
       inputLogo: function (e) {
 
         var file = e.currentTarget.files[0];
@@ -144,6 +147,7 @@
 
       },
 
+      //取消图片编辑
       cancelImg: function () {
 
         this.imgSrc = '';
@@ -153,6 +157,7 @@
       },
 
 
+      //获取编辑后图片
       getImage: function () {
 
         var height = this.$refs.cropper.cropH;
@@ -177,6 +182,7 @@
 
       },
 
+      //上传图片
       imgRequest:function(param){
 
         let that =this;
@@ -225,6 +231,7 @@
       },
 
 
+      //图片格式转换
       base64UrlToBlob:function(urlData){
         let arr = urlData.split(','),
           mime = arr[0].match(/:(.*?);/)[1],  // 去掉url的头，并转化为byte
@@ -240,6 +247,7 @@
       },
 
 
+      //更换logo事件
       changeLogo: function (img) {
 
 

@@ -29,11 +29,11 @@
 
       return {
 
-        feedbackList: [],
+        feedbackList: [],//消息数据列表
 
-        feedbackInput: '',
+        feedbackInput: '',//回复信息
 
-        feedbackId: ''
+        feedbackId: '',//消息Id
 
       }
 
@@ -48,6 +48,7 @@
 
     methods: {
 
+      //获取消息
       getData: function () {
 
         this.feedbackId = this.$route.query.msgId;
@@ -75,6 +76,7 @@
       },
 
 
+      //回复消息
       sendFeedback: function () {
 
         /*

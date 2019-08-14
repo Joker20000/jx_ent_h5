@@ -46,7 +46,7 @@
 
       return {
 
-        feedbackList: []
+        feedbackList: [],//消息列表
 
       }
 
@@ -62,6 +62,7 @@
 
     methods: {
 
+      //获取消息
       getData: function () {
 
         this.$http({
@@ -78,6 +79,7 @@
 
       },
 
+      //员工反馈消息点击查看明细
       jumpTo: function (type, msgId) {
 
         if(type === '1'){

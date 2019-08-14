@@ -45,15 +45,15 @@
 
       return {
 
-        btnName: '更换手机号',
+        btnName: '更换手机号',//按钮名称
 
-        mobile: '',
+        mobile: '',//用户账号
 
-        code: '',
+        code: '',//验证码
 
-        seconds: 0,
+        seconds: 0,//倒计时
 
-        getVoiceCode: this.getVoiceCodeCountDown(),
+        getVoiceCode: this.getVoiceCodeCountDown(),//获取语音验证码
 
       }
 
@@ -71,6 +71,7 @@
 
     methods: {
 
+      //获取验证码
       getCode: function () {
 
         if(this.seconds !== 0){
@@ -130,6 +131,7 @@
         })
       },
 
+      //提交验证码
       submit: function () {
 
         var message;
@@ -201,6 +203,7 @@
       },
 
 
+      //获取语音验证码
       getVoiceCodeCountDown: function () {
 
         var _this = this;

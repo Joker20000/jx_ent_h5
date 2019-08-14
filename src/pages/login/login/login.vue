@@ -52,11 +52,11 @@
 
       return {
 
-        btnName: '登录',
+        btnName: '登录',//按钮名称
 
-        mobile: '',
+        mobile: '',//用户账号
 
-        password: ''
+        password: '',//用户密码
 
       }
 
@@ -64,6 +64,7 @@
 
     methods: {
 
+      //登录
       submit: function () {
 
         if(this.check()){
@@ -131,6 +132,7 @@
       },
 
 
+      //检测
       check: function () {
 
         var message;

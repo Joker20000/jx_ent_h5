@@ -42,17 +42,17 @@
 
       return {
 
-        btnName: '更换手机号',
+        btnName: '更换手机号',//按钮名称
 
-        mobile: '',
+        mobile: '',//用户账号
 
-        code: '',
+        code: '',//验证码
 
-        seconds: '',
+        seconds: '',//倒计时
 
-        codeText: '获取验证码',
+        codeText: '获取验证码',//获取验证码按钮显示文案
 
-        getVoiceCode: this.getVoiceCodeCountDown()
+        getVoiceCode: this.getVoiceCodeCountDown(),//获取语音验证码
 
       }
 
@@ -61,6 +61,7 @@
 
     methods: {
 
+      //检测账号
       checkMobile: function () {
 
         var message;
@@ -93,6 +94,7 @@
 
       },
 
+      //检测页面输入信息
       check: function () {
 
         var message;
@@ -134,6 +136,7 @@
       },
 
 
+      //获取验证码
       getCode: function () {
 
         if(!this.checkMobile()){
@@ -199,6 +202,7 @@
       },
 
 
+      //更换手机号
       submit: function () {
 
         if(!this.check()) return;
@@ -246,6 +250,7 @@
       },
 
 
+      //获取语音验证码
       getVoiceCodeCountDown: function () {
 
         var _this = this;

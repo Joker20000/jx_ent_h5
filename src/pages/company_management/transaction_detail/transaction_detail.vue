@@ -67,11 +67,11 @@
 
       return {
 
-        companyList: [],
+        companyList: [],//企业列表
 
-        companyShow: false,
+        companyShow: false,//公司筛选框显示状态
 
-        dataList: [],
+        dataList: [],//交易数据列表
 
         transType : {
 
@@ -98,15 +98,15 @@
           '18':'众包结算',
 
           '19':'众包结算退款'
-        },
+        },//交易类型
 
-        pageNum: 1,
+        pageNum: 1,//数据分页
 
-        moreData: false,
+        moreData: false,//是否还有数据
 
-        entId: '',
+        entId: '',//企业Id(筛选时使用)
 
-        entName: '全部'
+        entName: '全部',//企业名称(筛选时使用)
 
       }
 
@@ -117,7 +117,7 @@
 
       this.entId = this.$route.query.entId;
 
-      (!this.$route.query.entId) && (this.getCompanyList());
+      (!this.$route.query.entId) && (this.getCompanyList());//未从企业账户余额进入
 
       this.getData();
 
@@ -126,6 +126,7 @@
 
     methods: {
 
+      //获取页面数据
       getData: function () {
 
         var params = {};
@@ -162,6 +163,7 @@
 
       },
 
+      //下拉加载
       loadMore: function () {
 
         if(this.moreData){
@@ -174,7 +176,7 @@
 
       },
 
-
+      //获取企业列表
       getCompanyList: function () {
 
         /**
@@ -230,6 +232,7 @@
 
       },
 
+      //下拉框筛选出单个企业数据
       selectCompany: function (entId, entName) {
 
         if(!entId){

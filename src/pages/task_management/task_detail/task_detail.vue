@@ -4,6 +4,12 @@
     <div class="task_id">任务编号：{{taskInfo.taskId}}</div>
 
     <div class="task_title">
+      <div class="task_image">
+        <img src="../../../../static/image/jx_task_detail_wating.png" v-if="taskInfo.state === '1'">
+        <img src="../../../../static/image/jx_task_detail_working.png" v-if="taskInfo.state === '2'">
+        <img src="../../../../static/image/jx_task_detail_finish.png" v-if="taskInfo.state === '3'">
+        <img src="../../../../static/image/jx_task_detail_close.png" v-if="taskInfo.state === '4'">
+      </div>
       <div class="task_name">{{taskInfo.taskName}}</div>
       <div class="type_place">
         <div class="type">
@@ -66,7 +72,7 @@
     <div class="task_content">
       <div class="title">
         <div class="box_name">任务内容</div>
-        <div class="add" v-on:click="$router.push('/additionInput')" v-if="taskInfo.state === '2'">
+        <div class="add" v-on:click="$router.push({path: '/additionInput', query: {taskId: $route.query.taskId}})" v-if="taskInfo.state === '2'">
           <img src="../../../../static/image/jx_task_additional.png">
           <span>补充任务需求</span>
         </div>
@@ -75,7 +81,7 @@
       <div class="file_list" v-if="!!taskInfo.taskFile">
         <a class="file" v-bind:href="fileSrc" v-for="(fileName, fileSrc) in fileList">
           <div class="img">
-            <img src="../../../../static/image/jx_task_file.png">
+            <img src="../../../../static/image/jx_task_file_download.png">
           </div>
           <span>{{fileName}}</span>
         </a>
@@ -87,6 +93,14 @@
             <div class="additional_time">{{addTaskAdd.createDate | fmtTimeStr2}}</div>
           </div>
           <div class="content_text">{{addTaskAdd.taskAddtionDetail}}</div>
+          <div class="file_list" v-if="!!addTaskAdd.taskAddtionFile">
+            <a class="file" v-bind:href="fileSrc" v-for="(fileName, fileSrc) in addTaskAdd.additionFile">
+              <div class="img">
+                <img src="../../../../static/image/jx_task_file_download.png">
+              </div>
+              <span>{{fileName}}</span>
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -142,13 +156,13 @@
 
       return {
 
-        taskInfo: {},
+        taskInfo: {},//任务信息
 
-        taskShow: true,
+        taskShow: true,//发布到任务广场状态
 
-        fileList: {},
+        fileList: {},//文件列表
 
-        dataState: false
+        dataState: false,//数据状态（判断页面刚进入还是加载完毕）
 
       }
 
@@ -163,6 +177,7 @@
 
     methods: {
 
+      //获取任务详情
       getData: function () {
 
         /*
@@ -191,7 +206,21 @@
 
           if(this.taskInfo.taskFile){
 
-            this.getTaskFile(this.taskInfo.taskFile, this.taskInfo.originalFileNames);
+            this.fileList = this.getTaskFile(this.taskInfo.taskFile, this.taskInfo.originalFileNames);
+
+          }
+
+          if(!!this.taskInfo.entTaskAddList){
+
+            for(var obj of this.taskInfo.entTaskAddList) {
+
+              if(!!obj.taskAddtionFile) {
+
+                obj.additionFile = this.getTaskFile(obj.taskAddtionFile, obj.originalFileNamesAdd);
+
+              }
+
+            }
 
           }
 
@@ -206,6 +235,7 @@
       },
 
 
+      //更改文件列表显示状态
       getTaskFile: function (taskFile, originalFileNames) {
 
         var fileList = taskFile.split(',');
@@ -222,11 +252,12 @@
 
         }
 
-        this.fileList = fileObj;
+        return fileObj;
 
       },
 
 
+      //删除任务
       deleteTask: function () {
 
         this.$messagebox({
@@ -274,6 +305,7 @@
 
       },
 
+      //继续发布任务
       publishTask: function () {
 
         sessionStorage.setItem('change', '1');
@@ -285,6 +317,7 @@
       },
 
 
+      //结束报名
       endTask: function () {
 
         this.$messagebox({
@@ -336,6 +369,7 @@
       },
 
 
+      //关闭任务
       closeTask: function () {
 
         this.$messagebox({
@@ -387,6 +421,7 @@
       },
 
 
+      //结束任务
       finishTask: function () {
 
         this.$messagebox({
@@ -448,6 +483,7 @@
 
     watch: {
 
+      //更改任务广场发布状态
       taskShow: function () {
 
         if(this.dataState) {

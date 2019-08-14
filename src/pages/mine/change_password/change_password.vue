@@ -40,13 +40,13 @@
 
       return {
 
-        btnName: '确认',
+        btnName: '确认',//按钮名称
 
-        oldPassword: '',
+        oldPassword: '',//原密码
 
-        password: '',
+        password: '',//新密码
 
-        passwordAgain: ''
+        passwordAgain: '',//验证新密码
 
       }
 
@@ -55,6 +55,7 @@
 
     methods: {
 
+      //检测页面数据
       check: function () {
 
         var message;
@@ -100,6 +101,7 @@
       },
 
 
+      //更换密码
       submit: function () {
 
         if(!this.check()) return;

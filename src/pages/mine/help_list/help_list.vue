@@ -38,9 +38,9 @@
 
       return {
 
-        aboutTask: ['如何发布任务','发布到任务广场是什么意思','自动发送合同是什么意思','为什么已存在的发薪企业不能发布任务','已发布的任务能否取消发布'],
+        aboutTask: ['如何发布任务','发布到任务广场是什么意思','自动发送合同是什么意思','为什么已存在的发薪企业不能发布任务','已发布的任务能否取消发布'],//任务问题列表
 
-        aboutCompany: ['如何完成企业认证和签约','如何充值企业账户余额']
+        aboutCompany: ['如何完成企业认证和签约','如何充值企业账户余额'],//企业问题列表
 
       }
 
@@ -48,6 +48,7 @@
 
     methods: {
 
+      //点击进入问题答案
       helpDetail: function (index, type) {
 
         this.$router.push({path: '/helpDetail', query: {type: type, index: index}});

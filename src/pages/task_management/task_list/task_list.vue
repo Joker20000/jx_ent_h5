@@ -100,27 +100,27 @@
 
       return {
 
-        taskList: [],
+        taskList: [],//任务列表
 
-        taskState: {'1': '待发布','2': '进行中','3': '已完成','4': '已关闭'},
+        taskState: {'1': '待发布','2': '进行中','3': '已完成','4': '已关闭'},//任务状态
 
-        signupState: {'1': '未开始', '2': '报名中', '3': '已结束'},
+        signupState: {'1': '未开始', '2': '报名中', '3': '已结束'},//报名状态
 
-        pageNum: 1,
+        pageNum: 1,//数据分页
 
-        moreData: false,
+        moreData: false,//数据可以继续加载
 
-        noData: false,
+        noData: false,//没有数据
 
-        companyList: [],
+        companyList: [],//公司列表
 
-        selectCompanyShow: false,
+        selectCompanyShow: false,//公司选择框显示状态
 
-        selectTaskShow: false,
+        selectTaskShow: false,//任务状态选择框显示状态
 
-        entId: '',
+        entId: '',//企业ID
 
-        state: ''
+        state: '',//任务状态
 
       }
 
@@ -136,6 +136,7 @@
 
     activated () {
 
+      /*任务详情中任务状态发生改变 任务列表页面刷新*/
       if(sessionStorage.getItem('delete') === '1'){
 
         sessionStorage.removeItem('delete');
@@ -148,6 +149,7 @@
 
     methods: {
 
+      /*获取页面数据*/
       getData: function () {
 
         var params = {};
@@ -185,6 +187,7 @@
 
       },
 
+      //上拉加载
       loadMore: function () {
 
         if(this.moreData){
@@ -198,6 +201,7 @@
       },
 
 
+      //获取账号下发薪企业
       getCompany: function () {
 
         /**
@@ -240,6 +244,7 @@
       },
 
 
+      //筛选下拉框显示控制
       selectShow: function (type) {
 
         if(type === 'Task') {
@@ -259,6 +264,7 @@
       },
 
 
+      //下拉框数据点击筛选事件
       screen: function (type , id) {
 
         if(type === 'company') {
@@ -284,6 +290,7 @@
       },
 
 
+      //下拉刷新
       loadTop: function () {
 
         this.pageNum = 1;

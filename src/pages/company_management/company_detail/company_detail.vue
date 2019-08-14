@@ -85,13 +85,11 @@
 
         companyDetail: {
           verifyInfo: [{}]
-        },
+        },//企业信息
 
-        clickPlace: '',
+        clickPlace: '',//点击弹框对应的的位置
 
-        popupShow: false,
-
-        thisimgShow: false
+        popupShow: false,//弹框显示状态
       }
 
     },
@@ -106,6 +104,7 @@
 
     methods: {
 
+      //获取企业信息
       getData: function () {
 
         /**
@@ -130,6 +129,7 @@
 
       },
 
+      //显示弹框
       showPs: function (place) {
 
         this.clickPlace = place;
@@ -141,6 +141,7 @@
       },
 
 
+      //显示图片（调用微信原生图片浏览器）
       showImg: function () {
 
         WeixinJSBridge.invoke('imagePreview', {

@@ -30,7 +30,7 @@
 
       return {
 
-        companyList: []
+        companyList: [],//企业列表
       }
 
     },
@@ -45,6 +45,7 @@
 
     methods: {
 
+      //获取数据
       getData: function () {
 
 

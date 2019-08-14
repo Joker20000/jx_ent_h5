@@ -35,9 +35,9 @@
 
       return {
 
-        companyList: [],
+        companyList: [],//企业列表
 
-        amount: ''
+        amount: '',//账户余额
 
       }
 
@@ -52,6 +52,7 @@
 
     methods: {
 
+      //获取数据
       getData: function () {
 
         /**
@@ -83,6 +84,7 @@
       },
 
 
+      //获取账户余额
       getBalance: function (count) {
 
         /**
@@ -120,6 +122,7 @@
       },
 
 
+      //页面跳转
       jumpTo: function (entId) {
 
         this.$router.push({path: '/transactionDetail', query: {entId: entId}});

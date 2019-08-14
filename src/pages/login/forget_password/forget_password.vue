@@ -51,21 +51,21 @@
 
       return {
 
-        btnName: '确认',
+        btnName: '确认',//按钮名称
 
-        mobile: '',
+        mobile: '',//用户账号
 
-        code: '',
+        code: '',//验证码
 
-        password: '',
+        password: '',//密码
 
-        passwordAgain: '',
+        passwordAgain: '',//验证码密码
 
-        codeText: '获取验证码',
+        codeText: '获取验证码',//验证码按钮显示
 
-        seconds: '',
+        seconds: '',//验证码按钮倒计时
 
-        getVoiceCode: ''
+        getVoiceCode: '',//获取语音验证码事件
 
       }
 
@@ -80,6 +80,7 @@
 
     methods: {
 
+      //检测手机号
       checkMobile: function () {
 
         var message;
@@ -111,6 +112,7 @@
       },
 
 
+      //检测获取验证码条件
       getCodeCheck: function () {
 
         if(this.checkMobile() && (this.seconds === 0 || this.seconds === '')){
@@ -122,6 +124,7 @@
       },
 
 
+      //倒计时
       countDown: function () {
 
         this.seconds = 60;
@@ -143,6 +146,7 @@
       },
 
 
+      //获取验证码
       getCode: function () {
 
         /**
@@ -187,6 +191,7 @@
 
       },
 
+      //重置密码
       submit: function () {
 
         if(!this.checkAll()) return;
@@ -243,6 +248,7 @@
 
       },
 
+      //检测页面信息
       checkAll: function () {
 
         if(!this.checkMobile()) return;
@@ -294,6 +300,7 @@
       },
 
 
+      //获取语音验证码
       getVoiceCodeCountDown: function () {
 
         var _this = this;

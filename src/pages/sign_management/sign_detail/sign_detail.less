@@ -1,0 +1,105 @@
+.sign_detail{
+  .user_information, .task_information{
+    background-color: white;
+    padding: 15px 10px;
+    margin-bottom: 10px;
+    .title{
+      display: flex;
+      align-items: center;
+      .img{
+        height: 35px;
+        width: 35px;
+        border: 1px solid #06a6ff;
+        border-radius: 50%;
+        background-color: white;
+        z-index: 2;
+        position: relative;
+        &:after{
+          content: '';
+          position: absolute;
+          right: -1px;
+          top: 5px;
+          display: block;
+          height: 25px;
+          width: 20px;
+          background-color: white;
+        }
+        img{
+          height: 26px;
+          width: 26px;
+          position: absolute;
+          z-index: 10;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+      }
+      div:last-child{
+        margin-left: -20px;
+        padding-left: 15px;
+        width: 80px;
+        text-align: center;
+        font-size: 15px;
+        line-height: 25px;
+        border: 1px solid #06abff;
+        border-radius: 13px;
+      }
+    }
+    .information_list{
+      padding: 0 10px;
+      .list{
+        margin: 20px 0;
+        display: flex;
+        .name{
+          color: #8a8a8a;
+          width: 75px;
+          flex-shrink: 0;
+        }
+      }
+      .jump_to{
+        display: inline-block;
+        position: relative;
+        margin-bottom: 10px;
+        &:before, &:after{
+          content: '';
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%) rotate(45deg);
+          display: block;
+          width: 4px;
+          height: 4px;
+          border-top: 1px solid #0054ff;
+          border-right: 1px solid #0054ff;
+          transform-origin: center;
+        }
+        &:before{
+          right: -11px;
+        }
+        &:after{
+          right: -8px;
+        }
+      }
+    }
+  }
+  .button{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 60px 0 20px;
+    padding: 0 50px;
+    &>div{
+      box-sizing: border-box;
+      width: 90px;
+      text-align: center;
+      border-radius: 15px;
+    }
+    .out{
+      border: 1px solid #0054ff;
+      line-height: 28px;
+    }
+    .use{
+      color: #fff;
+      line-height: 30px;
+    }
+  }
+}

@@ -25,6 +25,8 @@ import taskManagement from '@/pages/task_management/task_management'
 import taskDetail from '@/pages/task_management/task_detail/task_detail'
 import feedback from '@/pages/mine/feedback/feedback'
 import additionInput from '@/pages/task_management/addition_input/addition_input'
+import signList from '@/pages/sign_management/sign_list/sign_list'
+import signDetail from '@/pages/sign_management/sign_detail/sign_detail'
 
 
 Vue.use(Router)
@@ -228,7 +230,22 @@ export default new Router({
           component: additionInput
         }
       ]
-
+    },
+    {
+      path: '/signList',
+      name: 'signList',
+      meta: {
+        title: '报名管理'
+      },
+      component: signList
+    },
+    {
+      path: '/signDetail',
+      name: 'signDetail',
+      meta: {
+        title: '报名详情'
+      },
+      component: signDetail
     }
   ]
 })

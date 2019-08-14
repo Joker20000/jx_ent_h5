@@ -25,7 +25,7 @@
         </div>
 
         <div class="list must_input">
-          <div class="title">发布企业名称</div>
+          <div class="title">发布企业昵称</div>
           <div class="content">
             <div class="company_name">
               <input type="text" placeholder="请输入企业名称，2-32个字符" maxlength="32" minlength="2" v-model="entName">
@@ -62,19 +62,21 @@
           <div class="task_detail">
             <textarea cols="30" rows="10" v-model="taskDetail" placeholder="请填写任务需求描述，4-10000个字符
 例如 1、本项目是一个骑手配送任务；需要由骑手自己配备智能手机和电动车；2、骑手能够熟练使用智能手机接单、导航、驾驶电动车，年龄在18-50周岁"></textarea>
+            <div class="text_length">{{taskDetail.length}}</div>
           </div>
         </div>
 
         <div class="list">
           <div class="title">上传附件<span class="ps">（最多上传5个附件，大小不超过8M，不支持.exe格式）</span></div>
           <div class="file_list">
-            <div class="add_file" v-for="file in taskFiles">
-              <div class="add_file_img">
-                <img src="../../../../static/image/jx_add_file.png">
+            <div class="file" v-for="file in taskFiles">
+              <div class="file_img">
+                <img src="../../../../static/image/jx_task_file_download.png">
               </div>
               <div class="file_name">{{file.name}}</div>
+              <div class="close" v-on:click="deleteFile(file.name)"><img src="../../../../static/image/contract_close.png"></div>
             </div>
-            <div class="add_file">
+            <div class="add_file" v-if="taskFiles.length < 5">
               <input type="file" v-on:change="fileInput">
               <div class="add_file_img">
                 <img src="../../../../static/image/jx_add_file.png">
@@ -193,110 +195,108 @@
 
       return {
 
-        showTask: true,
+        showTask: true,//发布到任务广场状态
 
-        sendContract: false,
+        sendContract: false,//自动发送合同状态
 
-        taskDetail: '',
+        taskDetail: '',//任务描述
 
-        companyList: [],
+        companyList: [],//账号下发薪企业列表
 
-        entId: '',
+        entId: '',//企业Id
 
-        typeList: [],
+        typeList: [],//任务二级类型列表
 
-        industry: [],
+        industry: [],//任务一级类型列表
 
-        provinceList: [],
+        provinceList: [],//省列表
 
-        cityList: [],
+        cityList: [],//市列表
 
-        invoiceList: ['人力资源服务','现代服务'],
+        invoiceList: ['人力资源服务','现代服务'],//发表类型列表
 
-        templetList: [],
+        templetList: [],//合同模板列表
 
-        cooperate: [],
+        cooperate: [],//合作企业列表
 
-        slots: [],
+        slots: [],//选择框数据列表
 
         slot1: {
           flex: 1,
           values: [],
           textAlign: 'center'
-        },
+        },//选择框数据列表
 
         slot2: {
           flex: 1,
           values: [],
           textAlign: 'center'
-        },
+        },//选择框数据列表
 
-        pickerShow: false,
+        pickerShow: false,//选择框显示状态
 
-        lastPickerClick: '',
+        lastPickerClick: '',//点击显示选择框位置
 
-        _value: '',
+        _type: '',//点击取消时任务类型
 
-        _type: '',
+        type:[],//点击确定时选择的任务类型
 
-        type:[],
+        _place: '',//点击取消时选择的地区
 
-        _place: '',
+        place: [],//点击确定时选择的地区
 
-        place: [],
+        _ent: '',//点击取消时选择的发薪企业
 
-        _ent: '',
+        ent: [],//点击确定时选择的发薪企业
 
-        ent: [],
+        _invoice: '',//点击取消时选择的发票类型
 
-        _invoice: '',
+        invoice: [],//点击确定时选择的发票类型
 
-        invoice: [],
+        _templet: '',//点击取消时选择的合同模板类型
 
-        _templet: '',
+        templet: [],//点击确定时选择的合同模板类型
 
-        templet: [],
+        _ext: '',//点击取消时选择的合作企业
 
-        _ext: '',
+        ext: [],//点击确定时选择的合作企业
 
-        ext: [],
+        pickerType: false,//选择框加载时的状态(页面加载中和页面加载完成)
 
-        pickerType: false,
+        entName: '',//发布企业昵称
 
-        entName: '',
+        taskName: '',//任务名称
 
-        taskName: '',
+        taskFiles: [],//任务文件列表
 
-        taskFiles: [],
+        taskMoney: '',//任务总预算
 
-        taskMoney: '',
+        taskMaxMoney: '',//任务单价最高单价
 
-        taskMaxMoney: '',
+        taskMinMoney: '',//任务单价最低单价
 
-        taskMinMoney: '',
+        needPerson: '',//需要人数
 
-        needPerson: '',
+        templetName: '',//合同名称
 
-        templetName: '',
+        startDate: new Date(),//时间选择框开始时间
 
-        startDate: new Date(),
+        endDate: new Date(),//任务结束时间
 
-        endDate: new Date(),
+        endDateShow: '',//页面显示的任务结束时间
 
-        endDateShow: '',
+        filesUrl: [],//文件链接列表
 
-        filesUrl: [],
+        filesName: [],//文件名称列表
 
-        filesName: [],
-
-        mouldShow: false
+        mouldShow: false,//任务描述模板显示状态
       }
 
     },
 
     components: {
 
-      lookMould
+      lookMould//任务描述模板组件
 
     },
 
@@ -304,6 +304,7 @@
 
       this.getData();
 
+      //从任务详情编辑任务进入
       if(sessionStorage.getItem('change') === '1'){
 
         this.setTaskData();
@@ -314,6 +315,7 @@
 
     methods: {
 
+      //获取页面所需数据
       getData: function () {
 
         this.getCompanyList();
@@ -328,6 +330,7 @@
 
       },
 
+      //获取账号下发薪企业列表
       getCompanyList: function () {
 
         this.entId = localStorage.getItem('entId');
@@ -371,6 +374,7 @@
 
       },
 
+      //获取任务类型列表
       getTaskList: function (nodeId) {
 
         /*
@@ -398,6 +402,7 @@
       },
 
 
+      //获取省列表
       getProvince: function () {
 
         /*
@@ -420,6 +425,7 @@
       },
 
 
+      //获取市列表
       getCity: function (province) {
 
         /*
@@ -446,6 +452,7 @@
 
       },
 
+      //获取合同模板列表
       getTempletList: function () {
 
         /*
@@ -468,6 +475,7 @@
       },
 
 
+      //获取合作企业列表
       getAllCooperateInfo: function () {
 
         /*
@@ -490,6 +498,7 @@
       },
 
 
+      //选择框更换值事件
       onValueChange: function () {
 
         if(!this.lastPickerClick) return;
@@ -507,6 +516,7 @@
       },
 
 
+      //获取JSON数组里面单一对象的值
       getArray: function (obj, key) {
 
         let arr = [];
@@ -522,6 +532,7 @@
       },
 
 
+      //点击页面弹出框事件
       pickerSelect: function (clickType) {
 
         this.pickerType = true;
@@ -580,6 +591,7 @@
 
       },
 
+      //选择发薪企业
       entSelect: function () {
 
         this.slot1.values = this.getArray(this.companyList, 'entName');
@@ -592,6 +604,7 @@
 
       },
 
+      //选择任务类型
       typeSelect: function () {
 
         this.slot1.values = this.getArray(this.industry, 'name');
@@ -618,6 +631,7 @@
 
       },
 
+      //选择地区
       placeSelect: function () {
 
         this.slot1.values = this.getArray(this.provinceList, 'addrName');
@@ -647,6 +661,7 @@
       },
 
 
+      //选择发票类型
       invoiceSelect: function () {
 
         this.slot1.values = this.invoiceList;
@@ -659,6 +674,7 @@
 
       },
 
+      //选择合同模板
       templetSelect: function () {
 
         this.slot1.values = this.getArray(this.templetList, 'templetName');
@@ -671,6 +687,7 @@
 
       },
 
+      //选择合作企业
       extSelect: function () {
 
         this.slot1.values = this.getArray(this.cooperate, 'cooperateEntName');
@@ -684,6 +701,7 @@
       },
 
 
+      //类型选择框一级列表数据变化事件
       typePickerChange: function () {
 
         if(this.pickerType) return;
@@ -712,6 +730,7 @@
 
       },
 
+      //地址选择框一级列表数据变化事件
       placePickerChange: function () {
 
         if(this.pickerType) return;
@@ -749,6 +768,7 @@
       },
 
 
+      //选择框取消事件
       pickerCancel: function () {
 
         this.pickerShow = false;
@@ -760,6 +780,7 @@
       },
 
 
+      //选择框确定事件
       pickerConfirm: function () {
 
         this.pickerShow = false;
@@ -771,6 +792,7 @@
       },
 
 
+      //上传文件
       fileInput: function () {
 
         var file = event.currentTarget.files[0];
@@ -863,6 +885,7 @@
       },
 
 
+      //检测页面输入数据
       checkAll: function () {
 
         var message;
@@ -986,6 +1009,7 @@
       },
 
 
+      //发布任务/保存任务
       publishTask: function (submit) {
 
         if(!this.checkAll()) return;
@@ -1105,12 +1129,14 @@
       },
 
 
+      //时间选择事件
       selectTime: function () {
 
         this.endDateShow = this.changeTime(this.endDate, '-');
 
       },
 
+      //更换时间显示状态
       changeTime: function (date, symbol) {
 
         var year = date.getFullYear();
@@ -1124,6 +1150,8 @@
       },
 
 
+      //从任务详情继续发布进入
+      //获取任务数据
       setTaskData: function () {
 
         sessionStorage.removeItem('change');
@@ -1136,13 +1164,13 @@
 
         this.ent.push(taskInfo.entName);
 
-        this.taskDetail = taskInfo.taskDetails;
+        this.taskDetail = taskInfo.taskDetails.split('</br>').join('\n');
 
         this.entName = taskInfo.nickname;
 
-        this.filesUrl = taskInfo.taskFile;
+        this.filesUrl = taskInfo.taskFile.split(',');
 
-        this.filesName = taskInfo.originalFileNames;
+        this.filesName = taskInfo.originalFileNames.split(',');
 
         (taskInfo.province === '不限') ? (this.place.push('不限')) : (this.place.push(taskInfo.province) && this.place.push(taskInfo.city));
 
@@ -1203,19 +1231,42 @@
       },
 
 
+      //关闭任务描述模板
       closeFn: function () {
 
         this.mouldShow = false;
 
       },
 
+      //使用任务描述模板
       useMouldFn: function (mouldArr) {
 
         this.taskDetail = mouldArr.join('\n');
 
         this.mouldShow = false;
 
-      }
+      },
+
+      //删除已上传的文件
+      deleteFile: function (name) {
+
+        this.taskFiles.some(obj => {
+
+          if (obj.name === name){
+
+            this.taskFiles.splice(this.taskFiles.indexOf(obj),1);
+
+            this.filesUrl.splice(this.filesUrl.indexOf(obj.url),1);
+
+            this.filesName.splice(this.filesName.indexOf(obj.name),1);
+
+          }
+
+          return obj.name === name;
+
+        });
+
+      },
 
     }
   }

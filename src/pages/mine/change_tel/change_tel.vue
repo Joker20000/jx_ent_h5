@@ -26,9 +26,9 @@
 
       return {
 
-        btnName: '更换手机号',
+        btnName: '更换手机号',//按钮名称
 
-        mobile: ''
+        mobile: '',//用户账号
 
       }
 

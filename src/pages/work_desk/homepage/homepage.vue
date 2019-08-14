@@ -27,7 +27,7 @@
 
         </div>
 
-        <div class="sign_up_management">
+        <div class="sign_up_management" v-on:click="$router.push({path: '/signList', query: {type: 'signup'}})">
 
           <div class="img"><img src="../../../../static/image/sing_up_management.jpg"></div>
 
@@ -35,7 +35,7 @@
 
         </div>
 
-        <div class="task_check">
+        <div class="task_check" v-on:click="$router.push({path: '/signList', query: {type: 'work'}})">
 
           <div class="img"><img src="../../../../static/image/task_check.jpg"></div>
 
@@ -72,7 +72,7 @@
 
     mounted () {
 
-      this.$store.state.workDeskState = 'homepage';
+      this.$store.state.workDeskState = 'homepage';//控制下方按钮状态
 
       this.getData();
 
@@ -80,6 +80,7 @@
 
     methods: {
 
+      //获取页面数据
       getData: function () {
 
         /**

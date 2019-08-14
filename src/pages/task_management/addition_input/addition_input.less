@@ -11,11 +11,12 @@
       outline: none;
       resize: none;
       &::placeholder{
-        color: #ababab;
+        color: #8a8a8a;
       }
     }
     .show_number{
       text-align: right;
+      color: #8a8a8a;
     }
   }
   .input_files{
@@ -26,36 +27,71 @@
     .title{
       color: #4a4a4a;
       span{
-        color: #ababab;
+        color: #8a8a8a;
       }
     }
     .file_list{
-      display: flex;
-      &>div{
-        width: 50px;
-        height: 50px;
+      margin: 10px 0;
+      font-size: 0;
+      width: 100%;
+      &>.file{
+        width: 100%;
+        position: relative;
+        display: flex;
+        align-items: center;
+        margin: 15px 0;
+        .file_img{
+          margin: 0 10px;
+          width: 30px;
+          height: 30px;
+          border: 1px dashed #ababab;
+          display: flex;
+          img{
+            margin: auto;
+            width: 70%;
+            height: 70%;
+          }
+        }
+        .file_name{
+          flex: 1;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-size: 12px;
+        }
+        .close{
+          height: 14px;
+          width: 14px;
+          img{
+            height: 100%;
+            width: 100%;
+          }
+        }
+      }
+      .add_file{
+        margin: 0 10px;
+        position: relative;
+        width: 30px;
+        height: 30px;
         border: 1px dashed #ababab;
         display: flex;
-        margin: 10px;
-      }
-      .input{
-        position: relative;
+        .add_file_img{
+          width: 30px;
+          height: 30px;
+          display: flex;
+          img{
+            margin: auto;
+            width: 70%;
+            height: 70%;
+          }
+        }
         input{
           position: absolute;
           top: 0;
           left: 0;
-          right: 0;
-          bottom: 0;
+          height: 100%;
+          width: 100%;
           opacity: 0;
-        }
-        div{
-          margin: auto;
-          border: 1px solid #ababab;
-          color: #ababab;
-          border-radius: 50%;
-          line-height: 20px;
-          width: 20px;
-          text-align: center;
         }
       }
     }

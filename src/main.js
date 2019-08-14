@@ -67,8 +67,22 @@ router.beforeEach((to,from,next)=>{
 
   var Authorization = window.localStorage.getItem('Authorization');//Authorization数据
 
+  if(!!Authorization) {
+
+    if (from.path === '/taskList' && to.path === '/releaseTask') {
+
+      next('/workDesk/homepage');
+
+    }else if(from.path === '/accountCenter' && to.path === '/changeTelCertification'){
+
+      next('/workDesk/mine');
+
+    }
+
+  }
+
   next();
-})
+});
 
 
 

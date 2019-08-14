@@ -2,7 +2,7 @@
   .module_title{
     color: #8a8a8a;
     padding: 10px 15px;
-    font-size: 16px;
+    font-size: 14px;
   }
   .task_information{
     background: white;
@@ -23,9 +23,10 @@
       justify-content: space-between;
       align-items: flex-start;
       flex-wrap: wrap;
+      font-size: 12px;
       .title>div:last-child{
         color: #ababab;
-        font-size: 12px;
+        font-size: 10px;
       }
       .content{
         flex: 1;
@@ -46,6 +47,8 @@
           outline: none;
           text-align: right;
           color: #4a4a4a;
+          vertical-align: middle;
+          font-size: 12px;
           &[type="text"]{
             width: 100%;
           }
@@ -86,16 +89,23 @@
         margin-top: 5px;
         textarea{
           height: 120px;
-          outline: none;
-          border: none;
           width: 100%;
           padding: 5px;
-          background: #f5f5f5;
+          outline: none;
           resize: none;
+          background-color: #f5f5f5;
+          border: none;
           &::placeholder{
             color: #ababab;
             font-size: 12px;
           }
+        }
+        .text_length{
+          position: absolute;
+          bottom: 10px;
+          right: 5px;
+          font-size: 10px;
+          color: #8a8a8a;
         }
       }
       .title{
@@ -106,14 +116,59 @@
       }
       .file_list{
         margin: 10px 0;
-        display: flex;
-        &>.add_file{
-          width: 80px;
-          height: 80px;
-          border: 1px dashed #ababab;
+        font-size: 0;
+        width: 100%;
+        &>.file{
+          width: 100%;
           position: relative;
           display: flex;
+          align-items: center;
+          margin: 15px 0;
+          .file_img{
+            margin: 0 10px;
+            width: 30px;
+            height: 30px;
+            border: 1px dashed #ababab;
+            display: flex;
+            img{
+              margin: auto;
+              width: 70%;
+              height: 70%;
+            }
+          }
+          .file_name{
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 12px;
+          }
+          .close{
+            height: 14px;
+            width: 14px;
+            img{
+              height: 100%;
+              width: 100%;
+            }
+          }
+        }
+        .add_file{
           margin: 0 10px;
+          position: relative;
+          width: 30px;
+          height: 30px;
+          border: 1px dashed #ababab;
+          display: flex;
+          .add_file_img{
+            width: 30px;
+            height: 30px;
+            display: flex;
+            img{
+              margin: auto;
+              width: 70%;
+              height: 70%;
+            }
+          }
           input{
             position: absolute;
             top: 0;
@@ -121,26 +176,6 @@
             height: 100%;
             width: 100%;
             opacity: 0;
-          }
-          .add_file_img{
-            margin: auto;
-            border: 1px solid #89B7FB;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            img{
-              width: 100%;
-              height: 100%;
-            }
-          }
-          .file_name{
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            text-align: center;
-            overflow: hidden;
-            text-overflow: ellipsis;
           }
         }
       }
@@ -166,6 +201,7 @@
         input{
           flex: 1;
           text-align: center;
+          border: 1px solid #f5f5f5;
         }
         .line{
           width: 20%;
@@ -199,6 +235,7 @@
       position: relative;
       border-radius: 50%;
       vertical-align: middle;
+      outline: none;
       &:checked{
         background: #06abff;
         &:before{
