@@ -54,6 +54,30 @@
         this.feedbackId = this.$route.query.msgId;
 
         /*
+        * 接口：消息反馈标记为已读
+        * 请求方式： GET
+        * 接口： table/record/allread
+        * 入参： feedBackId
+        * */
+        this.$http({
+
+          url: process.env.API_ROOT + 'table/record/allread',
+          method: 'get',
+          params: {
+            feedBackId: this.feedbackId
+          }
+
+        }).then(res=>{
+
+          if(res.data.code === '0000'){
+
+
+
+          }
+
+        });
+
+        /*
         * 接口： 查询员工消息反馈详情
         * 请求方式： GET
         * 接口： table/record/feedbackdetail

@@ -27,6 +27,7 @@ import feedback from '@/pages/mine/feedback/feedback'
 import additionInput from '@/pages/task_management/addition_input/addition_input'
 import signList from '@/pages/sign_management/sign_list/sign_list'
 import signDetail from '@/pages/sign_management/sign_detail/sign_detail'
+import workCheck from '@/pages/sign_management/work_check/work_check'
 
 
 Vue.use(Router)
@@ -246,6 +247,14 @@ export default new Router({
         title: '报名详情'
       },
       component: signDetail
+    },
+    {
+      path: '/workCheck',
+      name: 'workCheck',
+      meta: {
+        title: '工作验收'
+      },
+      component: workCheck
     }
   ]
 })

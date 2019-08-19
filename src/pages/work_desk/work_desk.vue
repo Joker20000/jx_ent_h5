@@ -1,7 +1,7 @@
 <template>
 
   <div class="work_desk">
-    <router-view></router-view>
+    <router-view v-bind:newMessage="newMessage"></router-view>
 
     <div class="foot">
 
@@ -24,7 +24,7 @@
 
       </div>
 
-      <div class="button" v-bind:class="{'color_text': $store.state.workDeskState === 'mine'}" v-on:click="$router.push('/workDesk/mine')">
+      <div class="button" v-bind:class="{'color_text': $store.state.workDeskState === 'mine', 'new_message': newMessage}" v-on:click="$router.push('/workDesk/mine')">
 
         <div><i class="iconfont iconwode"></i></div>
         <div>我的</div>
@@ -41,6 +41,35 @@
   export default {
 
     name: 'workDesk',
+
+    data () {
+
+      return {
+
+        newMessage: false
+
+      }
+
+    },
+
+    created () {
+
+      this.$http({
+
+        url: process.env.API_ROOT + 'table/record/unreadnum',
+        method: 'get'
+
+      }).then(res=>{
+
+        if(res.data.data !== 0) {
+
+          this.newMessage = true;
+
+        }
+
+      })
+
+    }
 
   }
 </script>
@@ -92,6 +121,21 @@
           i{
             color: #0054ff;
           }
+        }
+      }
+      .new_message{
+        position: relative;
+        &:after{
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 50%;
+          display: block;
+          width: 5px;
+          height: 5px;
+          background-color: red;
+          border-radius: 50%;
+          transform: translateX(10px);
         }
       }
     }

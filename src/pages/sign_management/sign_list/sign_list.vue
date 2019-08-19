@@ -2,12 +2,12 @@
   <div class="sign_list">
     <div class="screen">
       <div class="select_list_sign" v-if="$route.query.type === 'signup'">
-        <div class="selected">全部</div>
-        <div>待处理</div>
-        <div>已录用</div>
-        <div>已淘汰</div>
-        <div>报名取消</div>
-        <div>过期失效</div>
+        <div v-on:click="selectByState('')" v-bind:class="{'selected' : selectState === ''}">全部</div>
+        <div v-on:click="selectByState('1')" v-bind:class="{'selected' : selectState === '1'}">待处理</div>
+        <div v-on:click="selectByState('3')" v-bind:class="{'selected' : selectState === '3'}">已录用</div>
+        <div v-on:click="selectByState('4')" v-bind:class="{'selected' : selectState === '4'}">已淘汰</div>
+        <div v-on:click="selectByState('2')" v-bind:class="{'selected' : selectState === '2'}">报名取消</div>
+        <div v-on:click="selectByState('5')" v-bind:class="{'selected' : selectState === '5'}">过期失效</div>
       </div>
       <div class="select_list_word" v-else-if="$route.query.type === 'work'">
         <div class="selected">全部</div>
@@ -21,7 +21,7 @@
           <div class="input_img">
             <img src="../../../../static/image/jx_find.png">
           </div>
-          <input type="text" placeholder="搜索姓名或任务名称">
+          <input type="text" placeholder="搜索姓名或任务名称" v-model="taskName">
           <div class="close">
             <img src="../../../../static/image/contract_close.png">
           </div>
@@ -30,38 +30,43 @@
       </div>
     </div>
 
-    <div class="detail_list" v-if="list.length > 0">
+    <mt-loadmore :top-method="loadTop" ref="loadmore">
 
-      <div class="list" v-on:click="$router.push('/signDetail')">
+      <div class="detail_list" v-if="list.length > 0"  v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="10">
 
-        <div class="title">
-          <div class="title_img">
-            <img src="../../../../static/image/jx_sign_person.png">
-          </div>
-          <div class="user_name">小单</div>
-          <div class="state">已录用</div>
-        </div>
+        <div class="list" v-on:click="jumpTo(detail)" v-for="detail in list">
 
-        <div class="detail">
-          <div class="content">任务：开发一个小程序</div>
-          <div class="time_box">
-            <div class="img">
-              <img src="../../../../static/image/jx_sign_time.png">
+          <div class="title">
+            <div class="title_img">
+              <img src="../../../../static/image/jx_sign_person.png">
             </div>
-            <div class="time">2019-07-21 18:24:36</div>
+            <div class="user_name">{{detail.userName}}</div>
+            <div class="state">{{selectStateObj[detail.selectState]}}</div>
           </div>
+
+          <div class="detail">
+            <div class="content">任务：{{detail.taskName}}</div>
+            <div class="time_box">
+              <div class="img">
+                <img src="../../../../static/image/jx_sign_time.png">
+              </div>
+              <div class="time">{{detail.createDate | fmtDateStr}}</div>
+            </div>
+          </div>
+
         </div>
 
       </div>
 
-    </div>
 
-    <div class="no_data" v-else>
-      <div class="no_data_img">
-        <img src="../../../../static/image/jx_sign_up_no_data.png">
+      <div class="no_data" v-else>
+        <div class="no_data_img">
+          <img src="../../../../static/image/jx_sign_up_no_data.png">
+        </div>
+        <div class="no_data_text">暂无相关数据哦~</div>
       </div>
-      <div class="no_data_text">暂无相关数据哦~</div>
-    </div>
+
+    </mt-loadmore>
 
   </div>
 </template>
@@ -74,7 +79,125 @@
 
       return {
 
-        list: [1]
+        list: [],
+
+        selectStateObj: {1: '待处理', 2: '报名取消', 3: '已录用', 4: '已淘汰', 5: '过期失效'},
+
+        pageNum: 1,
+
+        selectState: '',
+
+        taskName: '',
+
+        moreData: false
+
+      }
+
+    },
+
+    mounted () {
+
+      this.getData();
+
+    },
+
+    methods: {
+
+      jumpTo: function (obj) {
+
+        localStorage.setItem('signData', JSON.stringify(obj));
+
+        (this.$route.query.type === 'work') && (this.$router.push('/workCheck'));
+
+        (this.$route.query.type === 'signup') && (this.$router.push('/signDetail'));
+
+      },
+
+      getData: function () {
+
+        var params = {};
+
+        params.pageNum = this.pageNum;
+
+        (this.selectState !== '') && (params.selectState = this.selectState);
+
+        (this.taskName !== '') && (params.taskName = this.taskName);
+
+        /*
+        * 接口： 企业众包任务报名信息查询
+        * 请求方式： POST
+        * 接口： getselectinfo
+        * 入参： selectState, taskName,
+        * */
+        this.$http({
+
+          url: process.env.API_ROOT + 'getselectinfo',
+          method: 'post',
+          params: params
+
+        }).then(res=>{
+
+          this.list = this.list.concat(res.data.data.list);
+
+          this.moreData = (res.data.data.list.length >= 10) ? ( true): (false);
+
+        })
+
+      },
+
+
+      loadMore: function () {
+
+        if(this.moreData) {
+
+          this.pageNum++;
+
+          this.getData();
+
+        }
+
+      },
+
+
+      selectByState: function (state) {
+
+        this.selectState = state;
+
+        this.pageNum = 1;
+
+        this.list = [];
+
+        this.getData();
+
+      },
+
+      loadTop: function () {
+
+        this.pageNum = 1;
+
+        this.taskName = '';
+
+        this.selectState = '';
+
+        this.list = [];
+
+        this.getData();
+
+        this.$refs.loadmore.onTopLoaded();
+
+      }
+
+    },
+
+    watch: {
+
+      taskName: function () {
+
+        this.list = [];
+
+        this.pageNum = 1;
+
+        this.getData();
 
       }
 

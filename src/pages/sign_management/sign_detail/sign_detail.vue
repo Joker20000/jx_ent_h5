@@ -11,23 +11,23 @@
       <div class="information_list">
         <div class="list">
           <div class="name">姓名：</div>
-          <div class="detail">小明</div>
+          <div class="detail">{{signData.userName}}</div>
         </div>
         <div class="list">
           <div class="name">手机号：</div>
-          <div class="detail">15823567856</div>
+          <div class="detail">{{signData.mobile}}</div>
         </div>
         <div class="list">
           <div class="name">技能标签：</div>
-          <div class="detail">神车手</div>
+          <div class="detail">{{signData.label}}</div>
         </div>
         <div class="list">
           <div class="name">自我介绍：</div>
-          <div class="detail">这是自我介绍这是自我介绍这是自我介绍这是自我介绍</div>
+          <div class="detail">{{signData.introduce}}</div>
         </div>
         <div class="list">
           <div class="name">报名时间：</div>
-          <div class="detail">2019-07-18 12:45:34</div>
+          <div class="detail">{{signData.createDate | fmtDateStr}}</div>
         </div>
       </div>
     </div>
@@ -43,18 +43,18 @@
       <div class="information_list">
         <div class="list">
           <div class="name">任务名称：</div>
-          <div class="detail">招聘饿了么美团外卖骑手</div>
+          <div class="detail">{{signData.taskName}}</div>
         </div>
         <div class="list">
           <div class="name">发布企业：</div>
-          <div class="detail">嘉福集团</div>
+          <div class="detail">{{signData.entName}}</div>
         </div>
-        <div class="jump_to color_text">查看任务详情</div>
+        <div class="jump_to color_text" v-on:click="jumpTo">查看任务详情</div>
       </div>
 
     </div>
 
-    <div class="button">
+    <div class="button" v-if="signData.selectState === '1'">
 
       <div class="out color_text" v-on:click="changeState('out')">淘汰</div>
 
@@ -62,13 +62,13 @@
 
     </div>
 
-    <div class="button">
+    <div class="button" v-else-if="signData.selectState === '3'">
 
       <div class="out color_text" v-on:click="changeState('cancelUse')">取消录用</div>
 
     </div>
 
-    <div class="button">
+    <div class="button" v-else-if="signData.selectState === '4'">
 
       <div class="out color_text" v-on:click="changeState('cancel')">取消淘汰</div>
 
@@ -85,7 +85,7 @@
 
       return {
 
-
+        signData: {}
 
       }
 
@@ -103,13 +103,13 @@
 
       init: function () {
 
-
+        this.signData = JSON.parse(localStorage.getItem('signData'));
 
       },
 
       changeState: function (type) {
 
-        var message, title;
+        var message, title, num;
 
         switch (type) {
 
@@ -119,6 +119,8 @@
 
             message = '确认通过后，该用户将成功承接该任务确认录用？';
 
+            num = '3';
+
             break;
 
           case 'out':
@@ -126,6 +128,8 @@
             title = '确认淘汰';
 
             message = '该用户履历不符合任务要求，淘汰后将无法承接该任务';
+
+            num = '4';
 
             break;
 
@@ -135,6 +139,8 @@
 
             message = '取消录用的用户，可重新录用，也可淘汰';
 
+            num = '1';
+
             break;
 
           case 'cancel':
@@ -142,6 +148,8 @@
             title = '确认取消淘汰';
 
             message = '取消淘汰的用户，可重新录用';
+
+            num = '1';
 
             break;
 
@@ -160,11 +168,66 @@
 
           if(res === 'confirm'){
 
+            var params, url = '', httpSet = {};
 
+            if(type === 'cancelUse' || type === 'cancel'){
+
+              params = {};
+              params.taskId = this.signData.taskId;
+              params.userId = this.signData.userId;
+              params.selectState = this.signData.selectState;
+              url = 'task/cancel/employordieout';
+              httpSet.params = params;
+
+            }else if(type === 'use' || type === 'out'){
+
+              var data = {};
+              data.relId = this.signData.relId;
+              data.taskId = this.signData.taskId;
+              data.userId = this.signData.userId;
+              data.entId = this.signData.entId;
+              data.userName = this.signData.userName;
+              data.mobile = this.signData.mobile;
+              data.selectState = (type === 'use') ? ('3') : ('4');
+              data.taskName = this.signData.taskName;
+              params = new FormData();
+              params.append('dataList',JSON.stringify([data]));
+              url = 'task/update/userselectstate';
+              httpSet.data = params;
+
+            }
+
+            httpSet.url = process.env.API_ROOT + url;
+            httpSet.method = 'post';
+
+            this.$http(httpSet).then(res=>{
+
+              this.$toast({
+
+                message: res.data.msg,
+                position: 'middle',
+                duration: 1500
+
+              });
+
+              if(res.data.code === '0000'){
+
+                this.signData.selectState = num;
+
+              }
+
+            });
 
           }
 
         });
+
+      },
+
+
+      jumpTo: function () {
+
+        this.$router.push({path: '/taskDetail', query: {taskId: this.signData.taskId}});
 
       },
 

@@ -22,7 +22,7 @@
           <img src="../../../../static/image/mine_message.png">
           <span>消息</span>
         </div>
-        <div class="new_message">您有新消息</div>
+        <div class="new_message" v-if="newMessage">您有新消息</div>
       </div>
       <div class="online" v-on:click="customer">
         <div class="title">
@@ -62,6 +62,8 @@
       }
 
     },
+
+    props: ['newMessage'],
 
     mounted () {
 
