@@ -9,6 +9,15 @@
         <div>用户信息</div>
       </div>
       <div class="information_list">
+
+        <div class="sing_type_img">
+          <img src="../../../../static/image/jx_sign_detail_waiting.png" v-if="signData.selectState === '1'">
+          <img src="../../../../static/image/jx_sign_detail_sign_cancel.png" v-else-if="signData.selectState === '2'">
+          <img src="../../../../static/image/jx_sign_detail_used.png" v-else-if="signData.selectState === '3'">
+          <img src="../../../../static/image/jx_sign_detail_out.png" v-else-if="signData.selectState === '4'">
+          <img src="../../../../static/image/jx_sign_detail_time_out.png" v-else-if="signData.selectState === '5'">
+        </div>
+
         <div class="list">
           <div class="name">姓名：</div>
           <div class="detail">{{signData.userName}}</div>

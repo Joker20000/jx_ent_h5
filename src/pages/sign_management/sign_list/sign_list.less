@@ -115,6 +115,13 @@
         .state{
           padding-right: 10px;
           position: relative;
+          color: #8a8a8a;
+          &.orange_text{
+            color: #ff5050;
+          }
+          &.color_text{
+            color: #0054ff;
+          }
           &:after{
             content: '';
             position: absolute;
@@ -174,6 +181,10 @@
           }
         }
       }
+    }
+    .more_data, .no_more_data{
+      text-align: center;
+      color: #8a8a8a;
     }
   }
   .no_data{

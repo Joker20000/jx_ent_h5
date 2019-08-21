@@ -94,6 +94,11 @@
       .feedback{
         position: relative;
         &:last-child{
+          .title{
+            .name{
+              color: #0054ff;
+            }
+          }
           &:before{
             background: linear-gradient(to right, #0054ff, #06abff);
           }
@@ -147,8 +152,12 @@
         .feedback_file_list{
           padding: 5px;
           font-size: 12px;
-          color: #0054ff;
           line-height: 20px;
+          .file{
+            display: block;
+            text-decoration: none;
+            color: #0054ff;
+          }
         }
       }
     }

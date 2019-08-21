@@ -28,6 +28,7 @@ import additionInput from '@/pages/task_management/addition_input/addition_input
 import signList from '@/pages/sign_management/sign_list/sign_list'
 import signDetail from '@/pages/sign_management/sign_detail/sign_detail'
 import workCheck from '@/pages/sign_management/work_check/work_check'
+import loadingPage from '@/pages/login/loading_page/loading_page'
 
 
 Vue.use(Router)
@@ -255,6 +256,14 @@ export default new Router({
         title: '工作验收'
       },
       component: workCheck
+    },
+    {
+      path: '/loadingPage',
+      name: 'loadingPage',
+      meta: {
+        title: '嘉薪'
+      },
+      component: loadingPage
     }
   ]
 })
