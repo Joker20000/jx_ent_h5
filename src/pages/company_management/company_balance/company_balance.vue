@@ -75,8 +75,6 @@
 
             this.getBalance(res.data.data.count);
 
-
-
           }
 
         });

@@ -237,7 +237,7 @@ export default new Router({
       path: '/signList',
       name: 'signList',
       meta: {
-        title: '报名管理'
+        title: ''
       },
       component: signList
     },

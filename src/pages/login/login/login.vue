@@ -12,7 +12,7 @@
 
         <img src="../../../../static/image/login_phone.png">
 
-        <input type="text" placeholder="请输入企业管理员手机号" maxlength="11" v-model="mobile">
+        <input type="number" placeholder="请输入企业管理员手机号" v-model="mobile" @blur="lostPointFn" pattern="\d*">
 
       </div>
 
@@ -20,7 +20,7 @@
 
         <img src="../../../../static/image/login_password.png">
 
-        <input type="password" placeholder="请输入密码" v-model="password">
+        <input type="password" placeholder="请输入密码" v-model="password" @blur="lostPointFn">
 
       </div>
 
@@ -28,7 +28,7 @@
 
     <commonButton v-bind:btnName="btnName" v-on:clickEvent="submit"></commonButton>
 
-    <div class="forget_password color_text" v-on:click="$router.push('/forgetPassword')">忘记密码</div>
+    <div class="forget_password color_text" v-on:click="$router.push('/forgetPassword')">忘记密码？</div>
 
     <div class="ps">注册请前往PC端官网：https://www.99payroll.cn</div>
 
@@ -62,7 +62,21 @@
 
     },
 
+
+    mounted () {
+
+      this.focusFn();
+
+    },
+
     methods: {
+
+      //备注失去焦点恢复页面（ios输入法）
+      lostPointFn:function () {
+
+        document.body.scrollTop =document.documentElement.scrollTop = window.pageYOffset = 100;
+
+      },
 
       //登录
       submit: function () {
@@ -87,6 +101,8 @@
 
               password:hexMD5(this.password),
 
+              source: 1
+
             }
 
 
@@ -94,19 +110,19 @@
 
             if(res.data.code === '0000'){
 
-              localStorage.setItem('adminId',res.data.data.adminId);
-              localStorage.setItem('adminName',res.data.data.adminName);
-              localStorage.setItem('adminType', res.data.data.adminType);
-              localStorage.setItem('entId', res.data.data.entId);
-              localStorage.setItem('entName', res.data.data.entName);
-              localStorage.setItem('createDate', res.data.data.createDate);
-              localStorage.setItem('isActive', res.data.data.isActive);
-              localStorage.setItem('isCancel', res.data.data.isCancel);
-              localStorage.setItem('isFirstLoginAfterOnlie', res.data.data.isFirstLoginAfterOnlie);
-              localStorage.setItem('mobile', res.data.data.mobile);
-              localStorage.setItem('signState', res.data.data.signState);
-              localStorage.setItem('verifyState', res.data.data.verifyState);
-              (!!res.data.data.logoPath) ? (localStorage.setItem('logoPath', res.data.data.logoPath)) : (localStorage.removeItem('logoPath'));
+              localStorage.setItem('adminIdEnt',res.data.data.adminId);
+              localStorage.setItem('adminNameEnt',res.data.data.adminName);
+              localStorage.setItem('adminTypeEnt', res.data.data.adminType);
+              localStorage.setItem('entIdEnt', res.data.data.entId);
+              localStorage.setItem('entNameEnt', res.data.data.entName);
+              localStorage.setItem('createDateEnt', res.data.data.createDate);
+              localStorage.setItem('isActiveEnt', res.data.data.isActive);
+              localStorage.setItem('isCancelEnt', res.data.data.isCancel);
+              localStorage.setItem('isFirstLoginAfterOnlieEnt', res.data.data.isFirstLoginAfterOnlie);
+              localStorage.setItem('mobileEnt', res.data.data.mobile);
+              localStorage.setItem('signStateEnt', res.data.data.signState);
+              localStorage.setItem('verifyStateEnt', res.data.data.verifyState);
+              (!!res.data.data.logoPath) ? (localStorage.setItem('logoPathEnt', res.data.data.logoPath)) : (localStorage.removeItem('logoPathEnt'));
               this.$router.push('/workDesk/homepage');
 
             }else {
@@ -165,9 +181,27 @@
 
         return false;
 
+      },
+
+
+      focusFn: function () {
+
+        document.getElementsByClassName('login')[0].style.height = window.innerHeight + 'px';
+
       }
 
     },
+
+
+    watch: {
+
+      mobile: function () {
+
+        this.mobile.length > 11 && (this.mobile = this.mobile.slice(0, 11));
+
+      }
+
+    }
 
   }
 

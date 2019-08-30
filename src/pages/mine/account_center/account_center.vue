@@ -5,8 +5,11 @@
 
       <div class="information_list" v-if="adminType === '02'">
         <div class="title">企业logo</div>
-        <div class="icon"><img v-bind:src="logoPath"></div>
-        <input type="file" v-on:change="inputLogo">
+        <div class="icon">
+          <img v-bind:src="logoPath" v-if="!!logoPath">
+          <img src="../../../../static/image/jx_logo_orange.png" v-else>
+        </div>
+        <input type="file" v-on:change="inputLogo" accept="image/*">
       </div>
 
       <div class="information_list">
@@ -62,7 +65,7 @@
 
         adminName: '',//用户名称
 
-        logoPath: '../../../../static/image/mine_person.png',//企业logo地址
+        logoPath: '',//企业logo地址
 
         mobile:  '',//用户账号
 
@@ -97,10 +100,10 @@
 
     mounted () {
 
-      this.adminName = localStorage.getItem('adminName');
-      this.mobile = localStorage.getItem('mobile');
-      (!!localStorage.getItem('logoPath')) && (this.logoPath = localStorage.getItem('logoPath'));
-      this.adminType = localStorage.getItem('adminType');
+      this.adminName = localStorage.getItem('adminNameEnt');
+      this.mobile = localStorage.getItem('mobileEnt');
+      (!!localStorage.getItem('logoPathEnt')) && (this.logoPath = localStorage.getItem('logoPathEnt'));
+      this.adminType = localStorage.getItem('adminTypeEnt');
 
     },
 
@@ -125,13 +128,40 @@
 
           if(res === 'confirm'){
 
+            this.signOut();
+
+          }
+
+        });
+
+      },
+
+      //退出登录
+      signOut: function () {
+
+        /*
+        * 接口： 退出登录
+        * 请求方式： GET
+        * 接口： jx/action/logout
+        * 入参： null
+        * */
+        this.$http({
+
+          url: process.env.API_ROOT + 'jx/action/logout',
+          method: 'get'
+
+        }).then(res=>{
+
+          if(res.data.code === '0000'){
+
             localStorage.clear();
             this.$router.push('/login');
             window.location.reload();
 
           }
 
-        });
+
+        })
 
       },
 
@@ -262,7 +292,7 @@
           url: process.env.API_ROOT + 'set/ent/updatelogo',
           method: 'post',
           params: {
-            entName: localStorage.getItem('entName'),
+            entName: localStorage.getItem('entNameEnt'),
             logoPath: img
           }
 
@@ -280,7 +310,7 @@
 
           if(res.data.code === '0000'){
 
-            localStorage.setItem('logoPath', img);
+            localStorage.setItem('logoPathEnt', img);
 
             this.logoPath = img;
 

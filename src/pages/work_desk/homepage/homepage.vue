@@ -103,7 +103,15 @@
 
           }
 
-        })
+        }).catch(res=>{
+
+          if(res.response.status === 405){
+
+            this.amount = '******';
+
+          }
+
+        });
 
       },
 

@@ -46,7 +46,8 @@
         </div>
         <div class="list" v-if="companyDetail.verifyState !== '0'">
           <div class="title">证件类型</div>
-          <div class="information">{{companyDetail.verifyInfo[0].documentType}}</div>
+          <div class="information" v-if="companyDetail.verifyInfo[0].documentType === '1'">多证合一</div>
+          <div class="information" v-else-if="companyDetail.verifyInfo[0].documentType === '2'">普通营业执照</div>
         </div>
         <div class="list" v-if="companyDetail.verifyState !== '0'">
           <div class="title">营业执照</div>

@@ -94,7 +94,9 @@
 
       return {
 
-        signData: {}
+        signData: {},
+
+        clickType: ''
 
       }
 
@@ -112,11 +114,13 @@
 
       init: function () {
 
-        this.signData = JSON.parse(localStorage.getItem('signData'));
+        this.signData = JSON.parse(localStorage.getItem('signDataEnt'));
 
       },
 
       changeState: function (type) {
+
+        if(this.clickType) return;
 
         var message, title, num;
 
@@ -177,6 +181,8 @@
 
           if(res === 'confirm'){
 
+            this.clickType = true;
+
             var params, url = '', httpSet = {};
 
             if(type === 'cancelUse' || type === 'cancel'){
@@ -211,19 +217,38 @@
 
             this.$http(httpSet).then(res=>{
 
-              this.$toast({
+              this.clickType = false;
 
-                message: res.data.msg,
-                position: 'middle',
-                duration: 1500
-
-              });
+              var message = res.data.msg;
 
               if(res.data.code === '0000'){
+
+                switch (type) {
+                  case 'use':
+                    message = '录用成功';
+                    break;
+                  case 'out':
+                    message = '淘汰成功';
+                    break;
+                  case 'cancelUse':
+                    message = '已取消录用';
+                    break;
+                  case 'cancel':
+                    message = '已取消淘汰';
+                    break;
+                }
 
                 this.signData.selectState = num;
 
               }
+
+              this.$toast({
+
+                message: message,
+                position: 'middle',
+                duration: 1500
+
+              });
 
             });
 

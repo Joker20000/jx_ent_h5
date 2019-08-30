@@ -4,7 +4,8 @@
 
     <div class="person_information" v-on:click="$router.push('/accountCenter')">
       <div class="img">
-        <img v-bind:src="logoPath">
+        <img v-bind:src="logoPath" v-if="!!logoPath">
+        <img src="../../../../static/image/jx_logo_orange.png" v-else>
       </div>
       <div class="person">
         <div class="name">{{adminName}}</div>
@@ -55,7 +56,7 @@
 
         adminName: '',
 
-        logoPath: '../../../../static/image/mine_person.png',
+        logoPath: '',
 
         mobile:  '',
 
@@ -69,14 +70,14 @@
 
       //美恰初始化
       customerInit({
-        name:this.getStorage('userName'),// 名字
-        tel:this.getStorage('mobile'),// 电话
+        name:this.getStorage('userNameEnt'),// 名字
+        tel:this.getStorage('mobileEnt'),// 电话
       });
 
       this.$store.state.workDeskState = 'mine';//控制下方按钮状态
-      this.adminName = localStorage.getItem('adminName');
-      this.mobile = localStorage.getItem('mobile');
-      (!!localStorage.getItem('logoPath')) && (this.logoPath = localStorage.getItem('logoPath'));
+      this.adminName = localStorage.getItem('adminNameEnt');
+      this.mobile = localStorage.getItem('mobileEnt');
+      (!!localStorage.getItem('logoPathEnt')) && (this.logoPath = localStorage.getItem('logoPathEnt'));
 
 
     },
@@ -93,24 +94,32 @@
       //拨打电话
       call: function () {
 
-        this.$messagebox({
+        if(!!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)){
 
-          title: '提示',
-          message: '确定拨打电话：4008216990吗？',
-          showCancelButton:true,
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          closeOnClickModal: true,
+          window.location.href = 'tel: 4008216990';
 
-        }).then(res=>{
+        }else {
 
-          if(res === 'confirm'){
+          this.$messagebox({
 
-            window.location.href = 'tel: 4008216990';
+            title: '提示',
+            message: '确定拨打电话：4008216990吗？',
+            showCancelButton:true,
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            closeOnClickModal: true,
 
-          }
+          }).then(res=>{
 
-        });
+            if(res === 'confirm'){
+
+              window.location.href = 'tel: 4008216990';
+
+            }
+
+          });
+
+        }
 
       }
 

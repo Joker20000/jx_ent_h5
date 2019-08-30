@@ -7,7 +7,7 @@
       </div>
 
       <commonButton v-bind:btnName="btnName" v-on:clickEvent="$router.push('/authentication')"></commonButton>
-      <div class="ps">新手机须未为注册手机号</div>
+      <div class="ps">新手机须为未注册手机号</div>
 
     </div>
 </template>
@@ -37,7 +37,7 @@
 
     mounted () {
 
-      this.mobile = localStorage.getItem('mobile');
+      this.mobile = localStorage.getItem('mobileEnt');
 
     }
   }

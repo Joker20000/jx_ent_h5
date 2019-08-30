@@ -81,29 +81,15 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: white;
       display: flex;
-      padding: 10px 15px;
       align-items: flex-end;
       justify-content: space-around;
+      padding: 10px 15px;
+      background-color: white;
+      box-shadow: 0 -1px 3px #e5e5e5;
       .button{
         flex: 1;
         text-align: center;
-        .img{
-          position: absolute;
-          width: 35px;
-          height: 35px;
-          padding: 15px;
-          border-radius: 50%;
-          background: #f5f5f5;
-          top: 0;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          img{
-            width: 100%;
-            height: 100%;
-          }
-        }
         div{
           color: #ababab;
           &:last-child{
@@ -114,12 +100,28 @@
             color: #ababab;
           }
         }
+        .img{
+          position: absolute;
+          width: 33px;
+          height: 33px;
+          padding: 8px;
+          border-radius: 50%;
+          background: white;
+          top: 0;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          box-shadow: 0 -3px 3px #e5e5e5;
+          img{
+            width: 100%;
+            height: 100%;
+          }
+        }
       }
       .color_text{
         div{
-          color: #0054ff;
+          color: #3a8aff;
           i{
-            color: #0054ff;
+            color: #3a8aff;
           }
         }
       }

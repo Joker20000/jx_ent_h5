@@ -82,6 +82,10 @@
 
           message = '请确认两次密码相同';
 
+        }else if(this.password === this.oldPassword) {
+
+          message = '新密码和原密码不能相同！';
+
         }else {
 
           return true;

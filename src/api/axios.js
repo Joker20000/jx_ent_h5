@@ -20,7 +20,7 @@ axios.install = (Vue) => {
 
 
 
-  localStorage.getItem('Authorization') && (axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization'));
+  localStorage.getItem('AuthorizationEnt') && (axios.defaults.headers.common['Authorization'] = localStorage.getItem('AuthorizationEnt'));
 
   Vue.config.productductionTip = false;
 
@@ -45,7 +45,7 @@ axios.install = (Vue) => {
 
       axios.defaults.headers.common['Authorization'] = res.data.token.access_token;
 
-      localStorage.setItem('Authorization',res.data.token.access_token);
+      localStorage.setItem('AuthorizationEnt',res.data.token.access_token);
 
     }
 
@@ -56,7 +56,21 @@ axios.install = (Vue) => {
 
     console.log(error);
 
-    if((error.response.data.code=='3001'||error.response.data.code=='3003')) {
+    if(error.response.status === 405){
+
+      if(!(error.response.config.url.indexOf('ent/balance/allbalance') !== -1 && location.href.indexOf('/workDesk/homepage') !== -1)){
+
+        Toast({
+          message: error.response.data.msg,
+          position: 'middle',
+          duration: 1000
+        });
+
+        history.back(-1);
+
+      }
+
+    }else if((error.response.data.code=='3001'||error.response.data.code=='3003')) {
 
       localStorage.clear();
 

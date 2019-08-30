@@ -67,9 +67,9 @@ exports.install = function (Vue, options) {
   Vue.prototype.setAutoBack = function (num){
 
     //记录需要退回的页面
-    localStorage.setItem('thisBackRouter',this.$router.history.current.path);
+    localStorage.setItem('thisBackRouterEnt',this.$router.history.current.path);
 
-    localStorage.setItem('backNum',num);
+    localStorage.setItem('backNumEnt',num);
 
     //console.log(this.$router)
 

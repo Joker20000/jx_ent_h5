@@ -15,22 +15,22 @@
     <div class="select_bg" v-if="selectCompanyShow || selectTaskShow" v-on:click="selectCompanyShow = selectTaskShow = false"></div>
 
     <div class="select_by_company" v-if="selectCompanyShow">
-      <div class="company_select" v-on:click="screen('company','all')">全部</div>
-      <div class="company_select" v-for="company in companyList" v-on:click="screen('company', company.entId)">{{company.entName}}</div>
+      <div class="company_select" v-on:click="screen('company','all')" v-bind:class="{'color_text': entId === ''}">全部</div>
+      <div class="company_select" v-for="company in companyList" v-on:click="screen('company', company.entId)" v-bind:class="{'color_text': entId === company.entId}">{{company.entName}}</div>
     </div>
 
     <div class="select_by_task_state" v-if="selectTaskShow">
-      <div class="state_select" v-on:click="screen('task','all')">全部</div>
-      <div class="state_select" v-on:click="screen('task', '1')">待发布</div>
-      <div class="state_select" v-on:click="screen('task', '2')">进行中</div>
-      <div class="state_select" v-on:click="screen('task', '3')">已完成</div>
-      <div class="state_select" v-on:click="screen('task', '4')">已关闭</div>
+      <div class="state_select" v-on:click="screen('task','all')" v-bind:class="{'color_text': state === ''}">全部</div>
+      <div class="state_select" v-on:click="screen('task', '1')" v-bind:class="{'color_text': state === '1'}">待发布</div>
+      <div class="state_select" v-on:click="screen('task', '2')" v-bind:class="{'color_text': state === '2'}">进行中</div>
+      <div class="state_select" v-on:click="screen('task', '3')" v-bind:class="{'color_text': state === '3'}">已完成</div>
+      <div class="state_select" v-on:click="screen('task', '4')" v-bind:class="{'color_text': state === '4'}">已关闭</div>
     </div>
 
     <mt-loadmore :top-method="loadTop" ref="loadmore">
 
       <div class="task_list_show" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="10" v-if="!noData">
-        <div class="task" v-for="task in taskList" v-on:click="$router.push({path: '/taskDetail', query: {taskId: task.taskId}})">
+        <div class="task" v-for="task in taskList" v-on:click="jumpTo(task.taskId)">
           <div class="title">
             <div class="img">
               <img src="../../../../static/image/jx_bag.png">
@@ -40,7 +40,7 @@
           </div>
           <div class="content">
             <div class="money">
-              <span>￥{{task.taskAmount}}</span>
+              <span>￥{{task.taskMinUnit}}<span v-if="!!task.taskMaxUnit">-</span><span v-if="!!task.taskMaxUnit">{{task.taskMaxUnit}}</span></span>
               <span>任务预算单价</span>
             </div>
             <div class="person" v-if="task.state !== '3'">
@@ -75,7 +75,7 @@
         </div>
 
         <div class="more_data" v-if="moreData">正在加载</div>
-        <div class="no_more_data" v-else>暂无数据</div>
+        <div class="no_more_data" v-else>无更多数据</div>
       </div>
 
       <div class="no_data" v-if="noData">
@@ -83,7 +83,7 @@
         <div class="no_data_img">
           <img src="../../../../static/image/nodata.png">
         </div>
-        <div class="no_data_text">您还未发布任务哦~</div>
+        <div class="no_data_text">暂无相关数据哦~</div>
 
       </div>
 
@@ -122,6 +122,8 @@
 
         state: '',//任务状态
 
+        noUse: true
+
       }
 
     },
@@ -135,6 +137,8 @@
     },
 
     activated () {
+
+      this.noUse = this.moreData;
 
       /*任务详情中任务状态发生改变 任务列表页面刷新*/
       if(sessionStorage.getItem('delete') === '1'){
@@ -181,7 +185,9 @@
 
           (res.data.data.list.length === 10) ? (this.moreData = true) : (this.moreData = false);
 
-          (this.pageNum === 1 && res.data.data.list.length === 0) && (this.noData = true);
+          (this.pageNum === 1 && res.data.data.list.length === 0) ? (this.noData = true) : (this.noData = false);
+
+          this.noUse = this.moreData;
 
         });
 
@@ -190,7 +196,9 @@
       //上拉加载
       loadMore: function () {
 
-        if(this.moreData){
+        if(this.moreData && this.noUse){
+
+          this.noUse = false;
 
           this.pageNum++;
 
@@ -215,7 +223,7 @@
           method: 'get',
           url: process.env.API_ROOT + 'jx/common/salaryentbusiness',
           params: {
-            entId: localStorage.getItem('entId'),
+            entId: localStorage.getItem('entIdEnt'),
             verifyState: 3,
             signState: 1,
             businessType: '05'
@@ -304,6 +312,15 @@
         this.getData();
 
         this.$refs.loadmore.onTopLoaded();
+
+      },
+
+
+      jumpTo: function (taskId) {
+
+        this.noUse = false;
+
+        this.$router.push({path: '/taskDetail', query: {taskId: taskId}});
 
       }
 

@@ -65,7 +65,7 @@ let token ;
 router.beforeEach((to,from,next)=>{
 
 
-  var Authorization = window.localStorage.getItem('Authorization');//Authorization数据
+  var Authorization = window.localStorage.getItem('AuthorizationEnt');//Authorization数据
 
   if(!!Authorization) {
 

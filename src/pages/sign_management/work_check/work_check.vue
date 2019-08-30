@@ -52,7 +52,7 @@
         <div class="img">
           <img src="../../../../static/image/jx_sign_detail_title.png">
         </div>
-        <div>任务信息</div>
+        <div>工作进展汇报</div>
       </div>
       <div class="feedback_list">
         <div class="feedback" v-for="feedback in feedbackList">
@@ -69,8 +69,12 @@
             <span class="time">{{feedback.taskFeedback.finishDate | fmtTimeStr2}}</span>
           </div>
           <div class="feedback_detail" v-if="feedback.type === '1'">{{feedback.taskFeedback.pContent}}</div>
-          <div class="feedback_file_list" v-if="!feedback.taskFeedback.files">
+          <div class="feedback_file_list" v-if="!!feedback.taskFeedback.files">
             <a class="file" v-for="(fileUrl ,fileName) in feedback.taskFeedback.files" v-bind:href="fileUrl">{{fileName}}</a>
+          </div>
+          <div class="place" v-if="!!feedback.taskFeedback.pPlace">
+            <div class="img"><img src="../../../../static/image/jx_work_check_place.png"></div>
+            <div class="place_detail">{{feedback.taskFeedback.pPlace}}</div>
           </div>
         </div>
       </div>
@@ -111,7 +115,7 @@
 
       getData: function () {
 
-        this.workDetail = JSON.parse(localStorage.getItem('signData'));
+        this.workDetail = JSON.parse(localStorage.getItem('signDataEnt'));
 
         /*
         * 接口： 查看工作汇报
@@ -209,7 +213,11 @@
 
           if(res.data.code === '0000'){
 
+            this.getData();
+
             this.workDetail.workState = '3';
+
+            this.workDetail.checkNum++;
 
           }
 

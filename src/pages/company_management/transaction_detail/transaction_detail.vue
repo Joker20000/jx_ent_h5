@@ -25,7 +25,8 @@
 
           <div class="money_type">
             <div class="img">
-              <img src="../../../../static/image/money_income.png">
+              <img src="../../../../static/image/money_income.png" v-if="list.afterBalance - list.beforeBalance > 0">
+              <img src="../../../../static/image/money_spend.png" v-else>
             </div>
             <div class="money_information">
               <div>{{transType[list.transType]}}</div>
@@ -77,19 +78,21 @@
 
           '1':'工资发放',
 
-          '12':'工资发放',
-
-          '15':'众包结算',
-
           '2':'工资代发充值',
 
           '3':'工资发放退款',
 
+          '5': '发薪企业转账',
+
           '7':'工资发放撤回',
+
+          '12':'工资发放',
 
           '13':'工资发放退款',
 
           '14':'工资发放',
+
+          '15':'众包结算',
 
           '16':'众包结算撤回',
 
@@ -97,7 +100,11 @@
 
           '18':'众包结算',
 
-          '19':'众包结算退款'
+          '19':'众包结算退款',
+
+          '20': '众包结算',
+
+          '21': '众包结算退款'
         },//交易类型
 
         pageNum: 1,//数据分页
@@ -180,53 +187,32 @@
       getCompanyList: function () {
 
         /**
-         * 接口：获取企业账户发薪单位总额
+         * 接口：发薪企业查询
          * 请求方式：GET
-         * 接口：ent/balance/allbalance
+         * 接口：jx/common/salaryentinfo
          * 入参：null
          **/
         this.$http({
 
           method: 'get',
 
-          url:process.env.API_ROOT+'ent/balance/allbalance',
+          url:process.env.API_ROOT+'jx/common/salaryentinfo',
 
-        }).then(res=>{
+          params: {
+            entId: localStorage.getItem('entIdEnt')
+          }
+
+        }).then(res => {
 
           if(res.data.code === '0000'){
 
-            /**
-             * 接口：获取企业信息
-             * 请求方式：GET
-             * 接口：ent/info/getinfo
-             * 入参：null
-             **/
-            this.$http({
-
-              method: 'get',
-
-              url:process.env.API_ROOT+'ent/info/getinfo',
-
-              params: {
-
-                pageSize: res.data.data.count,
-              }
-
-            }).then(res => {
-
-              if(res.data.code === '0000'){
-
-                this.companyList = this.companyList.concat(res.data.data.list);
-
-              }
-
-            }).catch(res=>{
-
-              console.log(res);
-
-            });
+            this.companyList = this.companyList.concat(res.data.data);
 
           }
+
+        }).catch(res=>{
+
+          console.log(res);
 
         });
 

@@ -14,16 +14,17 @@
       <div class="type_place">
         <div class="type">
           <img src="../../../../static/image/jx_task_type.png">
-          <span>{{taskInfo.industryName}}</span>
+          <span>{{taskInfo.industryName}} > {{taskInfo.typeName}}</span>
         </div>
         <div class="place">
           <img src="../../../../static/image/jx_task_place.png">
-          <span>{{taskInfo.province}}</span>
+          <span v-if="!!taskInfo.region">{{taskInfo.region}}</span>
+          <span v-else>不限</span>
         </div>
       </div>
       <div class="task_money_state">
         <div class="task_money">
-          <div>￥<span v-if="!!taskInfo.taskMaxUnit">{{taskInfo.taskMaxUnit}}-</span>{{taskInfo.taskMinUnit}}</div>
+          <div>￥{{taskInfo.taskMinUnit}}<span v-if="!!taskInfo.taskMaxUnit">-</span><span v-if="!!taskInfo.taskMaxUnit">{{taskInfo.taskMaxUnit}}</span></div>
           <div>任务预算单价</div>
         </div>
         <div class="task_money_all">
@@ -37,14 +38,14 @@
           <div>报名状态</div>
         </div>
       </div>
-      <div class="show_all">
+      <div class="show_all" v-if="taskInfo.state === '1' || taskInfo.state === '2'">
         <span>发布到任务广场</span>
         <mt-switch v-model="taskShow"></mt-switch>
       </div>
-      <div class="task_info">
-        <span>任务合同：</span><span v-if="taskInfo.isSendContract === '1'">自动发送合同</span><span v-else-if="taskInfo.isSendContract === '2'">不自动发送合同</span>
+      <div class="task_info" v-if="taskInfo.isSendContract === '1'">
+        <span>任务合同：</span><span>自动发送合同</span>
       </div>
-      <div class="task_info" v-if="taskInfo.state !== '4'">
+      <div class="task_info" v-if="taskInfo.state !== '3'">
         <span>需要人数：</span><span>{{taskInfo.peopleCount}}</span>
       </div>
       <div class="task_info" v-if="taskInfo.state === '1'">
@@ -56,7 +57,7 @@
       <div class="task_info" v-if="taskInfo.state === '3' || taskInfo.state === '4'">
         <span>实际用工人数：</span><span>{{taskInfo.realHireTotal}}</span>
       </div>
-      <div class="task_info" v-if="taskInfo.state === '4'">
+      <div class="task_info" v-if="taskInfo.state === '3'">
         <span>实际发放资金：</span><span>{{taskInfo.realAmountTotal}}</span>
       </div>
       <div class="task_info">
@@ -65,7 +66,10 @@
       <div class="task_info">
         <span>发布企业：</span><span>{{taskInfo.entName}}</span>
       </div>
-      <div class="task_info">
+      <div class="task_info" v-if="taskInfo.state !== '1'">
+        <span>发布时间：</span><span>{{taskInfo.releaseDate | fmtTimeStr2}}</span>
+      </div>
+      <div class="task_info" v-else>
         <span>创建时间：</span><span>{{taskInfo.createDate | fmtTimeStr2}}</span>
       </div>
     </div>
@@ -112,7 +116,7 @@
       </div>
       <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 2 }">
         <div class="img"><img src="../../../../static/image/jx_task_signup.png"></div>
-        <div>用户报告</div>
+        <div>用户报名</div>
       </div>
       <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 3 , 'close':taskInfo.stateForTask === '7'}">
         <div class="img"><img src="../../../../static/image/jx_task_working.png"></div>
@@ -140,7 +144,7 @@
     </div>
 
     <div class="button" v-else-if="taskInfo.state === '2'">
-      <div class="end" v-on:click="endTask">结束报名</div>
+      <div class="end" v-on:click="endTask" v-if="taskInfo.signupState === '2'">结束报名</div>
       <div class="close" v-on:click="closeTask">关闭任务</div>
       <div class="finish" v-on:click="finishTask">&nbsp;&nbsp;已完成&nbsp;&nbsp;</div>
     </div>
@@ -171,6 +175,8 @@
     mounted () {
 
       this.getData();
+
+      window.scrollTo(0,0);
 
     },
 
@@ -289,6 +295,14 @@
 
             }).then(res=>{
 
+              this.$toast({
+
+                message: res.data.msg,
+                position: 'middle',
+                duration: 1500
+
+              });
+
               if(res.data.code === '0000'){
 
                 sessionStorage.setItem('delete','1');
@@ -350,6 +364,14 @@
 
             }).then(res=>{
 
+              this.$toast({
+
+                message: res.data.msg,
+                position: 'middle',
+                duration: 1500
+
+              });
+
               if(res.data.code === '0000'){
 
                 sessionStorage.setItem('delete','1');
@@ -402,6 +424,14 @@
 
             }).then(res=>{
 
+              this.$toast({
+
+                message: res.data.msg,
+                position: 'middle',
+                duration: 1500
+
+              });
+
               if(res.data.code === '0000'){
 
                 sessionStorage.setItem('delete','1');
@@ -427,7 +457,7 @@
         this.$messagebox({
 
           title: '确认结束任务',
-          message: '若存在用户为完成结算，因此产生的相关纠纷，平台不承担任何责任。',
+          message: '若存在用户未完成结算，因此产生的相关纠纷，平台不承担任何责任。',
           showCancelButton:true,
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -453,6 +483,14 @@
               }
 
             }).then(res=>{
+
+              this.$toast({
+
+                message: res.data.msg,
+                position: 'middle',
+                duration: 1500
+
+              });
 
               if(res.data.code === '0000'){
 
@@ -489,14 +527,14 @@
         if(this.dataState) {
 
           /*
-          * 接口： 更新企业众包任务
+          * 接口： 任务是否展示
           * 请求方式： POST
-          * 接口： updateenttask
+          * 接口： taskisshow
           * 入参： taskId， isShow
           * */
           this.$http({
 
-            url: process.env.API_ROOT + 'updateenttask',
+            url: process.env.API_ROOT + 'taskisshow',
             method: 'post',
             params: {
               taskId: this.$route.query.taskId,
@@ -550,5 +588,8 @@
   }
   .task_detail .mint-switch .mint-switch-input:checked +  .mint-switch-core::after{
     transform: translateX(13px);
+  }
+  .mint-msgbox .mint-msgbox-btns> .mint-msgbox-btn{
+    font-size: 16px;
   }
 </style>

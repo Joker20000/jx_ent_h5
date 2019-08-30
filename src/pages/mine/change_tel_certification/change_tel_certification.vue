@@ -74,7 +74,7 @@
 
           message = '请输入正确的手机号';
 
-        }else if(this.mobile === localStorage.getItem('mobile')){
+        }else if(this.mobile === localStorage.getItem('mobileEnt')){
 
           message = '请输入与当前手机号不同的手机号';
 
@@ -99,7 +99,7 @@
 
         var message;
 
-        if(!this.checkMobile){
+        if(!this.checkMobile()){
 
           return false;
 
@@ -151,8 +151,6 @@
 
         }
 
-        this.seconds = 60;
-
         /*
         * 接口： 管理员账号修改-新手机验证
         * 请求方式： GET
@@ -181,6 +179,8 @@
 
           if(res.data.code === '0000'){
 
+            this.seconds = 60;
+
             var countdown = setInterval(()=>{
 
               this.seconds--;
@@ -194,6 +194,10 @@
               }
 
             },1000);
+
+          }else {
+
+            this.seconds = 0;
 
           }
 
@@ -219,9 +223,9 @@
 
             code: this.code,
 
-            originCode: localStorage.getItem('originCode'),
+            originCode: localStorage.getItem('originCodeEnt'),
 
-            adminId: localStorage.getItem('adminId')
+            adminId: localStorage.getItem('adminIdEnt')
 
           }
 
@@ -237,9 +241,9 @@
 
           if(res.data.code === '0000'){
 
-            localStorage.removeItem('originCode');
+            localStorage.removeItem('originCodeEnt');
 
-            localStorage.setItem('mobile',this.mobile);
+            localStorage.setItem('mobileEnt',this.mobile);
 
             this.$router.push('/accountCenter');
 

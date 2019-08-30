@@ -43,10 +43,7 @@ var jxCustomerService = {
 
         jfServiceSwitch(visibility);
 
-        if (browser.os.iOS && $('html').hasClass('ovfHiden') && $('body').hasClass('ovfHiden')) {                    //解决ios10的在详情页聊天移位问题。
-          isIosProduct = 1;
-          $(document).scrollTop(0);
-        }
+
       };
 
       (function (m, ei, q, i, a, j, s) {

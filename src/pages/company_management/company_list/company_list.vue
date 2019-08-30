@@ -50,50 +50,26 @@
 
 
         /**
-         * 接口：获取企业账户发薪单位总额
+         * 接口：获取企业信息
          * 请求方式：GET
-         * 接口：ent/balance/allbalance
+         * 接口：ent/info/getinfo
          * 入参：null
          **/
+
         this.$http({
 
+          url: process.env.API_ROOT + 'ent/info/getinfo',
           method: 'get',
+          params: {
 
-          url:process.env.API_ROOT+'ent/balance/allbalance',
+            pageSize: 100
+
+          }
 
         }).then(res=>{
 
-          if(res.data.code === '0000'){
+          this.companyList = this.companyList.concat(res.data.data.list);
 
-            /**
-             * 接口：获取企业信息
-             * 请求方式：GET
-             * 接口：ent/info/getinfo
-             * 入参：null
-             **/
-
-            this.$http({
-
-              url: process.env.API_ROOT + 'ent/info/getinfo',
-              method: 'get',
-              params: {
-
-                pageSize: res.data.data.count
-
-              }
-
-            }).then(res=>{
-
-              this.companyList = this.companyList.concat(res.data.data.list);
-
-
-            }).catch(res=>{
-
-              console.log(res);
-
-            });
-
-          }
 
         }).catch(res=>{
 

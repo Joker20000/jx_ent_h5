@@ -22,9 +22,6 @@
             <img src="../../../../static/image/jx_find.png">
           </div>
           <input type="text" placeholder="搜索姓名或任务名称" v-model="taskName">
-          <div class="close">
-            <img src="../../../../static/image/contract_close.png">
-          </div>
         </div>
         <div class="input_cancel" v-on:click="cancelFn" v-if="cancelShow">取消</div>
       </div>
@@ -111,6 +108,16 @@
 
       this.pageType = this.$route.query.type;
 
+      document.title = (this.pageType === 'work') ? ('工作验收') : ('报名管理');
+
+      if(!!sessionStorage.getItem('signListType')){
+
+        this.selectState = sessionStorage.getItem('signListType');
+
+        sessionStorage.removeItem('signListType');
+
+      }
+
       this.getData();
 
     },
@@ -119,7 +126,7 @@
 
       jumpTo: function (obj) {
 
-        localStorage.setItem('signData', JSON.stringify(obj));
+        localStorage.setItem('signDataEnt', JSON.stringify(obj));
 
         (this.pageType === 'work') && (this.$router.push('/workCheck'));
 
@@ -189,6 +196,8 @@
       selectByState: function (state) {
 
         this.selectState = state;
+
+        sessionStorage.setItem('signListType', state);
 
         this.pageNum = 1;
 

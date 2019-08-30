@@ -18,6 +18,9 @@
     .show_type{
       margin-right: 5px;
       font-size: 16px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
     .three{
       display: inline-block;
@@ -100,9 +103,13 @@
         justify-content: space-between;
         align-items: center;
         position: relative;
+        width: 100%;
+        box-sizing: border-box;
         .money_type{
           display: flex;
           align-items: center;
+          width: 50%;
+          flex: 1;
           .img{
             height: 24px;
             width: 25px;
@@ -114,18 +121,25 @@
             }
           }
           .money_information{
+            width: 50%;
+            flex: 1;
             div:first-child{
               font-size: 16px;
               margin-bottom: 5px;
             }
             div:last-child{
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
               color: #ababab;
             }
           }
         }
         .money_count_time{
           text-align: right;
+          flex-shrink: 0;
           .money_count{
+            line-height: 21px;
             margin-bottom: 5px;
             .cut{
               display: inline-block;

@@ -62,7 +62,7 @@
 
     mounted () {
 
-      this.mobile = localStorage.getItem('mobile');
+      this.mobile = localStorage.getItem('mobileEnt');
 
       this.getCode();
 
@@ -176,7 +176,7 @@
 
             if(res.data.code === '0000'){
 
-              localStorage.setItem('originCode', this.code);
+              localStorage.setItem('originCodeEnt', this.code);
 
               this.$router.push('/changeTelCertification');
 

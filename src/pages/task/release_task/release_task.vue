@@ -28,10 +28,10 @@
           <div class="title">发布企业昵称</div>
           <div class="content">
             <div class="company_name">
-              <input type="text" placeholder="请输入企业名称，2-32个字符" maxlength="32" minlength="2" v-model="entName">
+              <input type="text" placeholder="请输入企业名称，2-32个字符" maxlength="32" minlength="2" v-model="entName" @blur="lostPointFn">
             </div>
             <div class="hide_name">
-              <input type="checkbox" class="ent_name">
+              <input type="checkbox" class="ent_name" v-model="hideName">
               <span>隐藏昵称</span>
             </div>
           </div>
@@ -52,7 +52,7 @@
         <div class="list must_input">
           <div class="title">任务名称</div>
           <div class="content">
-            <input type="text" placeholder="请输入任务名称，4-50个字符" maxlength="50" minlength="4" v-model="taskName">
+            <input type="text" placeholder="请输入任务名称，4-50个字符" maxlength="50" minlength="4" v-model="taskName" @blur="lostPointFn">
           </div>
         </div>
 
@@ -96,7 +96,7 @@
           <div class="content select" v-on:click="$refs.datetime.open()" v-if="!this.endDateShow">选择报名截止时间</div>
           <div class="content select data" v-on:click="$refs.datetime.open()" v-else>{{endDateShow}}</div>
           <div class="no_choose">
-            <input type="checkbox" class="sign_up_time">
+            <input type="checkbox" class="sign_up_time" v-model="noLimitTime">
             <span>不限</span>
           </div>
         </div>
@@ -104,26 +104,26 @@
         <div class="list must_input">
           <div class="title">任务总预算（元）</div>
           <div class="content">
-            <input type="text" placeholder="请输入任务预算总金额" v-model="taskMoney">
+            <input type="text" placeholder="请输入任务预算总金额" v-model="taskMoney" @blur="lostPointFn">
           </div>
         </div>
 
         <div class="list must_input">
-          <div class="title">任务单价</div>
+          <div class="title">任务单价（元）</div>
           <div class="content max_min_spend">
-            <input type="text" placeholder="最低单价" v-model="taskMinMoney">
+            <input type="text" placeholder="最低单价" v-model="taskMinMoney" @blur="lostPointFn">
             <div class="line"></div>
-            <input type="text" placeholder="最高单价" v-model="taskMaxMoney">
+            <input type="text" placeholder="最高单价" v-model="taskMaxMoney" @blur="lostPointFn">
           </div>
         </div>
 
         <div class="list must_input">
           <div class="title">需要人数</div>
           <div class="content">
-            <input type="number" placeholder="请输入任务所需人数" v-model="needPerson">
+            <input type="text" placeholder="请输入任务所需人数" v-model="needPerson" @blur="lostPointFn">
           </div>
           <div class="no_choose">
-            <input type="checkbox" class="need_person">
+            <input type="checkbox" class="need_person" v-model="noLimit">
             <span>不限</span>
           </div>
         </div>
@@ -149,7 +149,7 @@
         <div class="list must_input">
           <div class="title">合同名称</div>
           <div class="content">
-            <input type="text" placeholder="请输入合同名称，不超过50个字" max="50" v-model="templetName">
+            <input type="text" placeholder="请输入合同名称，不超过50个字" max="50" v-model="templetName" @blur="lostPointFn">
           </div>
         </div>
 
@@ -161,8 +161,8 @@
 
       </div>
 
-      <div class="sign_agreement">
-        <input type="checkbox" class="agree">
+      <div class="sign_agreement" v-if="sendContract">
+        <input type="checkbox" class="agree" checked>
         <span>我已阅读并同意<span v-on:click="$router.push('signAgreement')">《快捷签署服务委托协议书》</span></span>
       </div>
 
@@ -197,7 +197,7 @@
 
         showTask: true,//发布到任务广场状态
 
-        sendContract: false,//自动发送合同状态
+        sendContract: true,//自动发送合同状态
 
         taskDetail: '',//任务描述
 
@@ -290,6 +290,16 @@
         filesName: [],//文件名称列表
 
         mouldShow: false,//任务描述模板显示状态
+
+        hideName: false,//隐藏昵称
+
+        pageType: 'publish',//页面状态 发布任务还是任务继续发布
+
+        taskId: '',//任务Id
+
+        pageLoading: true
+
+
       }
 
     },
@@ -311,14 +321,23 @@
 
       }
 
+      window.scrollTo(0,0);
+
     },
 
     methods: {
 
+      //备注失去焦点恢复页面（ios输入法）
+      lostPointFn:function () {
+
+        document.body.scrollTop =scrollY;
+
+      },
+
       //获取页面所需数据
       getData: function () {
 
-        this.getCompanyList();
+        this.getCompanyList(true);
 
         this.getTaskList(0);
 
@@ -331,9 +350,17 @@
       },
 
       //获取账号下发薪企业列表
-      getCompanyList: function () {
+      getCompanyList: function (type) {
 
-        this.entId = localStorage.getItem('entId');
+        this.entId = localStorage.getItem('entIdEnt');
+
+        var params = {
+          entId: this.entId,
+          verifyState: 3,
+          signState: 1,
+          businessType: '05'
+        };
+        (type) && (params.bestSignIsOpen = 1);
 
         /**
          * 接口：发薪企业查询
@@ -345,12 +372,7 @@
 
           method: 'get',
           url: process.env.API_ROOT + 'jx/common/salaryentbusiness',
-          params: {
-            entId: this.entId,
-            verifyState: 3,
-            signState: 1,
-            businessType: '05'
-          }
+          params: params
 
         }).then(res=>{
 
@@ -366,7 +388,25 @@
 
           }else if(res.data.code === '0000'){
 
+            if(!this.pageLoading){
+
+              this.ent = [];
+
+              this._ent = [];
+
+            }
+
             this.companyList = res.data.data;
+
+            if(this.lastPickerClick === 'ent'){
+
+              this.slots = [];
+
+              this.slot1.values = this.getArray(this.companyList, 'entName');
+
+              this.slots.push(this.slot1);
+
+            }
 
           }
 
@@ -589,6 +629,20 @@
 
         this.pickerType = false;
 
+        setTimeout(function () {
+
+          var div = document.getElementsByClassName('task_page')[0];
+
+          var scrollY = window.scrollY;
+
+          div.style.position = 'fixed';
+
+          div.style.top = -scrollY + 'px';
+
+          div.style.overflow = 'hidden';
+
+        },100);
+
       },
 
       //选择发薪企业
@@ -777,6 +831,18 @@
 
         (!!this.$refs.picker.getSlotValue(1)) && (this['_'+ this.lastPickerClick].push(this.$refs.picker.getSlotValue(1)));
 
+        var div = document.getElementsByClassName('task_page')[0];
+
+        var scrollY = parseInt(div.style.top);
+
+        div.style.position = '';
+
+        div.style.top = '';
+
+        div.overflow = '';
+
+        window.scrollTo(0, -scrollY);
+
       },
 
 
@@ -788,6 +854,18 @@
         this[this.lastPickerClick] = [this.$refs.picker.getSlotValue(0)];
 
         (!!this.$refs.picker.getSlotValue(1)) && (this[this.lastPickerClick].push(this.$refs.picker.getSlotValue(1)));
+
+        var div = document.getElementsByClassName('task_page')[0];
+
+        var scrollY = parseInt(div.style.top);
+
+        div.style.position = '';
+
+        div.style.top = '';
+
+        div.overflow = '';
+
+        window.scrollTo(0, -scrollY);
 
       },
 
@@ -890,23 +968,23 @@
 
         var message;
 
-        if(!this.ent) {
+        if(this.ent.length === 0) {
 
           message = '请选择企业名称';
 
         }else if(!this.entName) {
 
-          message = '请输入企业名称';
+          message = '请输入发布企业昵称';
 
         }else if(this.entName.length < 2 || this.entName.length > 32){
 
           message = '企业名称为2-32个字符';
 
-        }else if(!this.type) {
+        }else if(this.type.length === 0) {
 
           message = '请选择任务类型';
 
-        }else if(!this.place) {
+        }else if(this.place.length === 0) {
 
           message = '请选择工作地区';
 
@@ -926,6 +1004,14 @@
 
           message = '任务需求为4-10000个字符';
 
+        }else if(!this.endDateShow && !this.noLimitTime){
+
+          message = '请选择报名截止时间';
+
+        }else if(new Date(this.changeTime(new Date(new Date() - 1000*60*60*24), '-') + ' ') > this.endDate){
+
+          message = '请重新选择报名截止时间';
+
         }else if(!this.taskMoney) {
 
           message = '请输入任务预算总金额';
@@ -936,39 +1022,35 @@
 
         }else if(!this.taskMinMoney){
 
-          message = '请输入最低金额';
-
-        }else if(!this.taskMaxMoney) {
-
-          message = '请输入最高金额';
+          message = '请输入最低单价';
 
         }else if(Number.isNaN(+this.taskMinMoney)){
 
           message = '最低金额需为纯数字';
 
-        }else if(!this.endDateShow && !document.getElementsByClassName('sign_up_time')[0].checked){
-
-          message = '请选择报名截止时间';
-
-        }else if(Number.isNaN(+this.taskMaxMoney)){
+        }else if(!!this.taskMaxMoney && Number.isNaN(+this.taskMaxMoney)){
 
           message = '最高金额需为纯数字';
 
-        }else if(+this.taskMinMoney > +this.taskMaxMoney){
+        }else if((!!this.taskMinMoney && !!this.taskMaxMoney)&&(+this.taskMinMoney > +this.taskMaxMoney)){
 
           message = '最低金额不得大于最高金额';
 
-        }else if(!this.needPerson && !document.getElementsByClassName('need_person')[0].checked){
+        }else if((!this.needPerson && !this.noLimit)){
 
-          message = '请输入任务所需人数或者选择不限';
+          message = '请输入任务所需人数';
+
+        }else if(Number.isNaN(+this.needPerson) && this.needPerson !== '不限'){
+
+          message = '任务所需人数需为纯数字';
 
         }else if(this.sendContract){
 
-          if(!this.invoice) {
+          if(this.invoice.length === 0) {
 
             message = '请选择发票类型';
 
-          }else if(!this.templet) {
+          }else if(this.templet.length === 0) {
 
             message = '请选择合同模板';
 
@@ -976,7 +1058,7 @@
 
             message = '请输入合同名称';
 
-          }else if(!this.ext) {
+          }else if(this.ext.length === 0) {
 
             message = '请选择业务合作企业';
 
@@ -1016,83 +1098,116 @@
 
         var params = {};
 
-        params.entId = localStorage.getItem('entId');
-
-        params.entName = this.ent[0];
-
-        params.nickname = this.entName;
-
-        var hideEntName = document.getElementsByClassName('ent_name')[0].checked ? '1' : '0';
-
-        params.nicknameHide = hideEntName;
-
-        this.industry.some(obj=>{
-
-          (obj.name === this.type[0]) && (params.industry = obj.nodeId);
-
-        });
-
-        this.typeList.some(obj=>{
-
-          (obj.name === this.type[1]) && (params.type = obj.nodeId);
-
-        });
-
-        params.taskName = this.taskName;
-
-        params.taskDetails = this.taskDetail;
-
-        params.abortDate = this.endDateShow;
-
-        (document.getElementsByClassName('sign_up_time')[0].checked) && (params.abortDate = '不限');
-
-        params.taskAmount = this.taskMoney;
-
-        params.taskMinUnit = this.taskMinMoney;
-
-        params.taskMaxUnit = this.taskMaxMoney;
-
-        params.peopleCount = this.needPerson;
-
-        (document.getElementsByClassName('need_person')[0].checked) && (params.peopleCount = '不限');
-
+        //发布到任务广场赋值
         params.isShow = this.showTask? '1': '0';
 
+        //自动发送合同赋值
         params.isSendContract = this.sendContract? '1' : '2';
 
-        this.templetList.some(obj=>{
+        //企业entId赋值
+        var entInfo = this.companyList.filter(obj=>obj.entName === this.ent[0]);
+        params.entId = entInfo[0].entId;
 
-          (obj.templetName === this.templet[0]) && (params.templateId = obj.tempId);
+        //企业名称赋值
+        params.entName = this.ent[0];
 
+        //企业昵称赋值
+        params.nickname = this.entName;
+
+        //隐藏企业昵称赋值
+        params.nicknameHide = this.hideName ? ('0') : ('1');
+
+        //获取行业类型
+        this.industry.some(obj=>{
+          (obj.name === this.type[0]) && (params.industry = obj.nodeId);
         });
 
-        params.contractName = this.templetName;
-
-        this.cooperate.some(obj=>{
-
-          (obj.cooperateEntName === this.ext[0]) && (params.extEntId = obj.cooperateEntId);
-
+        //获取任务类型
+        this.typeList.some(obj=>{
+          (obj.name === this.type[1]) && (params.type = obj.nodeId);
         });
 
+        //工作地区赋值
+        if(this.place[0] !== '不限'){
+          params.province = this.place[0];
+          params.city = this.place[1];
+        }else {
+          params.province = '不限';
+          params.city = '不限';
+        }
+
+        //任务名称赋值
+        params.taskName = this.taskName;
+
+        //任务描述赋值
+        params.taskDetails = this.taskDetail;
+
+        //报名截止时间赋值
+        params.abortDate = this.endDateShow;
+
+        //报名截止时间不限赋值
+        (this.noLimitTime) && (params.abortDate = '不限');
+
+        //任务总预算赋值
+        params.taskAmount = this.taskMoney;
+
+        //任务单价最低单价赋值
+        (this.taskMinMoney) && (params.taskMinUnit = this.taskMinMoney);
+
+        //任务单价最高单价赋值
+        (this.taskMaxMoney) && (params.taskMaxUnit = this.taskMaxMoney);
+
+        //需要人数赋值
+        params.peopleCount = this.needPerson;
+
+        //需要人数不限赋值
+        (this.noLimit) && (params.peopleCount = '不限');
+
+        //发票类型赋值
         params.invoiceType = (this.invoice[0] === '人力资源服务') ? ('1') : ('2');
 
-        params.submit = submit;
+        //合同类型赋值
+        this.templetList.some(obj=>{
+          (obj.templetName === this.templet[0]) && (params.templateId = obj.tempId);
+        });
 
-        if(this.place[0] !== '不限'){
+        //合同名称赋值
+        params.contractName = this.templetName;
 
-          params.province = this.place[0];
+        //合作企业赋值
+        this.cooperate.some(obj=>{
+          (obj.cooperateEntName === this.ext[0]) && (params.extEntId = obj.cooperateEntId);
+        });
 
-          params.city = this.place[1];
+        var url;
 
-        }else {
+        if(this.pageType === 'publish'){
 
-          params.province = '不限';
+          //发布类型赋值
+          params.submit = submit;
 
-          params.city = '不限';
+          url = 'pulluptask';
+
+        }else if(this.pageType === 'update'){
+
+          //更新任务状态
+          params.state = submit ? ('2'): ('1');
+
+          params.taskId = this.taskId;
+
+          url = 'updateenttask';
 
         }
 
+        //上传文件赋值
         (!!this.filesUrl) && (params.taskFile = this.filesUrl.join(',')) && (params.originalFileNames = this.filesName.join(','));
+
+        /*
+        * 接口： 更新企业众包任务
+        * 请求方式： POST
+        * 接口： updateenttask
+        * 入参： 很多
+        * */
 
         /*
         * 接口： 企业众包任务发布
@@ -1102,7 +1217,7 @@
         * */
         this.$http({
 
-          url: process.env.API_ROOT + 'pulluptask',
+          url: process.env.API_ROOT + url,
           method: 'post',
           params: params
 
@@ -1160,73 +1275,98 @@
 
         sessionStorage.removeItem('taskInfo');
 
-        (!taskInfo.abortDate) ? (document.getElementsByClassName('sign_up_time')[0].checked = true) : (this.endDateShow = this.changeTime(new Date(taskInfo.abortDate), '-'));
+        //页面状态为继续发布任务
+        this.pageType = 'update';
 
-        this.ent.push(taskInfo.entName);
+        this.taskId = taskInfo.taskId;
 
-        this.taskDetail = taskInfo.taskDetails.split('</br>').join('\n');
-
-        this.entName = taskInfo.nickname;
-
-        this.filesUrl = taskInfo.taskFile.split(',');
-
-        this.filesName = taskInfo.originalFileNames.split(',');
-
-        (taskInfo.province === '不限') ? (this.place.push('不限')) : (this.place.push(taskInfo.province) && this.place.push(taskInfo.city));
-
-        this.getCity(taskInfo.province);
-
-        (taskInfo.peopleCount === '不限') ? (document.getElementsByClassName('need_person')[0].checked = true) : (this.needPerson = taskInfo.peopleCount);
-
-        this.taskMoney = taskInfo.taskAmount;
-
-        this.taskMaxMoney = taskInfo.taskMaxUnit;
-
-        this.taskMinMoney = taskInfo.taskMinUnit;
-
-        this.taskName = taskInfo.taskName;
-
-        this.templet.push(taskInfo.templateName);
-
-        this.type.push(taskInfo.industryName);
-
-        this.getTaskList(taskInfo.industry);
-
-        this.type.push(taskInfo.typeName);
-
-        this.ext.push(taskInfo.extEntName);
-
-        document.getElementsByClassName('ent_name')[0].checked = (taskInfo.nicknameHide === '1') ? (true) : (false);
-
+        //自动发送合同赋值
         this.sendContract = (taskInfo.isSendContract === '1') ? (true) : (false);
 
+        //发布到任务广场赋值
         this.showTask = (taskInfo.isShow === '1') ? (true) : (false);
 
-        this.invoice.push(taskInfo.templateName);
+        //企业名称赋值
+        this.ent.push(taskInfo.entName);
 
-        this.templetName = taskInfo.contractName;
+        //发布企业昵称赋值
+        this.entName = taskInfo.nickname;
 
+        //隐藏任务昵称赋值
+        this.hideName = (taskInfo.nicknameHide === '0') ? (true) : (false);
+
+        //任务类型赋值
+        this.type.push(taskInfo.industryName);
+
+        //获取任务列表
+        this.getTaskList(taskInfo.industry);
+
+        //任务类型赋值
+        this.type.push(taskInfo.typeName);
+
+        //工作地区赋值
+        (taskInfo.province === '不限') ? (this.place.push('不限')) : (this.place.push(taskInfo.province) && this.place.push(taskInfo.city));
+
+        //获取地区列表
+        this.getCity(taskInfo.province);
+
+        //任务名称赋值
+        this.taskName = taskInfo.taskName;
+
+        //任务描述赋值
+        this.taskDetail = taskInfo.taskDetails.split('</br>').join('\n');
+
+        //上传文件赋值
         if(!!taskInfo.taskFile) {
-
+          this.filesUrl = taskInfo.taskFile.split(',');
+          this.filesName = taskInfo.originalFileNames.split(',');
           var fileArr = taskInfo.taskFile.split(',');
-
           var fileNameArr = taskInfo.originalFileNames.split(',');
-
           var length = fileArr.length;
-
           while(length-- ) {
-
             var file = {};
-
             file.url = fileArr[length];
-
             file.name = fileNameArr[length];
-
             this.taskFiles.push(file);
-
           }
+        }
+
+        //报名截止时间赋值
+        (!taskInfo.abortDate) ? (this.noLimitTime = true) : (this.endDateShow = this.changeTime(new Date(taskInfo.abortDate), '-'));
+
+        //任务总预算赋值
+        this.taskMoney = taskInfo.taskAmount;
+
+        //任务最高单价赋值
+        (!!taskInfo.taskMaxUnit) && (this.taskMaxMoney = taskInfo.taskMaxUnit);
+
+        //任务最低单价赋值
+        this.taskMinMoney = taskInfo.taskMinUnit;
+
+        //需要人数赋值
+        (taskInfo.peopleCount === '不限') ? (this.noLimit = true) : (this.needPerson = taskInfo.peopleCount);
+
+        if(this.sendContract) {
+
+          //发票类型赋值
+          this.invoice.push(this.invoiceList[taskInfo.invoiceType - 1]);
+
+          //合同模板类型赋值
+          this.templet.push(taskInfo.templateName);
+
+          //合同名称赋值
+          this.templetName = taskInfo.contractName;
+
+          //合作企业赋值
+          this.ext.push(taskInfo.extEntName);
 
         }
+
+        setTimeout(()=>{
+
+          this.pageLoading = false;
+
+        },500);
 
       },
 
@@ -1268,7 +1408,138 @@
 
       },
 
+
+
+    },
+
+
+    computed: {
+
+
+      //报名截止时间限制
+      noLimitTime: {
+
+        get: function () {
+
+          if(this.endDateShow !== '不限'){
+
+            return false;
+
+          }
+
+          return true;
+
+        },
+
+        set: function (newValue) {
+
+          if(newValue){
+
+            this.endDateShow = '不限';
+
+          }else {
+
+            this.endDateShow = '';
+
+          }
+
+        }
+
+      },
+
+      //人员数量限制
+      noLimit:  {
+
+        get: function () {
+
+          if(this.needPerson !== '不限'){
+
+            return false;
+
+          }
+
+          return true;
+
+        },
+
+        set: function (newValue) {
+
+          if(newValue){
+
+            this.needPerson = '不限';
+
+          }else {
+
+            this.needPerson = '';
+
+          }
+
+        }
+
+      }
+
+    },
+
+
+
+    watch: {
+
+      needPerson: function () {
+
+        if(this.needPerson.indexOf('.') !== -1){
+
+          this.needPerson = this.needPerson.slice(0, this.needPerson.length - 1);
+
+        }else if(this.needPerson === '不' || this.needPerson === '限'){
+
+          this.needPerson = '';
+
+        }
+
+      },
+
+
+      sendContract: function () {
+
+        this.getCompanyList(this.sendContract);
+
+      },
+
+
+      taskMinMoney: function () {
+
+        if(this.taskMinMoney.length > 10) {
+
+          this.taskMinMoney = this.taskMinMoney.slice(0, 10);
+
+        }
+
+      },
+
+
+      taskMaxMoney: function () {
+
+        if(this.taskMaxMoney.length > 10) {
+
+          this.taskMaxMoney = this.taskMaxMoney.slice(0, 10);
+
+        }
+
+      },
+
+
+      taskMoney: function () {
+
+        if(this.taskMoney.length > 10) {
+
+          this.taskMoney = this.taskMoney.slice(0, 10);
+
+        }
+
+      }
+
     }
+
   }
 </script>
 
