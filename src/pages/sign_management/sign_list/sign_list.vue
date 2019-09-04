@@ -213,8 +213,6 @@
 
         this.taskName = '';
 
-        this.selectState = '';
-
         this.list = [];
 
         this.getData();

@@ -323,6 +323,12 @@
 
       window.scrollTo(0,0);
 
+      setTimeout(()=>{
+
+        this.pageLoading = false;
+
+      },500);
+
     },
 
     methods: {
@@ -388,7 +394,11 @@
 
           }else if(res.data.code === '0000'){
 
-            if(!this.pageLoading){
+            this.companyList = res.data.data;
+
+            var companyArr = this.getArray(this.companyList, 'entName');
+
+            if(companyArr.indexOf(this.ent[0]) === -1 && !this.pageLoading) {
 
               this.ent = [];
 
@@ -396,13 +406,11 @@
 
             }
 
-            this.companyList = res.data.data;
-
             if(this.lastPickerClick === 'ent'){
 
               this.slots = [];
 
-              this.slot1.values = this.getArray(this.companyList, 'entName');
+              this.slot1.values = companyArr;
 
               this.slots.push(this.slot1);
 
@@ -1008,10 +1016,6 @@
 
           message = '请选择报名截止时间';
 
-        }else if(new Date(this.changeTime(new Date(new Date() - 1000*60*60*24), '-') + ' ') > this.endDate){
-
-          message = '请重新选择报名截止时间';
-
         }else if(!this.taskMoney) {
 
           message = '请输入任务预算总金额';
@@ -1332,7 +1336,14 @@
         }
 
         //报名截止时间赋值
-        (!taskInfo.abortDate) ? (this.noLimitTime = true) : (this.endDateShow = this.changeTime(new Date(taskInfo.abortDate), '-'));
+        if(!taskInfo.abortDate) {
+          this.noLimitTime = true;
+        }else {
+          this.endDateShow = this.changeTime(new Date(taskInfo.abortDate), '-');
+          if(new Date(this.changeTime(new Date, '-') + ' ') > new Date(this.endDateShow)){
+            this.endDateShow = '';
+          }
+        }
 
         //任务总预算赋值
         this.taskMoney = taskInfo.taskAmount;
@@ -1361,12 +1372,6 @@
           this.ext.push(taskInfo.extEntName);
 
         }
-
-        setTimeout(()=>{
-
-          this.pageLoading = false;
-
-        },500);
 
       },
 

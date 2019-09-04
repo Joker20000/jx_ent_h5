@@ -45,7 +45,7 @@
 
         </div>
 
-        <div class="no_more" v-if="!moreData && dataList.length > 0">没有更多数据了</div>
+        <div class="no_more" v-if="!moreData && dataList.length > 0">无更多数据</div>
 
       </div>
 

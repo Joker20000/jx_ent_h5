@@ -81,6 +81,8 @@
       //登录
       submit: function () {
 
+        document.body.scrollTop =document.documentElement.scrollTop = window.pageYOffset = 0;
+
         if(this.check()){
 
           /**
