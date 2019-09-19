@@ -29,6 +29,7 @@ import signList from '@/pages/sign_management/sign_list/sign_list'
 import signDetail from '@/pages/sign_management/sign_detail/sign_detail'
 import workCheck from '@/pages/sign_management/work_check/work_check'
 import loadingPage from '@/pages/login/loading_page/loading_page'
+import personInformation from '@/pages/sign_management/person_information/person_information'
 
 
 Vue.use(Router)
@@ -264,6 +265,14 @@ export default new Router({
         title: '嘉薪'
       },
       component: loadingPage
+    },
+    {
+      path: '/personInformation',
+      name: 'personInformation',
+      meta: {
+        title: '个人信息'
+      },
+      component: personInformation
     }
   ]
 })

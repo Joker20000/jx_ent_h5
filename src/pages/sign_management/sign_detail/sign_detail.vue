@@ -27,12 +27,8 @@
           <div class="detail">{{signData.mobile}}</div>
         </div>
         <div class="list">
-          <div class="name">技能标签：</div>
-          <div class="detail">{{signData.label}}</div>
-        </div>
-        <div class="list">
-          <div class="name">自我介绍：</div>
-          <div class="detail">{{signData.introduce}}</div>
+          <div class="name">个人履历：</div>
+          <div class="detail color_text" v-on:click="$router.push({path: '/personInformation', query: {userId: signData.userId}})">点击查看</div>
         </div>
         <div class="list">
           <div class="name">报名时间：</div>

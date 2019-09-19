@@ -157,3 +157,29 @@ Vue.filter('fmtTimeStr2', (value) => {
 
 
 });
+/**
+ * 时间格式转换
+ * date:'****年**月'
+ */
+Vue.filter('dateChange', (value) => {
+
+  if(value){
+
+    if(value === '至今'){
+
+      return value;
+
+    }else {
+
+      var str = value.replace('月','');
+      var arr = str.split('年');
+      arr[1] = arr[1].padStart(2 , '0');
+      str = arr.join('/');
+
+      return str;
+
+    }
+
+  }
+
+});
