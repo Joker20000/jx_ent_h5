@@ -48,9 +48,9 @@
         <mt-switch v-model="isSendContract"></mt-switch>
       </div>
       
-      <div class="task_info" v-if="taskInfo.isSendContract === '1'">
+      <!-- <div class="task_info" v-if="taskInfo.isSendContract === '1'">
         <span>任务合同：</span><span>自动发送合同</span>
-      </div>
+      </div> -->
       <div class="task_info" v-if="taskInfo.state !== '3'">
         <span>需要人数：</span><span>{{taskInfo.peopleCount}}</span>
       </div>
@@ -597,6 +597,46 @@
             if(res.data.code !== '0000'){
 
               this.taskShow = !this.taskShow;
+
+            }
+
+          })
+
+        }
+
+      },
+      //更改任务广场发布状态
+      isSendContract: function () {
+
+        if(this.dataState) {
+
+
+          // 判断企业是否有印章
+          let isSend=!this.isSendContract;
+
+
+          this.$http({
+
+            url: process.env.API_ROOT + 'updateenttask',
+            method: 'post',
+            params: {
+              taskId: this.$route.query.taskId,
+              isSendContract: this.isSendContract ? ('1') : ('0')
+            }
+
+          }).then(res=>{
+
+            this.$toast({
+
+              message: res.data.msg,
+              position: 'middle',
+              duration: 1500
+
+            });
+
+            if(res.data.code !== '0000'){
+
+              this.isSendContract = !this.isSend;
 
             }
 

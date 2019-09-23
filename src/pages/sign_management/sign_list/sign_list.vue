@@ -16,34 +16,30 @@
         <div v-on:click="selectByState('4')" v-bind:class="{'selected' : selectState === '4'}">验收中</div>
         <div v-on:click="selectByState('3')" v-bind:class="{'selected' : selectState === '3'}">验收通过</div>
       </div>
-  
-      <div class="select">
-        <div class="company" v-on:click="selectShow('Task')">
+
+      <div class="select" v-if="!selectTaskSearch">
+        <div class="company" v-on:click=" selectTaskShow = true">
           <span class="three"><img src="../../../../static/image/jx_search.png"></span>
-          <span class="show_type"  v-bind:class="{'click_type': selectTaskShow}">任务筛选</span>
+          <span class="show_type" v-bind:class="{'click_type': selectTaskShow}">任务筛选</span>
         </div>
-        <div class="task_state" >
+        <div class="task_state" v-on:click=" selectTaskSearch = true">
           <span class="three"><img src="../../../../static/image/jx_find.png"></span>
-  
           <span class="show_type">搜索</span>
         </div>
       </div>
-  
-      <!--<div class="select_bg" v-if="selectTaskShow" v-on:click=" selectTaskShow = false"></div>-->
-  <!---->
-      <!--<div class="select_by_company" v-if="selectTaskShow">-->
-        <!--<div class="company_select" v-on:click="screen('company','all')" v-bind:class="{'color_text': entId === ''}">全部</div>-->
-        <!--<div class="company_select" v-for="company in companyList" v-on:click="screen('company', company.entId)" v-bind:class="{'color_text': entId === company.entId}">{{company.entName}}</div>-->
-      <!--</div>-->
-      <!---->
-      
-      
-      <div class="input_box">
+
+      <div class="select_bg" v-if="selectTaskShow" v-on:click=" selectTaskShow = false"></div>
+      <div class="select_by_company" v-if="selectTaskShow">
+        <div class="company_select" @click="taskNameCilck()" v-bind:class="{'color_text': selectTaskName === ''}">全部</div>
+        <div class="company_select" v-for="item in taskList" v-bind:class="{'color_text': selectTaskName === item.taskId}" @click="taskNameCilck(item)">{{item.taskName}}</div>
+      </div>
+
+      <div class="input_box" v-if="selectTaskSearch">
         <div class="input">
           <div class="input_img">
             <img src="../../../../static/image/jx_find.png">
           </div>
-          <input type="text" placeholder="搜索姓名或任务名称" v-model="taskName" v-on:hover="" v-on:blur="">
+          <input type="text" placeholder="搜索姓名或任务名称" v-model="taskName">
         </div>
         <div class="input_cancel" v-on:click="cancelFn" v-if="cancelShow">取消</div>
       </div>
@@ -51,7 +47,7 @@
 
     <mt-loadmore :top-method="loadTop" ref="loadmore">
 
-      <div class="detail_list" v-if="list.length > 0"  v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="10">
+      <div class="detail_list" v-if="list.length > 0" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="10">
 
         <div class="list" v-on:click="jumpTo(detail)" v-for="detail in list">
 
@@ -60,8 +56,7 @@
               <img src="../../../../static/image/jx_sign_person.png">
             </div>
             <div class="user_name">{{detail.userName}}</div>
-            <div class="state" v-if="pageType === 'signup'"
-                 v-bind:class="{'color_text': detail.selectState === '3', 'orange_text': detail.selectState === '1'}">
+            <div class="state" v-if="pageType === 'signup'" v-bind:class="{'color_text': detail.selectState === '3', 'orange_text': detail.selectState === '1'}">
               {{selectStateObj[detail.selectState]}}
             </div>
             <div class="state" v-else-if="pageType === 'work'" v-bind:class="{'color_text': detail.workState !== '3'}">{{workState[detail.workState]}}</div>
@@ -73,7 +68,7 @@
               <div class="img">
                 <img src="../../../../static/image/jx_sign_time.png">
               </div>
-              <div class="time"  v-if="pageType === 'signup'">{{detail.createDate | fmtDateStr}}</div>
+              <div class="time" v-if="pageType === 'signup'">{{detail.createDate | fmtDateStr}}</div>
               <div class="time" v-else-if="pageType === 'work'">{{detail.startDate | fmtDateStr}}</div>
             </div>
           </div>
@@ -84,7 +79,6 @@
         <div class="no_more_data" v-else>无更多数据</div>
 
       </div>
-
 
       <div class="no_data" v-else>
         <div class="no_data_img">
@@ -99,194 +93,212 @@
 </template>
 
 <script>
-  export default {
-    name: "sign_list.vue",
+export default {
+  name: "sign_list.vue",
 
-    data () {
+  data() {
+    return {
+      list: [],
 
-      return {
-
-        list: [],
-
-        selectStateObj: {1: '待处理', 2: '报名取消', 3: '已录用', 4: '已淘汰', 5: '过期失效'},
-
-        workState: {1: '工作中', 2: '待验收', 3: '验收通过', 4: '验收中'},
-
-        pageNum: 1,
-
-        selectState: '',
-
-        taskName: '',
-
-        moreData: false,
-  
-        selectTaskShow: false,//任务状态选择框显示状态
-
-        pageType: ''
-
-      }
-
-    },
-
-    mounted () {
-
-      this.pageType = this.$route.query.type;
-
-      document.title = (this.pageType === 'work') ? ('工作验收') : ('报名管理');
-
-      if(!!sessionStorage.getItem('signListType')){
-
-        this.selectState = sessionStorage.getItem('signListType');
-
-        sessionStorage.removeItem('signListType');
-
-      }
-
-      this.getData();
-
-    },
-
-    methods: {
-
-      jumpTo: function (obj) {
-
-        localStorage.setItem('signDataEnt', JSON.stringify(obj));
-
-        (this.pageType === 'work') && (this.$router.push('/workCheck'));
-
-        (this.pageType === 'signup') && (this.$router.push('/signDetail'));
-
+      selectStateObj: {
+        1: "待处理",
+        2: "报名取消",
+        3: "已录用",
+        4: "已淘汰",
+        5: "过期失效"
       },
 
-      getData: function () {
+      workState: { 1: "工作中", 2: "待验收", 3: "验收通过", 4: "验收中" },
 
-        var params = {};
+      pageNum: 1,
 
-        params.pageNum = this.pageNum;
+      selectState: "",
 
-        (this.selectState !== '' && this.pageType === 'signup') && (params.selectState = this.selectState);
+      taskName: "",
 
-        (this.selectState !== ''  && this.pageType === 'work') && (params.workState = this.selectState);
+      moreData: false,
 
-        (this.taskName !== '' && this.pageType === 'signup') && (params.taskName = this.taskName);
+      selectTaskShow: false, //任务状态选择框显示状态
 
-        (this.taskName !== '' && this.pageType === 'work') && (params.userName = this.taskName);
+      pageType: "",
+      taskList: [],
 
-        var url = (this.pageType === 'work') ? ('table/task/checkalllist') : ('getselectinfo');
+      selectTaskName: "",
+      selectTaskSearch: false
+    };
+  },
 
-        /*
+  mounted() {
+    this.pageType = this.$route.query.type;
+
+    document.title = this.pageType === "work" ? "工作验收" : "报名管理";
+
+    if (!!sessionStorage.getItem("signListType")) {
+      this.selectState = sessionStorage.getItem("signListType");
+
+      sessionStorage.removeItem("signListType");
+    }
+
+    this.getData();
+
+    this.getTaskData();
+  },
+
+  methods: {
+    jumpTo: function(obj) {
+      localStorage.setItem("signDataEnt", JSON.stringify(obj));
+
+      this.pageType === "work" && this.$router.push("/workCheck");
+
+      this.pageType === "signup" && this.$router.push("/signDetail");
+    },
+
+    getData: function() {
+      var params = {};
+
+      params.pageNum = this.pageNum;
+
+      this.selectState !== "" &&
+        this.pageType === "signup" &&
+        (params.selectState = this.selectState);
+
+      this.selectState !== "" &&
+        this.pageType === "work" &&
+        (params.workState = this.selectState);
+
+      this.taskName !== "" &&
+        this.pageType === "signup" &&
+        (params.taskName = this.taskName);
+
+      this.taskName !== "" &&
+        this.pageType === "work" &&
+        (params.userName = this.taskName);
+
+      var url =
+        this.pageType === "work" ? "table/task/checkalllist" : "getselectinfo";
+
+      /*
         * 接口： 登录企业下工作验收列表
         * 请求方式： POST
         * 接口： table/task/checkalllist
         * 入参： userName, workState
         * */
 
-        /*
+      /*
         * 接口： 企业众包任务报名信息查询
         * 请求方式： POST
         * 接口： getselectinfo
         * 入参： selectState, taskName,
         * */
-        this.$http({
+      this.$http({
+        url: process.env.API_ROOT + url,
+        method: "post",
+        params: params
+      }).then(res => {
+        this.list = this.list.concat(res.data.data.list);
 
-          url: process.env.API_ROOT + url,
-          method: 'post',
-          params: params
+        this.moreData = res.data.data.list.length >= 10 ? true : false;
+      });
+    },
 
-        }).then(res=>{
+    loadMore: function() {
+      if (this.moreData) {
+        this.pageNum++;
 
-          this.list = this.list.concat(res.data.data.list);
+        this.getData();
+      }
+    },
 
-          this.moreData = (res.data.data.list.length >= 10) ? ( true): (false);
-
-        })
-
-      },
-
-
-      loadMore: function () {
-
-        if(this.moreData) {
-
-          this.pageNum++;
-
-          this.getData();
-
+    getTaskData() {
+      var params = {};
+      // 兼容两个接 默认查100条
+      params.pageNum = 1;
+      params.pageSize = 100;
+      let url = "";
+      if (this.pageType == "signup") {
+        url = "gettasknameinfo";
+      } else {
+        url = "getselectinfo";
+      }
+      this.$http({
+        url: process.env.API_ROOT + url,
+        method: "get",
+        params: params
+      }).then(res => {
+        if (this.pageType == "signup") {
+          this.taskList = res.data.data;
+        } else {
+          this.taskList = res.data.data.list;
         }
-
-      },
-
-
-      selectByState: function (state) {
-
-        this.selectState = state;
-
-        sessionStorage.setItem('signListType', state);
-
-        this.pageNum = 1;
-
-        this.list = [];
-
-        this.getData();
-
-      },
-
-      loadTop: function () {
-
-        this.pageNum = 1;
-
-        this.taskName = '';
-
-        this.list = [];
-
-        this.getData();
-
-        this.$refs.loadmore.onTopLoaded();
-
-      },
-
-
-      cancelFn: function () {
-
-        this.taskName = '';
-
-        this.pageNum = 1;
-
-        this.list = [];
-
-        this.getData();
-
-      }
-
+      });
     },
 
-    watch: {
+    selectByState: function(state) {
+      this.selectState = state;
 
-      taskName: function () {
+      sessionStorage.setItem("signListType", state);
 
-        this.list = [];
+      this.pageNum = 1;
 
-        this.pageNum = 1;
+      this.list = [];
 
-        this.getData();
-
-      }
-
+      this.getData();
     },
 
+    loadTop: function() {
+      this.pageNum = 1;
 
-    computed : {
+      this.taskName = "";
 
-      cancelShow: function () {
+      this.list = [];
 
-        return !!this.taskName;
+      this.getData();
 
+      this.$refs.loadmore.onTopLoaded();
+    },
+
+    cancelFn: function() {
+      this.taskName = "";
+
+      this.selectTaskSearch=false;
+
+      this.pageNum = 1;
+
+      this.list = [];
+
+      this.getData();
+    },
+    taskNameCilck(item) {
+      if (!item) {
+        this.selectTaskName = "";
+        this.taskName = "";
+      } else {
+        this.selectTaskName = item.taskId;
+
+        this.taskName = this.selectTaskName;
       }
+      this.selectTaskShow = false;
+    }
+  },
 
+  watch: {
+    taskName: function() {
+      this.list = [];
+
+      this.pageNum = 1;
+
+      this.getData();
+    }
+  },
+
+  computed: {
+    cancelShow: function() {
+      return !!this.taskName;
     }
   }
+};
 </script>
 
 <style scoped lang="less">
-  @import "sign_list.less";
+@import "sign_list.less";
 </style>
