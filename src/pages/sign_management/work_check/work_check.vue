@@ -77,10 +77,19 @@
             <div class="place_detail">{{feedback.taskFeedback.pPlace}}</div>
           </div>
         </div>
+        
+        <div class="feedword">还没反馈工作哦~</div>
+      </div>
+  
+      <div class="feddback_line"></div>
+      <div class="feedback_add" v-on:click="$router.push('/workInput')">
+        <img src="../../../../static/image/work_add.png" alt="">
+      添加工作反馈
       </div>
 
     </div>
-
+  
+    <div class="button button_help background_linear_gradient">帮助提交验收</div>
     <div class="button background_linear_gradient" v-on:click="buttonClickFn" v-if="workDetail.workState === '2'">验收</div>
 
   </div>

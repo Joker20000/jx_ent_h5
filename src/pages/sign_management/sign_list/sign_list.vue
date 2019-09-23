@@ -16,12 +16,34 @@
         <div v-on:click="selectByState('4')" v-bind:class="{'selected' : selectState === '4'}">验收中</div>
         <div v-on:click="selectByState('3')" v-bind:class="{'selected' : selectState === '3'}">验收通过</div>
       </div>
+  
+      <div class="select">
+        <div class="company" v-on:click="selectShow('Task')">
+          <span class="three"><img src="../../../../static/image/jx_search.png"></span>
+          <span class="show_type"  v-bind:class="{'click_type': selectTaskShow}">任务筛选</span>
+        </div>
+        <div class="task_state" >
+          <span class="three"><img src="../../../../static/image/jx_find.png"></span>
+  
+          <span class="show_type">搜索</span>
+        </div>
+      </div>
+  
+      <!--<div class="select_bg" v-if="selectTaskShow" v-on:click=" selectTaskShow = false"></div>-->
+  <!---->
+      <!--<div class="select_by_company" v-if="selectTaskShow">-->
+        <!--<div class="company_select" v-on:click="screen('company','all')" v-bind:class="{'color_text': entId === ''}">全部</div>-->
+        <!--<div class="company_select" v-for="company in companyList" v-on:click="screen('company', company.entId)" v-bind:class="{'color_text': entId === company.entId}">{{company.entName}}</div>-->
+      <!--</div>-->
+      <!---->
+      
+      
       <div class="input_box">
         <div class="input">
           <div class="input_img">
             <img src="../../../../static/image/jx_find.png">
           </div>
-          <input type="text" placeholder="搜索姓名或任务名称" v-model="taskName">
+          <input type="text" placeholder="搜索姓名或任务名称" v-model="taskName" v-on:hover="" v-on:blur="">
         </div>
         <div class="input_cancel" v-on:click="cancelFn" v-if="cancelShow">取消</div>
       </div>
@@ -97,6 +119,8 @@
         taskName: '',
 
         moreData: false,
+  
+        selectTaskShow: false,//任务状态选择框显示状态
 
         pageType: ''
 

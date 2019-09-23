@@ -134,11 +134,11 @@
 
       <div class="task_information" v-if="sendContract">
 
-        <div class="list must_input" v-on:click="pickerSelect('invoice')">
-          <div class="title">发票类型</div>
-          <div class="content select" v-if="this.invoice.length === 0">请选择发票类型</div>
-          <div class="content select data" v-else>{{this.invoice[0]}}</div>
-        </div>
+        <!--<div class="list must_input" v-on:click="pickerSelect('invoice')">-->
+          <!--<div class="title">发票类型</div>-->
+          <!--<div class="content select" v-if="this.invoice.length === 0">请选择发票类型</div>-->
+          <!--<div class="content select data" v-else>{{this.invoice[0]}}</div>-->
+        <!--</div>-->
 
         <div class="list must_input" v-on:click="pickerSelect('templet')">
           <div class="title">合同模板</div>
@@ -249,9 +249,9 @@
 
         ent: [],//点击确定时选择的发薪企业
 
-        _invoice: '',//点击取消时选择的发票类型
-
-        invoice: [],//点击确定时选择的发票类型
+        // _invoice: '',//点击取消时选择的发票类型
+        //
+        // invoice: [],//点击确定时选择的发票类型
 
         _templet: '',//点击取消时选择的合同模板类型
 
@@ -609,11 +609,11 @@
 
               break;
 
-            case 'invoice':
-
-              this.invoiceSelect();
-
-              break;
+            // case 'invoice':
+            //
+            //   this.invoiceSelect();
+            //
+            //   break;
 
             case 'templet':
 
@@ -724,17 +724,17 @@
 
 
       //选择发票类型
-      invoiceSelect: function () {
-
-        this.slot1.values = this.invoiceList;
-
-        this.slots.push(this.slot1);
-
-        (this._invoice && !this.invoice) && (this.$refs.picker.setSlotValue(0, this._invoice[0]));
-
-        (this.invoice) && (this.$refs.picker.setSlotValue(0, this.invoice[0]));
-
-      },
+      // invoiceSelect: function () {
+      //
+      //   this.slot1.values = this.invoiceList;
+      //
+      //   this.slots.push(this.slot1);
+      //
+      //   (this._invoice && !this.invoice) && (this.$refs.picker.setSlotValue(0, this._invoice[0]));
+      //
+      //   (this.invoice) && (this.$refs.picker.setSlotValue(0, this.invoice[0]));
+      //
+      // },
 
       //选择合同模板
       templetSelect: function () {
@@ -1050,11 +1050,12 @@
 
         }else if(this.sendContract){
 
-          if(this.invoice.length === 0) {
-
-            message = '请选择发票类型';
-
-          }else if(this.templet.length === 0) {
+          // if(this.invoice.length === 0) {
+          //
+          //   message = '请选择发票类型';
+          //
+          // }else
+            if(this.templet.length === 0) {
 
             message = '请选择合同模板';
 
@@ -1168,7 +1169,7 @@
         (this.noLimit) && (params.peopleCount = '不限');
 
         //发票类型赋值
-        params.invoiceType = (this.invoice[0] === '人力资源服务') ? ('1') : ('2');
+        // params.invoiceType = (this.invoice[0] === '人力资源服务') ? ('1') : ('2');
 
         //合同类型赋值
         this.templetList.some(obj=>{
@@ -1360,7 +1361,7 @@
         if(this.sendContract) {
 
           //发票类型赋值
-          this.invoice.push(this.invoiceList[taskInfo.invoiceType - 1]);
+          // this.invoice.push(this.invoiceList[taskInfo.invoiceType - 1]);
 
           //合同模板类型赋值
           this.templet.push(taskInfo.templateName);

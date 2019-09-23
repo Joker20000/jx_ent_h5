@@ -42,6 +42,12 @@
         <span>发布到任务广场</span>
         <mt-switch v-model="taskShow"></mt-switch>
       </div>
+  
+      <div class="show_all" v-if="taskInfo.state === '1' || taskInfo.state === '2'" >
+        <span v-on:click="changeBtn">自动发送合同</span>
+        <mt-switch v-model="isSendContract"></mt-switch>
+      </div>
+      
       <div class="task_info" v-if="taskInfo.isSendContract === '1'">
         <span>任务合同：</span><span>自动发送合同</span>
       </div>
@@ -163,6 +169,8 @@
         taskInfo: {},//任务信息
 
         taskShow: true,//发布到任务广场状态
+  
+        isSendContract:true,//自动发送合同状态
 
         fileList: {},//文件列表
 
@@ -209,6 +217,8 @@
           this.taskInfo = res.data.data;
 
           this.taskShow = (res.data.data.isShow === '1');
+          
+          this.isSendContract = (res.data.data.isSendContract === '1');
 
           if(this.taskInfo.taskFile){
 
@@ -261,7 +271,40 @@
         return fileObj;
 
       },
-
+  
+      changeBtn: function () {
+    
+        // this.$messagebox({
+        //
+        //   title: '提示',
+        //   message: '为保证电子合同具有法律效力，开启自动发送任务合同前，请先前往PC端【合同管理】-【印章管理】中申请企业印章证书，申请成功即可开启',
+        //   showCancelButton:false,
+        //   confirmButtonText: '好的',
+        //   closeOnClickModal: true,
+        //
+        // }).then(res=>{
+        // })
+  
+        this.$messagebox({
+    
+          title: '提示',
+          message: '开启自动发送合同，需先填写合同及发票信息',
+          showCancelButton:true,
+          confirmButtonText: '去填写',
+          cancelButtonText: '取消',
+          closeOnClickModal: true,
+    
+        }).then(res=>{
+    
+          if(res === 'confirm'){
+  
+            this.$router.push('/taskEdit');
+            
+          }
+    
+        })
+    
+      },
 
       //删除任务
       deleteTask: function () {
