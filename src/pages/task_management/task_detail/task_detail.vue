@@ -24,7 +24,10 @@
       </div>
       <div class="task_money_state">
         <div class="task_money">
-          <div>￥{{taskInfo.taskMinUnit}}<span v-if="!!taskInfo.taskMaxUnit">-</span><span v-if="!!taskInfo.taskMaxUnit">{{taskInfo.taskMaxUnit}}</span></div>
+          <div>￥{{taskInfo.taskMinUnit}}
+            <span v-if="!!taskInfo.taskMaxUnit">-</span>
+            <span v-if="!!taskInfo.taskMaxUnit">{{taskInfo.taskMaxUnit}}</span>
+          </div>
           <div>任务预算单价</div>
         </div>
         <div class="task_money_all">
@@ -42,41 +45,51 @@
         <span>发布到任务广场</span>
         <mt-switch v-model="taskShow"></mt-switch>
       </div>
-  
-      <div class="show_all" v-if="taskInfo.state === '1' || taskInfo.state === '2'" >
-        <span v-on:click="changeBtn">自动发送合同</span>
-        <mt-switch v-model="isSendContract"></mt-switch>
+
+      <div class="show_all" v-if="taskInfo.state === '1' || taskInfo.state === '2'">
+        <span>自动发送合同</span>
+        <mt-switch @change="changeBtn()" v-model="isSendContract"></mt-switch>
       </div>
-      
+
       <!-- <div class="task_info" v-if="taskInfo.isSendContract === '1'">
         <span>任务合同：</span><span>自动发送合同</span>
       </div> -->
       <div class="task_info" v-if="taskInfo.state !== '3'">
-        <span>需要人数：</span><span>{{taskInfo.peopleCount}}</span>
+        <span>需要人数：</span>
+        <span>{{taskInfo.peopleCount}}</span>
       </div>
       <div class="task_info" v-if="taskInfo.state === '1'">
-        <span>报名人数：</span><span>{{taskInfo.signUpTotal}}</span>
+        <span>报名人数：</span>
+        <span>{{taskInfo.signUpTotal}}</span>
       </div>
       <div class="task_info" v-if="taskInfo.state === '2'">
-        <span>已录用人数：</span><span>{{taskInfo.hireTotal}}</span>
+        <span>已录用人数：</span>
+        <span>{{taskInfo.hireTotal}}</span>
       </div>
       <div class="task_info" v-if="taskInfo.state === '3' || taskInfo.state === '4'">
-        <span>实际用工人数：</span><span>{{taskInfo.realHireTotal}}</span>
+        <span>实际用工人数：</span>
+        <span>{{taskInfo.realHireTotal}}</span>
       </div>
       <div class="task_info" v-if="taskInfo.state === '3'">
-        <span>实际发放资金：</span><span>{{taskInfo.realAmountTotal}}</span>
+        <span>实际发放资金：</span>
+        <span>{{taskInfo.realAmountTotal}}</span>
       </div>
       <div class="task_info">
-        <span>报名截止时间：</span><span v-if="!!taskInfo.abortDate">{{taskInfo.abortDate | fmtDateStr2}}</span><span v-else>不限</span>
+        <span>报名截止时间：</span>
+        <span v-if="!!taskInfo.abortDate">{{taskInfo.abortDate | fmtDateStr2}}</span>
+        <span v-else>不限</span>
       </div>
       <div class="task_info">
-        <span>发布企业：</span><span>{{taskInfo.entName}}</span>
+        <span>发布企业：</span>
+        <span>{{taskInfo.entName}}</span>
       </div>
       <div class="task_info" v-if="taskInfo.state !== '1'">
-        <span>发布时间：</span><span>{{taskInfo.releaseDate | fmtTimeStr2}}</span>
+        <span>发布时间：</span>
+        <span>{{taskInfo.releaseDate | fmtTimeStr2}}</span>
       </div>
       <div class="task_info" v-else>
-        <span>创建时间：</span><span>{{taskInfo.createDate | fmtTimeStr2}}</span>
+        <span>创建时间：</span>
+        <span>{{taskInfo.createDate | fmtTimeStr2}}</span>
       </div>
     </div>
     <div class="task_content">
@@ -159,520 +172,429 @@
 </template>
 
 <script>
-  export default {
-    name: "task_detail.vue",
+export default {
+  name: "task_detail.vue",
 
-    data () {
+  data() {
+    return {
+      taskInfo: {}, //任务信息
 
-      return {
+      taskShow: true, //发布到任务广场状态
 
-        taskInfo: {},//任务信息
+      isSendContract: true, //自动发送合同状态
 
-        taskShow: true,//发布到任务广场状态
-  
-        isSendContract:true,//自动发送合同状态
+      fileList: {}, //文件列表
 
-        fileList: {},//文件列表
+      dataState: false, //数据状态（判断页面刚进入还是加载完毕）
+      companyList: []
+    };
+  },
 
-        dataState: false,//数据状态（判断页面刚进入还是加载完毕）
+  mounted() {
+    this.getData();
 
-      }
+    this.getCompantList();
 
-    },
+    window.scrollTo(0, 0);
+  },
 
-    mounted () {
-
-      this.getData();
-
-      window.scrollTo(0,0);
-
-    },
-
-
-    methods: {
-
-      //获取任务详情
-      getData: function () {
-
-        /*
+  methods: {
+    //获取任务详情
+    getData: function() {
+      /*
         * 接口： 企业众包任务详情查询
         * 请求方式： POST
         * 接口： gettaskinfosimple
         * 传参：taskId
         * */
-        this.$http({
+      this.$http({
+        url: process.env.API_ROOT + "gettaskinfosimple",
+        method: "post",
+        params: {
+          taskId: this.$route.query.taskId
+        }
+      }).then(res => {
+        console.log(res);
 
-          url: process.env.API_ROOT + 'gettaskinfosimple',
-          method: 'post',
-          params: {
-            taskId: this.$route.query.taskId
-          }
+        res.data.data.taskDetails.indexOf("\n") !== -1 &&
+          (res.data.data.taskDetails = res.data.data.taskDetails
+            .split("\n")
+            .join("</br>"));
 
-        }).then(res=>{
+        this.taskInfo = res.data.data;
 
-          console.log(res);
+        this.taskShow = res.data.data.isShow === "1";
 
-          (res.data.data.taskDetails.indexOf('\n') !== -1) && (res.data.data.taskDetails = res.data.data.taskDetails.split('\n').join('</br>'));
+        this.isSendContract = res.data.data.isSendContract === "1";
 
-          this.taskInfo = res.data.data;
-
-          this.taskShow = (res.data.data.isShow === '1');
-          
-          this.isSendContract = (res.data.data.isSendContract === '1');
-
-          if(this.taskInfo.taskFile){
-
-            this.fileList = this.getTaskFile(this.taskInfo.taskFile, this.taskInfo.originalFileNames);
-
-          }
-
-          if(!!this.taskInfo.entTaskAddList){
-
-            for(var obj of this.taskInfo.entTaskAddList) {
-
-              if(!!obj.taskAddtionFile) {
-
-                obj.additionFile = this.getTaskFile(obj.taskAddtionFile, obj.originalFileNamesAdd);
-
-              }
-
-            }
-
-          }
-
-          setTimeout(function () {
-
-            this.dataState = true;
-
-          }.bind(this), 1);
-
-        });
-
-      },
-
-
-      //更改文件列表显示状态
-      getTaskFile: function (taskFile, originalFileNames) {
-
-        var fileList = taskFile.split(',');
-
-        var fileNameList = originalFileNames.split(',');
-
-        var fileObj = {};
-
-        var length = fileList.length;
-
-        while(length--) {
-
-          fileObj[fileList[length]] = fileNameList[length];
-
+        if (this.taskInfo.taskFile) {
+          this.fileList = this.getTaskFile(
+            this.taskInfo.taskFile,
+            this.taskInfo.originalFileNames
+          );
         }
 
-        return fileObj;
-
-      },
-  
-      changeBtn: function () {
-    
-        // this.$messagebox({
-        //
-        //   title: '提示',
-        //   message: '为保证电子合同具有法律效力，开启自动发送任务合同前，请先前往PC端【合同管理】-【印章管理】中申请企业印章证书，申请成功即可开启',
-        //   showCancelButton:false,
-        //   confirmButtonText: '好的',
-        //   closeOnClickModal: true,
-        //
-        // }).then(res=>{
-        // })
-  
-        this.$messagebox({
-    
-          title: '提示',
-          message: '开启自动发送合同，需先填写合同及发票信息',
-          showCancelButton:true,
-          confirmButtonText: '去填写',
-          cancelButtonText: '取消',
-          closeOnClickModal: true,
-    
-        }).then(res=>{
-    
-          if(res === 'confirm'){
-  
-            this.$router.push('/taskEdit');
-            
+        if (!!this.taskInfo.entTaskAddList) {
+          for (var obj of this.taskInfo.entTaskAddList) {
+            if (!!obj.taskAddtionFile) {
+              obj.additionFile = this.getTaskFile(
+                obj.taskAddtionFile,
+                obj.originalFileNamesAdd
+              );
+            }
           }
-    
-        })
-    
-      },
+        }
 
-      //删除任务
-      deleteTask: function () {
+        setTimeout(
+          function() {
+            this.dataState = true;
+          }.bind(this),
+          1
+        );
+      });
+    },
 
+    //更改文件列表显示状态
+    getTaskFile: function(taskFile, originalFileNames) {
+      var fileList = taskFile.split(",");
+
+      var fileNameList = originalFileNames.split(",");
+
+      var fileObj = {};
+
+      var length = fileList.length;
+
+      while (length--) {
+        fileObj[fileList[length]] = fileNameList[length];
+      }
+
+      return fileObj;
+    },
+
+    getCompantList() {
+      this.$http({
+        method: "get",
+        url: process.env.API_ROOT + "jx/common/salaryentbusiness",
+        params: {
+          entId: localStorage.getItem("entIdEnt"),
+          verifyState: 3,
+          signState: 1,
+          businessType: "05"
+        }
+      }).then(res => {
+        if (res.data.code === "-1") {
+          this.$toast({
+            message: res.data.msg,
+            position: "middle",
+            duration: 1500
+          });
+        } else if (res.data.code === "0000") {
+          this.companyList = res.data.data;
+        }
+      });
+    },
+    changeBtn: function() {
+      let arr = this.companyList.filter(e => {
+        return e.entId == this.taskInfo.entId && e.bestSignIsOpen == "1";
+      });
+      if ((!arr || arr.length == 0) && this.isSendContract) {
         this.$messagebox({
+          title: "提示",
+          message:
+            "为保证电子合同具有法律效力，开启自动发送任务合同前，请先前往PC端【合同管理】-【印章管理】中申请企业印章证书，申请成功即可开启",
+          showCancelButton: false,
+          confirmButtonText: "好的",
+          closeOnClickModal: true
+        }).then(res => {
+          this.isSendContract = false;
+        });
+        return;
+      }
+      if (
+        this.isSendContract &&
+        (!this.taskInfo.templateId ||
+        this.taskInfo.templateId == "")
+      ) {
+        this.$messagebox({
+          title: "提示",
+          message: "开启自动发送合同，需先填写合同及发票信息",
+          showCancelButton: true,
+          confirmButtonText: "去填写",
+          cancelButtonText: "取消",
+          closeOnClickModal: true
+        }).then(res => {
+          this.isSendContract = false;
+          if (res === "confirm") {
+            this.$router.push("/taskEdit");
+          }
+        });
+        return;
+      }
+      this.$http({
+        url: process.env.API_ROOT + "updateenttask",
+        method: "post",
+        params: {
+          taskId: this.$route.query.taskId,
+          isSendContract: this.isSendContract ? "1" : "0"
+        }
+      }).then(res => {
+        this.$toast({
+          message: res.data.msg,
+          position: "middle",
+          duration: 1500
+        });
 
-          title: '确认删除任务',
-          message: '删除任务后，该任务将不能继续发布，确认删除？',
-          showCancelButton:true,
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          closeOnClickModal: true,
+        if (res.data.code !== "0000") {
+          this.isSendContract =!this.isSendContract ;
+        }
+      });
+    },
 
-        }).then(res=>{
-
-          if(res === 'confirm') {
-
-            /*
+    //删除任务
+    deleteTask: function() {
+      this.$messagebox({
+        title: "确认删除任务",
+        message: "删除任务后，该任务将不能继续发布，确认删除？",
+        showCancelButton: true,
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        closeOnClickModal: true
+      }).then(res => {
+        if (res === "confirm") {
+          /*
             * 接口： 删除任务
             * 请求方式： GET
             * 接口： deltask
             * 入参： this.
             * */
-            this.$http({
+          this.$http({
+            url: process.env.API_ROOT + "deltask",
+            method: "get",
+            params: {
+              taskId: this.$route.query.taskId
+            }
+          }).then(res => {
+            this.$toast({
+              message: res.data.msg,
+              position: "middle",
+              duration: 1500
+            });
 
-              url: process.env.API_ROOT + 'deltask',
-              method: 'get',
-              params: {
-                taskId: this.$route.query.taskId
-              }
+            if (res.data.code === "0000") {
+              sessionStorage.setItem("delete", "1");
 
-            }).then(res=>{
+              this.$router.go(-1);
+            }
+          });
+        }
+      });
+    },
 
-              this.$toast({
+    //继续发布任务
+    publishTask: function() {
+      sessionStorage.setItem("change", "1");
 
-                message: res.data.msg,
-                position: 'middle',
-                duration: 1500
+      sessionStorage.setItem("taskInfo", JSON.stringify(this.taskInfo));
 
-              });
+      this.$router.push("/releaseTask");
+    },
 
-              if(res.data.code === '0000'){
-
-                sessionStorage.setItem('delete','1');
-
-                this.$router.go(-1);
-
-              }
-
-            })
-
-          }
-
-        })
-
-      },
-
-      //继续发布任务
-      publishTask: function () {
-
-        sessionStorage.setItem('change', '1');
-
-        sessionStorage.setItem('taskInfo', JSON.stringify(this.taskInfo));
-
-        this.$router.push('/releaseTask');
-
-      },
-
-
-      //结束报名
-      endTask: function () {
-
-        this.$messagebox({
-
-          title: '确认结束报名',
-          message: '结束报名后，任务将不再展示在任务广场，用户也不可再报名，确认结束？',
-          showCancelButton:true,
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          closeOnClickModal: true,
-
-        }).then(res=>{
-
-          if(res === 'confirm'){
-
-            /*
+    //结束报名
+    endTask: function() {
+      this.$messagebox({
+        title: "确认结束报名",
+        message:
+          "结束报名后，任务将不再展示在任务广场，用户也不可再报名，确认结束？",
+        showCancelButton: true,
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        closeOnClickModal: true
+      }).then(res => {
+        if (res === "confirm") {
+          /*
             * 接口： 更新企业众包任务
             * 请求方式： POST
             * 接口： updateenttask
             * 入参： signupState
             * */
-            this.$http({
-
-              url: process.env.API_ROOT + 'updateenttask',
-              method: 'post',
-              params: {
-                taskId: this.$route.query.taskId,
-                signupState: 3
-              }
-
-            }).then(res=>{
-
-              this.$toast({
-
-                message: res.data.msg,
-                position: 'middle',
-                duration: 1500
-
-              });
-
-              if(res.data.code === '0000'){
-
-                sessionStorage.setItem('delete','1');
-
-                this.getData();
-
-                window.scrollTo(0,0)
-
-              }
-
+          this.$http({
+            url: process.env.API_ROOT + "updateenttask",
+            method: "post",
+            params: {
+              taskId: this.$route.query.taskId,
+              signupState: 3
+            }
+          }).then(res => {
+            this.$toast({
+              message: res.data.msg,
+              position: "middle",
+              duration: 1500
             });
 
-          }
+            if (res.data.code === "0000") {
+              sessionStorage.setItem("delete", "1");
 
-        })
+              this.getData();
 
-      },
-
-
-      //关闭任务
-      closeTask: function () {
-
-        this.$messagebox({
-
-          title: '确认关闭任务',
-          message: '任务关闭后，任务将不在任务广场显示，同时所有报名将失效，确认关闭？',
-          showCancelButton:true,
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          closeOnClickModal: true,
-
-        }).then(res=>{
-
-          if(res === 'confirm'){
-
-            /*
-            * 接口： 更新企业众包任务
-            * 请求方式： POST
-            * 接口： updateenttask
-            * 入参： state
-            * */
-            this.$http({
-
-              url: process.env.API_ROOT + 'updateenttask',
-              method: 'post',
-              params: {
-                taskId: this.$route.query.taskId,
-                state: 4
-              }
-
-            }).then(res=>{
-
-              this.$toast({
-
-                message: res.data.msg,
-                position: 'middle',
-                duration: 1500
-
-              });
-
-              if(res.data.code === '0000'){
-
-                sessionStorage.setItem('delete','1');
-
-                this.getData();
-
-                window.scrollTo(0,0)
-
-              }
-
-            });
-
-          }
-
-        })
-
-      },
-
-
-      //结束任务
-      finishTask: function () {
-
-        this.$messagebox({
-
-          title: '确认结束任务',
-          message: '若存在用户未完成结算，因此产生的相关纠纷，平台不承担任何责任。',
-          showCancelButton:true,
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          closeOnClickModal: true,
-
-        }).then(res=>{
-
-          if(res === 'confirm'){
-
-            /*
-            * 接口： 更新企业众包任务
-            * 请求方式： POST
-            * 接口： updateenttask
-            * 入参： state
-            * */
-            this.$http({
-
-              url: process.env.API_ROOT + 'updateenttask',
-              method: 'post',
-              params: {
-                taskId: this.$route.query.taskId,
-                state: 3
-              }
-
-            }).then(res=>{
-
-              this.$toast({
-
-                message: res.data.msg,
-                position: 'middle',
-                duration: 1500
-
-              });
-
-              if(res.data.code === '0000'){
-
-                sessionStorage.setItem('delete','1');
-
-                this.getData();
-
-                window.scrollTo(0,0);
-
-              }
-
-            });
-
-          }
-
-        })
-
-      }
-
+              window.scrollTo(0, 0);
+            }
+          });
+        }
+      });
     },
 
-
-    destroyed () {
-
-      this.$messagebox.close();
-
-    },
-
-    watch: {
-
-      //更改任务广场发布状态
-      taskShow: function () {
-
-        if(this.dataState) {
-
+    //关闭任务
+    closeTask: function() {
+      this.$messagebox({
+        title: "确认关闭任务",
+        message:
+          "任务关闭后，任务将不在任务广场显示，同时所有报名将失效，确认关闭？",
+        showCancelButton: true,
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        closeOnClickModal: true
+      }).then(res => {
+        if (res === "confirm") {
           /*
+            * 接口： 更新企业众包任务
+            * 请求方式： POST
+            * 接口： updateenttask
+            * 入参： state
+            * */
+          this.$http({
+            url: process.env.API_ROOT + "updateenttask",
+            method: "post",
+            params: {
+              taskId: this.$route.query.taskId,
+              state: 4
+            }
+          }).then(res => {
+            this.$toast({
+              message: res.data.msg,
+              position: "middle",
+              duration: 1500
+            });
+
+            if (res.data.code === "0000") {
+              sessionStorage.setItem("delete", "1");
+
+              this.getData();
+
+              window.scrollTo(0, 0);
+            }
+          });
+        }
+      });
+    },
+
+    //结束任务
+    finishTask: function() {
+      this.$messagebox({
+        title: "确认结束任务",
+        message:
+          "若存在用户未完成结算，因此产生的相关纠纷，平台不承担任何责任。",
+        showCancelButton: true,
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        closeOnClickModal: true
+      }).then(res => {
+        if (res === "confirm") {
+          /*
+            * 接口： 更新企业众包任务
+            * 请求方式： POST
+            * 接口： updateenttask
+            * 入参： state
+            * */
+          this.$http({
+            url: process.env.API_ROOT + "updateenttask",
+            method: "post",
+            params: {
+              taskId: this.$route.query.taskId,
+              state: 3
+            }
+          }).then(res => {
+            this.$toast({
+              message: res.data.msg,
+              position: "middle",
+              duration: 1500
+            });
+
+            if (res.data.code === "0000") {
+              sessionStorage.setItem("delete", "1");
+
+              this.getData();
+
+              window.scrollTo(0, 0);
+            }
+          });
+        }
+      });
+    }
+  },
+
+  destroyed() {
+    this.$messagebox.close();
+  },
+
+  watch: {
+    //更改任务广场发布状态
+    taskShow: function() {
+      if (this.dataState) {
+        /*
           * 接口： 任务是否展示
           * 请求方式： POST
           * 接口： taskisshow
           * 入参： taskId， isShow
           * */
-          this.$http({
+        this.$http({
+          url: process.env.API_ROOT + "taskisshow",
+          method: "post",
+          params: {
+            taskId: this.$route.query.taskId,
+            isShow: this.taskShow ? "1" : "0"
+          }
+        }).then(res => {
+          this.$toast({
+            message: res.data.msg,
+            position: "middle",
+            duration: 1500
+          });
 
-            url: process.env.API_ROOT + 'taskisshow',
-            method: 'post',
-            params: {
-              taskId: this.$route.query.taskId,
-              isShow: this.taskShow ? ('1') : ('0')
-            }
-
-          }).then(res=>{
-
-            this.$toast({
-
-              message: res.data.msg,
-              position: 'middle',
-              duration: 1500
-
-            });
-
-            if(res.data.code !== '0000'){
-
-              this.taskShow = !this.taskShow;
-
-            }
-
-          })
-
-        }
-
-      },
-      //更改任务广场发布状态
-      isSendContract: function () {
-
-        if(this.dataState) {
-
-
-          // 判断企业是否有印章
-          let isSend=!this.isSendContract;
-
-
-          this.$http({
-
-            url: process.env.API_ROOT + 'updateenttask',
-            method: 'post',
-            params: {
-              taskId: this.$route.query.taskId,
-              isSendContract: this.isSendContract ? ('1') : ('0')
-            }
-
-          }).then(res=>{
-
-            this.$toast({
-
-              message: res.data.msg,
-              position: 'middle',
-              duration: 1500
-
-            });
-
-            if(res.data.code !== '0000'){
-
-              this.isSendContract = !this.isSend;
-
-            }
-
-          })
-
-        }
-
+          if (res.data.code !== "0000") {
+            this.taskShow = !this.taskShow;
+          }
+        });
       }
-
     }
-
   }
+};
 </script>
 
 <style scoped lang="less">
-  @import "task_detail.less";
+@import "task_detail.less";
 </style>
 <style>
-  .task_detail .mint-switch .mint-switch-core{
-    height: 14px;
-    width: 27px;
-    border-radius: 7px;
-  }
-  .task_detail .mint-switch .mint-switch-core:after{
-    height: 12px;
-    width: 12px;
-    border-radius: 50%;
-  }
-  .task_detail .mint-switch .mint-switch-core:before{
-    width: 27px;
-    height: 14px;
-  }
-  .task_detail .mint-switch .mint-switch-input:checked +  .mint-switch-core::after{
-    transform: translateX(13px);
-  }
-  .mint-msgbox .mint-msgbox-btns> .mint-msgbox-btn{
-    font-size: 16px;
-  }
+.task_detail .mint-switch .mint-switch-core {
+  height: 14px;
+  width: 27px;
+  border-radius: 7px;
+}
+.task_detail .mint-switch .mint-switch-core:after {
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+}
+.task_detail .mint-switch .mint-switch-core:before {
+  width: 27px;
+  height: 14px;
+}
+.task_detail
+  .mint-switch
+  .mint-switch-input:checked
+  + .mint-switch-core::after {
+  transform: translateX(13px);
+}
+.mint-msgbox .mint-msgbox-btns > .mint-msgbox-btn {
+  font-size: 16px;
+}
 </style>

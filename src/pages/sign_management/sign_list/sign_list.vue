@@ -212,24 +212,12 @@ export default {
     getTaskData() {
       var params = {};
       // 兼容两个接 默认查100条
-      params.pageNum = 1;
-      params.pageSize = 100;
-      let url = "";
-      if (this.pageType == "signup") {
-        url = "gettasknameinfo";
-      } else {
-        url = "getselectinfo";
-      }
       this.$http({
-        url: process.env.API_ROOT + url,
+        url: process.env.API_ROOT + "gettasknameinfo",
         method: "get",
         params: params
       }).then(res => {
-        if (this.pageType == "signup") {
-          this.taskList = res.data.data;
-        } else {
-          this.taskList = res.data.data.list;
-        }
+        this.taskList = res.data.data;
       });
     },
 
@@ -260,7 +248,7 @@ export default {
     cancelFn: function() {
       this.taskName = "";
 
-      this.selectTaskSearch=false;
+      this.selectTaskSearch = false;
 
       this.pageNum = 1;
 
@@ -275,7 +263,7 @@ export default {
       } else {
         this.selectTaskName = item.taskId;
 
-        this.taskName = this.selectTaskName;
+        this.taskName = item.taskName;
       }
       this.selectTaskShow = false;
     }

@@ -153,7 +153,7 @@
           </div>
         </div>
 
-        <div class="list must_input" v-on:click="pickerSelect('ext')">
+        <div class="list must_input" v-on:click="pickerSelect('ext')" v-if="isCompanySelectShow">
           <div class="title">业务合作企业</div>
           <div class="content select" v-if="this.ext.length === 0">请选择业务合作企业</div>
           <div class="content select data" v-else>{{this.ext[0]}}</div>
@@ -297,7 +297,9 @@
 
         taskId: '',//任务Id
 
-        pageLoading: true
+        pageLoading: true,
+
+        isCompanySelectShow:false
 
 
       }
@@ -1540,6 +1542,20 @@
 
           this.taskMoney = this.taskMoney.slice(0, 10);
 
+        }
+
+      },
+      templet:function(){
+        let item={}
+         //合同类型赋值
+        this.templetList.some(obj=>{
+          (obj.templetName === this.templet[0]) && (item = obj);
+        });
+
+        if(item.templetType==1){
+          this.isCompanySelectShow=true;
+        }else{
+          this.isCompanySelectShow=false;
         }
 
       }
