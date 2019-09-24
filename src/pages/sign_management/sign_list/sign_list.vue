@@ -19,12 +19,12 @@
       </div>
 
       <div class="select" v-if="!selectTaskSearch">
-        <div class="company" v-on:click=" selectTaskShow = true" v-bind:class="{'color_text': taskName !== ''}">
-          <span class="three"><img src="../../../../static/image/jx_search.png"></span>
-          <span class="three"><img src="../../../../static/image/jx_search_blue.png"></span>
+        <div class="company" @click="taskSelectCilck()" v-bind:class="{'color_text': selectTaskShow}">
+          <span class="three" v-if="!selectTaskShow" ><img src="../../../../static/image/jx_search.png" ></span>
+          <span class="three" v-if="selectTaskShow" ><img src="../../../../static/image/jx_search_blue.png" ></span>
           <span class="show_type" >任务筛选</span>
         </div>
-        <div class="task_state" v-on:click=" selectTaskSearch = true" >
+        <div class="task_state" v-on:click="selectTaskSearchClick()" >
           <span class="three"><img src="../../../../static/image/jx_find.png"></span>
           <span class="show_type">搜索</span>
         </div>
@@ -43,8 +43,8 @@
 
     </div>
     
-    <div class="select_bg" v-if="selectTaskShow" v-on:click=" selectTaskShow = false"></div>
-    <div class="select_by_company" v-if="selectTaskShow">
+    <div class="select_bg" v-if="selectTaskShowModel"></div>
+    <div class="select_by_company" v-if="selectTaskShowModel">
       <div class="company_select" @click="taskNameCilck()" v-bind:class="{'color_text': selectTaskName === ''}">全部</div>
       <div class="company_select" v-for="item in taskList" v-bind:class="{'color_text': selectTaskName === item.taskId}" @click="taskNameCilck(item)">{{item.taskName}}</div>
     </div>
@@ -129,7 +129,8 @@ export default {
       taskList: [],
 
       selectTaskName: "",
-      selectTaskSearch: false
+      selectTaskSearch: false,
+      selectTaskShowModel: false,
     };
   },
 
@@ -265,12 +266,23 @@ export default {
       if (!item) {
         this.selectTaskName = "";
         this.taskName = "";
+        this.selectTaskShow=false;
       } else {
         this.selectTaskName = item.taskId;
 
         this.taskName = item.taskName;
       }
-      this.selectTaskShow = false;
+      this.selectTaskShowModel = false;
+    },
+    taskSelectCilck(){
+      this.selectTaskShowModel = true;
+      this.selectTaskShow = true;
+    },
+    selectTaskSearchClick(){
+      this.selectTaskSearch=true;
+      this.taskName='';
+      this.selectTaskShow=false;
+      this.selectTaskName='';
     }
   },
 
