@@ -153,7 +153,9 @@ export default {
   methods: {
     jumpTo: function(obj) {
       localStorage.setItem("signDataEnt", JSON.stringify(obj));
-
+  
+      sessionStorage.setItem("signListType", this.selectState);
+      
       this.pageType === "work" && this.$router.push("/workCheck");
 
       this.pageType === "signup" && this.$router.push("/signDetail");
@@ -229,9 +231,7 @@ export default {
 
     selectByState: function(state) {
       this.selectState = state;
-
-      sessionStorage.setItem("signListType", state);
-
+      
       this.pageNum = 1;
 
       this.list = [];
