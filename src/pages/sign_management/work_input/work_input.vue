@@ -2,13 +2,16 @@
   <div class="addition_input">
 
     <div class="addition_text">
-      <div class="title"><span class="must_input">*</span>反馈内容</div>
+      <div class="title">
+        <span class="must_input">*</span>反馈内容</div>
       <textarea v-model="additionText" placeholder="请填写反馈内容 （200字以内）" maxlength="200"></textarea>
       <div class="show_number">{{additionText.length}}</div>
     </div>
 
     <div class="input_files">
-      <div class="title">上传附件<span>（最多上传6个附件，大小不超过3M）</span></div>
+      <div class="title">上传附件
+        <span>（最多上传6个附件，大小不超过3M）</span>
+      </div>
       <div class="file_list">
         <div class="file" v-for="file in fileList">
           <div class="file_img">
@@ -24,10 +27,10 @@
           </div>
         </div>
       </div>
-  
+
       <div class="place">
         <div class="img"><img src="../../../../static/image/jx_work_check_place.png"></div>
-        <div class="place_detail">上海市徐汇区</div>
+        <div class="place_detail">{{address}}</div>
       </div>
     </div>
 
@@ -37,223 +40,181 @@
 </template>
 
 <script>
-  import commonButton from '../../../component/common_button/common_button'
-  export default {
-    name: "work_input.vue",
+import commonButton from "../../../component/common_button/common_button";
+export default {
+  name: "work_input.vue",
 
-    components: {
+  components: {
+    commonButton
+  },
 
-      commonButton
+  data() {
+    return {
+      additionText: "", //补充任务描述
 
-    },
+      fileList: [], //上传文件列表
 
-    data () {
+      btnName: "提交反馈", //按钮名称
 
-      return {
+      filesUrl: [], //文件链接列表
 
-        additionText: '',//补充任务描述
+      filesName: [], //文件名称列表
 
-        fileList: [],//上传文件列表
+      address: ""
+    };
+  },
+  mounted() {
+    WeixinJSBridge.invoke("geoLocation", {}, function(res) {
+      console.log(res);
+      this.address=res
+    });
+  },
 
-        btnName: '提交反馈',//按钮名称
+  methods: {
+    //文件上传
+    fileInput: function() {
+      var file = event.currentTarget.files[0];
 
-        filesUrl: [],//文件链接列表
+      var message;
 
-        filesName: [],//文件名称列表
+      var input;
 
-      }
+      if (file.name.split(".")[1] === "exe") {
+        message = "不支持ext格式文件";
 
-    },
+        input = false;
+      } else if (file.size > 3 * 1024 * 1024) {
+        message = "文件过大，无法上传，请压缩后重新上传";
 
-    methods: {
+        input = false;
+      } else {
+        var param = new FormData(); //创建form对象
 
-      //文件上传
-      fileInput: function () {
+        param.append("file", file, file.name); //通过append向form对象添加数据
 
-        var file = event.currentTarget.files[0];
+        message = "文件上传中";
 
-        var message;
-
-        var input;
-
-        if(file.name.split('.')[1] === 'exe'){
-
-          message = '不支持ext格式文件';
-
-          input = false;
-
-        }else if(file.size > 3*1024*1024) {
-
-          message = '文件过大，无法上传，请压缩后重新上传';
-
-          input = false;
-
-        }else {
-
-          var param = new FormData(); //创建form对象
-
-          param.append('file',file,file.name);//通过append向form对象添加数据
-
-          message = '文件上传中';
-
-          input = true;
-          /*
+        input = true;
+        /*
           * 接口： 图片上传
           * 请求方式： POST
           * 接口： jx/upload/oss
           * 入参： file
           * */
-          this.$http({
+        this.$http({
+          url: process.env.API_ROOT + "jx/upload/oss",
+          method: "post",
+          data: param
+        }).then(res => {
+          toast.close();
 
-            url: process.env.API_ROOT + 'jx/upload/oss',
-            method: 'post',
-            data: param
+          if (res.data.code === "0000") {
+            message = "上传成功";
 
-          }).then(res=>{
+            var thisfile = {};
 
-            toast.close();
+            thisfile.name = file.name;
 
-            if(res.data.code === '0000'){
+            thisfile.url = res.data.data.url;
 
-              message = '上传成功';
+            this.filesUrl.push(res.data.data.url);
 
-              var thisfile = {};
+            this.filesName.push(file.name);
 
-              thisfile.name = file.name;
-
-              thisfile.url = res.data.data.url;
-
-              this.filesUrl.push(res.data.data.url);
-
-              this.filesName.push(file.name);
-
-              this.fileList.push(thisfile);
-
-            }else {
-
-              message = res.data.msg;
-
-            }
-
-            this.$toast({
-
-              message: message,
-              position: 'middle',
-              duration: 1500
-
-            });
-
-          });
-
-        }
-
-        var toast = this.$toast({
-
-          message: message,
-          position: 'middle',
-          duration: input? 15000 : 1500
-
-        });
-
-        event.currentTarget.value = '';
-
-      },
-
-
-      //删除已上传文件
-      deleteFile: function (name) {
-
-        this.fileList.some(obj => {
-
-          if (obj.name === name){
-
-            this.fileList.splice(this.fileList.indexOf(obj),1);
-
-            this.filesUrl.splice(this.filesUrl.indexOf(obj.url),1);
-
-            this.filesName.splice(this.filesName.indexOf(obj.name),1);
-
+            this.fileList.push(thisfile);
+          } else {
+            message = res.data.msg;
           }
 
-          return obj.name === name;
-
+          this.$toast({
+            message: message,
+            position: "middle",
+            duration: 1500
+          });
         });
+      }
 
-      },
+      var toast = this.$toast({
+        message: message,
+        position: "middle",
+        duration: input ? 15000 : 1500
+      });
 
-      //提交任务补充
-      submit: function () {
+      event.currentTarget.value = "";
+    },
 
-        if(!this.check()) return;
+    //删除已上传文件
+    deleteFile: function(name) {
+      this.fileList.some(obj => {
+        if (obj.name === name) {
+          this.fileList.splice(this.fileList.indexOf(obj), 1);
 
-        var params = {};
+          this.filesUrl.splice(this.filesUrl.indexOf(obj.url), 1);
 
-        params.taskId = this.$route.query.taskId;
+          this.filesName.splice(this.filesName.indexOf(obj.name), 1);
+        }
 
-        params.taskAddtionDetail = this.additionText;
+        return obj.name === name;
+      });
+    },
 
-        (this.fileList.length > 0) && ((params.originalFileNamesAdd = this.filesName.join(',')) && (params.taskAddtionFile = this.filesUrl.join(',')));
+    //提交任务补充
+    submit: function() {
+      if (!this.check()) return;
 
-        /*
+      let workDetail = JSON.parse(localStorage.getItem("signDataEnt"));
+
+      var params = {};
+
+      params.taskId = "100105331";
+
+      params.taskAddtionDetail = this.additionText;
+
+      this.fileList.length > 0 &&
+        ((params.originalFileNamesAdd = this.filesName.join(",")) &&
+          (params.taskAddtionFile = this.filesUrl.join(",")));
+
+      /*
         * 接口： 企业众包任务添加附加内容
         * 请求方式： POST
         * 接口： addaddtionaltaskdetails
         * 入参： taskId, taskAddtionDetail, originalFileNamesAdd, taskAddtionFile
         * */
-        this.$http({
-
-          url: process.env.API_ROOT + 'addaddtionaltaskdetails',
-          method: 'post',
-          params: params
-
-        }).then(res=>{
-
-          if(res.data.code === '0000') {
-
-            this.$router.go(-1);
-
-          }
-
-        })
-
-      },
-
-
-      //检测页面输入信息
-      check: function () {
-
-        var message;
-
-        if(!this.additionText) {
-
-          message = '请填写反馈内容';
-
-        }else if(this.additionText.length < 4) {
-
-          message = '反馈内容不少于4个字符';
-
-        }else {
-
-          return true;
-
+      this.$http({
+        url: process.env.API_ROOT + "addaddtionaltaskdetails",
+        method: "post",
+        params: params
+      }).then(res => {
+        if (res.data.code === "0000") {
+          this.$router.go(-1);
         }
+      });
+    },
 
-        this.$toast({
+    //检测页面输入信息
+    check: function() {
+      var message;
 
-          message: message,
-          position: 'middle',
-          duration: 1500
-
-        });
-
-        return false;
-
+      if (!this.additionText) {
+        message = "请填写反馈内容";
+      } else if (this.additionText.length < 4) {
+        message = "反馈内容不少于4个字符";
+      } else {
+        return true;
       }
 
+      this.$toast({
+        message: message,
+        position: "middle",
+        duration: 1500
+      });
+
+      return false;
     }
   }
+};
 </script>
 
 <style scoped lang="less">
-  @import "work_input.less";
+@import "work_input.less";
 </style>

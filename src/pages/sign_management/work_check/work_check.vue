@@ -55,7 +55,10 @@
         <div>工作进展汇报</div>
       </div>
       <div class="feedback_list">
-        <div class="feedback" v-for="feedback in feedbackList">
+
+        <div class="feedword" v-if="this.feedbackList.length === 0">还没反馈工作哦~</div>
+
+        <div class="feedback" v-else=" " v-for="feedback in feedbackList">
           <div class="title" v-if="feedback.type === '1'">
             <span class="name">反馈内容</span>
             <span class="time">{{feedback.taskFeedback.pCreateDate | fmtTimeStr2}}</span>
@@ -77,18 +80,16 @@
             <div class="place_detail">{{feedback.taskFeedback.pPlace}}</div>
           </div>
         </div>
-        
-        <div class="feedword">还没反馈工作哦~</div>
+
       </div>
-  
+
       <div class="feddback_line"></div>
-      <div class="feedback_add" v-on:click="$router.push('/workInput')">
-        <img src="../../../../static/image/work_add.png" alt="">
-      添加工作反馈
+      <div class="feedback_add" v-on:click="buttonAdd">
+        <img src="../../../../static/image/work_add.png" alt=""> 添加工作反馈
       </div>
 
     </div>
-  
+
     <div class="button button_help background_linear_gradient" v-on:click="buttonSend" v-if="workDetail.workState === '1'">帮助提交验收</div>
     <div class="button background_linear_gradient" v-on:click="buttonClickFn" v-if="workDetail.workState === '2'">验收</div>
 
@@ -96,150 +97,159 @@
 </template>
 
 <script>
-  export default {
-    name: "work_check.vue",
+export default {
+  name: "work_check.vue",
 
-    data () {
+  data() {
+    return {
+      workDetail: {},
 
-      return {
+      workState: { 1: "工作中", 2: "待验收", 3: "验收通过", 4: "验收中" },
 
-        workDetail: {},
+      feedbackList: []
+    };
+  },
 
-        workState: {1: '工作中', 2: '待验收', 3: '验收通过', 4: '验收中'},
+  mounted() {
+    this.getData();
+  },
 
-        feedbackList: []
+  methods: {
+    getData: function() {
+      this.workDetail = JSON.parse(localStorage.getItem("signDataEnt"));
 
-      }
-
-    },
-
-    mounted () {
-
-      this.getData();
-
-    },
-
-
-    methods: {
-
-      getData: function () {
-
-        this.workDetail = JSON.parse(localStorage.getItem('signDataEnt'));
-
-        /*
+      /*
         * 接口： 查看工作汇报
         * 请求方式： POST
         * 接口： table/task/workreport
         * 入参： recordId
         * */
-        this.$http({
+      this.$http({
+        url: process.env.API_ROOT + "table/task/workreport",
+        method: "post",
+        params: {
+          recordId: this.workDetail.recordId
+        }
+      }).then(res => {
+        this.feedbackList = res.data.data;
 
-          url: process.env.API_ROOT + 'table/task/workreport',
-          method: 'post',
-          params: {
-            recordId: this.workDetail.recordId
-          }
+        for (var feedback of this.feedbackList) {
+          if (!!feedback.taskFeedback.pFiles) {
+            feedback.taskFeedback.files = {};
 
-        }).then(res=>{
+            var fileList = feedback.taskFeedback.pFiles.split(",");
 
-          this.feedbackList = res.data.data;
+            var fileNameList = feedback.taskFeedback.originalFileName.split(
+              ","
+            );
 
-          for(var feedback of this.feedbackList) {
+            var length = fileList.length;
 
-            if(!!feedback.taskFeedback.pFiles){
-
-              feedback.taskFeedback.files = {};
-
-              var fileList = feedback.taskFeedback.pFiles.split(',');
-
-              var fileNameList = feedback.taskFeedback.originalFileName.split(',');
-
-              var length = fileList.length;
-
-              while(length--){
-
-                feedback.taskFeedback.files[fileNameList[length]] = fileList[length];
-
-              }
-
+            while (length--) {
+              feedback.taskFeedback.files[fileNameList[length]] =
+                fileList[length];
             }
-
           }
+        }
+      });
+    },
 
-        })
+    buttonAdd() {
+      var message = "";
 
-      },
-  
-      buttonSend(){
-      
-      },
+      if (this.workDetail.workState == "3") {
+        message = "任务已完成";
+      } else if (this.workDetail.workState == "4") {
+        message = "任务已关闭";
+      }
+      if (message && message != "") {
+        this.$toast({
+          message: message,
+          position: "middle",
+          duration: 1500
+        });
+      } else {
+        this.$router.push("/workInput");
+      }
+    },
 
-      buttonClickFn: function () {
+    buttonSend() {
+      var message = "";
 
-        this.$messagebox({
+      if (this.workDetail.workState == "3") {
+        message = "任务已完成";
+      } else if (this.workDetail.workState == "4") {
+        message = "任务已关闭";
+      } else if (this.feedbackList.length == 0) {
+        message = "请先添加工作反馈";
+      }
+      if (message && message != "") {
+        this.$toast({
+          message: message,
+          position: "middle",
+          duration: 1500
+        });
+      } else {
+        // 调用提交验收
+        this.submit();
+      }
+    },
 
-          title: '确认验收',
-          message: '验收通过后，请登录嘉薪PC端完成任务结算',
-          showCancelButton:true,
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          closeOnClickModal: true,
+    buttonClickFn: function() {
+      this.$messagebox({
+        title: "确认验收",
+        message: "验收通过后，请登录嘉薪PC端完成任务结算",
+        showCancelButton: true,
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        closeOnClickModal: true
+      }).then(res => {
+        if (res === "confirm") {
+          this.submit();
+        }
+      });
+    },
 
-        }).then(res=>{
+    submit: function() {
+      var obj = {};
+      obj.recordId = this.workDetail.recordId;
+      obj.userId = this.workDetail.userId;
+      var config = {
+        headers: { "Content-Type": "application/json" }
+      };
 
-          if(res === 'confirm') {
-
-            this.submit();
-
-          }
-
-        })
-
-      },
-      
-      submit: function () {
-
-        var obj = {};
-        obj.recordId = this.workDetail.recordId;
-        obj.userId = this.workDetail.userId;
-        var config = {
-          headers: { "Content-Type": "application/json" }
-        };
-
-        /*
+      /*
         * 接口： 验收
         * 请求方式： POST
         * 接口： table/task/checkaccept
         * 入参： list
         * */
-        this.$http.post(process.env.API_ROOT + 'table/task/checkaccept',JSON.stringify([obj]),config).then(res=>{
-
+      this.$http
+        .post(
+          process.env.API_ROOT + "table/task/checkaccept",
+          JSON.stringify([obj]),
+          config
+        )
+        .then(res => {
           this.$toast({
-
             message: res.data.msg,
-            position: 'middle',
+            position: "middle",
             duration: 1500
-
           });
 
-          if(res.data.code === '0000'){
-
+          if (res.data.code === "0000") {
             this.getData();
 
-            this.workDetail.workState = '3';
+            this.workDetail.workState = "3";
 
             this.workDetail.checkNum++;
-
           }
-
-        })
-
-      }
-
+        });
     }
   }
+};
 </script>
 
 <style scoped lang="less">
-  @import "work_check.less";
+@import "work_check.less";
 </style>

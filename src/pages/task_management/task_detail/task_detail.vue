@@ -325,7 +325,9 @@ export default {
         }).then(res => {
           this.isSendContract = false;
           if (res === "confirm") {
-            this.$router.push("/taskEdit");
+
+            this.$router.push({path: '/taskEdit', query: {taskId: this.$route.query.taskId}});
+
           }
         });
         return;
