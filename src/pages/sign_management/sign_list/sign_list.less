@@ -83,13 +83,16 @@
     background-color: white;
     z-index: 49;
     padding: 0 15px;
-    max-height: 47vh;
+    max-height: 50vh;
     overflow: auto;
     box-shadow: 0 -1px 3px #e5e5e5;
     .company_select{
       padding: 10px 0;
       font-size: 14px;
       position: relative;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
     }
     .company_select + .company_select:before{
       content: '';

@@ -89,7 +89,7 @@
 
     </div>
   
-    <div class="button button_help background_linear_gradient">帮助提交验收</div>
+    <div class="button button_help background_linear_gradient" v-on:click="buttonSend" v-if="workDetail.workState === '1'">帮助提交验收</div>
     <div class="button background_linear_gradient" v-on:click="buttonClickFn" v-if="workDetail.workState === '2'">验收</div>
 
   </div>
@@ -169,7 +169,10 @@
         })
 
       },
-
+  
+      buttonSend(){
+      
+      },
 
       buttonClickFn: function () {
 
@@ -193,8 +196,7 @@
         })
 
       },
-
-
+      
       submit: function () {
 
         var obj = {};

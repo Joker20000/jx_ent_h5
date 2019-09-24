@@ -3,7 +3,7 @@
 
     <div class="addition_text">
       <div class="title"><span class="must_input">*</span>反馈内容</div>
-      <textarea v-model="additionText" placeholder="请填写反馈内容 （200字以内）"></textarea>
+      <textarea v-model="additionText" placeholder="请填写反馈内容 （200字以内）" maxlength="200"></textarea>
       <div class="show_number">{{additionText.length}}</div>
     </div>
 
@@ -17,7 +17,7 @@
           <div class="file_name">{{file.name}}</div>
           <div class="close" v-on:click="deleteFile(file.name)"><img src="../../../../static/image/contract_close.png"></div>
         </div>
-        <div class="add_file" v-if="fileList.length < 5">
+        <div class="add_file" v-if="fileList.length < 6">
           <input type="file" v-on:change="fileInput">
           <div class="add_file_img">
             <img src="../../../../static/image/jx_add_file.png">
@@ -82,7 +82,7 @@
 
           input = false;
 
-        }else if(file.size > 8*1024*1024) {
+        }else if(file.size > 3*1024*1024) {
 
           message = '文件过大，无法上传，请压缩后重新上传';
 
@@ -226,15 +226,11 @@
 
         if(!this.additionText) {
 
-          message = '请输入任务描述';
+          message = '请填写反馈内容';
 
         }else if(this.additionText.length < 4) {
 
-          message = '任务描述内容不少于4个字符';
-
-        }else if(this.additionText.length > 10000) {
-
-          message = '任务描述内容不多余200个字符';
+          message = '反馈内容不少于4个字符';
 
         }else {
 
@@ -246,7 +242,7 @@
 
           message: message,
           position: 'middle',
-          duration: 200
+          duration: 1500
 
         });
 
