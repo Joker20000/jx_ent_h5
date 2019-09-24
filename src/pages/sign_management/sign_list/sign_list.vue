@@ -43,7 +43,7 @@
 
     </div>
     
-    <div class="select_bg" v-if="selectTaskShowModel"></div>
+    <div class="select_bg" v-if="selectTaskShowModel" v-on:click="bgClick()"></div>
     <div class="select_by_company" v-if="selectTaskShowModel">
       <div class="company_select" @click="taskNameCilck()" v-bind:class="{'color_text': selectTaskName === ''}">全部</div>
       <div class="company_select" v-for="item in taskList" v-bind:class="{'color_text': selectTaskName === item.taskId}" @click="taskNameCilck(item)">{{item.taskName}}</div>
@@ -277,12 +277,21 @@ export default {
     taskSelectCilck(){
       this.selectTaskShowModel = true;
       this.selectTaskShow = true;
+      this.selectTaskSearch=false;
+
     },
     selectTaskSearchClick(){
       this.selectTaskSearch=true;
       this.taskName='';
       this.selectTaskShow=false;
       this.selectTaskName='';
+      this.selectTaskShowModel = false;
+    },
+    bgClick(){
+      this.taskName='';
+      this.selectTaskShow=false;
+      this.selectTaskName='';
+      this.selectTaskShowModel = false;
     }
   },
 
