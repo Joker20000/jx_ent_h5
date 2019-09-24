@@ -1,6 +1,7 @@
 <template>
   <div class="sign_list">
     <div class="screen">
+      
       <div class="select_list_sign" v-if="pageType === 'signup'">
         <div v-on:click="selectByState('')" v-bind:class="{'selected' : selectState === ''}">全部</div>
         <div v-on:click="selectByState('1')" v-bind:class="{'selected' : selectState === '1'}">待处理</div>
@@ -18,22 +19,17 @@
       </div>
 
       <div class="select" v-if="!selectTaskSearch">
-        <div class="company" v-on:click=" selectTaskShow = true">
+        <div class="company" v-on:click=" selectTaskShow = true" v-bind:class="{'color_text': taskName !== ''}">
           <span class="three"><img src="../../../../static/image/jx_search.png"></span>
-          <span class="show_type" v-bind:class="{'click_type': selectTaskShow}">任务筛选</span>
+          <span class="three"><img src="../../../../static/image/jx_search_blue.png"></span>
+          <span class="show_type" >任务筛选</span>
         </div>
-        <div class="task_state" v-on:click=" selectTaskSearch = true">
+        <div class="task_state" v-on:click=" selectTaskSearch = true" >
           <span class="three"><img src="../../../../static/image/jx_find.png"></span>
           <span class="show_type">搜索</span>
         </div>
       </div>
-
-      <div class="select_bg" v-if="selectTaskShow" v-on:click=" selectTaskShow = false"></div>
-      <div class="select_by_company" v-if="selectTaskShow">
-        <div class="company_select" @click="taskNameCilck()" v-bind:class="{'color_text': selectTaskName === ''}">全部</div>
-        <div class="company_select" v-for="item in taskList" v-bind:class="{'color_text': selectTaskName === item.taskId}" @click="taskNameCilck(item)">{{item.taskName}}</div>
-      </div>
-
+  
       <div class="input_box" v-if="selectTaskSearch">
         <div class="input">
           <div class="input_img">
@@ -43,7 +39,16 @@
         </div>
         <div class="input_cancel" v-on:click="cancelFn" v-if="cancelShow">取消</div>
       </div>
+
+
     </div>
+    
+    <div class="select_bg" v-if="selectTaskShow" v-on:click=" selectTaskShow = false"></div>
+    <div class="select_by_company" v-if="selectTaskShow">
+      <div class="company_select" @click="taskNameCilck()" v-bind:class="{'color_text': selectTaskName === ''}">全部</div>
+      <div class="company_select" v-for="item in taskList" v-bind:class="{'color_text': selectTaskName === item.taskId}" @click="taskNameCilck(item)">{{item.taskName}}</div>
+    </div>
+  
 
     <mt-loadmore :top-method="loadTop" ref="loadmore">
 
