@@ -317,7 +317,7 @@ export default {
       ) {
         this.$messagebox({
           title: "提示",
-          message: "开启自动发送合同，需先填写合同及发票信息",
+          message: "开启自动发送合同，需先填写合同",
           showCancelButton: true,
           confirmButtonText: "去填写",
           cancelButtonText: "取消",

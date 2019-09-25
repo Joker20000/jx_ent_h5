@@ -285,7 +285,8 @@ export default {
           duration: 1500
         });
 
-        if (res.data.code !== "0000") {
+        if (res.data.code == "0000") {
+          this.$router.push("/taskDetail");
         }
       });
     }

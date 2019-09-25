@@ -136,7 +136,7 @@
 
     </div>
 
-    <div class="module_title" v-if="sendContract">合同及发票</div>
+    <div class="module_title" v-if="sendContract">合同信息</div>
 
     <div class="task_information" v-if="sendContract">
 

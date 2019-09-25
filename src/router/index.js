@@ -222,7 +222,7 @@ export default new Router({
           path: '/taskEdit',
           name: 'taskEdit',
           meta: {
-            title: '合同及发票'
+            title: '合同信息'
           },
           component: taskEdit
         },

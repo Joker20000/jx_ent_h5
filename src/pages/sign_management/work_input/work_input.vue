@@ -64,10 +64,11 @@ export default {
     };
   },
   mounted() {
-    WeixinJSBridge.invoke("geoLocation", {}, function(res) {
-      console.log(res);
-      this.address=res
-    });
+    // WeixinJSBridge.invoke("geoLocation", {}, function(res) {
+    //   console.log(res);
+    //   this.address=res
+    //   alert(JSON.stringify(res));
+    // });
   },
 
   methods: {
@@ -166,7 +167,7 @@ export default {
 
       var params = {};
 
-      params.taskId = "100105331";
+      // params.taskId = "100105331";
 
       params.taskAddtionDetail = this.additionText;
 
