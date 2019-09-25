@@ -30,7 +30,7 @@
 
       <div class="place">
         <div class="img"><img src="../../../../static/image/jx_work_check_place.png"></div>
-        <div class="place_detail">{{address}}</div>
+        <div class="place_detail">{{place}}</div>
       </div>
     </div>
 
@@ -59,19 +59,193 @@ export default {
       filesUrl: [], //文件链接列表
 
       filesName: [], //文件名称列表
-
-      address: ""
+      
+      place: ''
     };
   },
   mounted() {
-    // WeixinJSBridge.invoke("geoLocation", {}, function(res) {
-    //   console.log(res);
-    //   this.address=res
-    //   alert(JSON.stringify(res));
-    // });
+   this.init();
   },
 
   methods: {
+  
+    init: function () {
+    
+      var self = this;
+    
+      /*
+       * 接口：获取微信签名
+       * 请求方式：POST
+       * 接口：jx/common/getweixinsign
+       * 入参：url
+       */
+    
+      console.log(window.location.href);
+    
+      this.$http({
+      
+        method: 'post',
+      
+        url: process.env.API_ROOT + 'jx/common/getweixinsign',
+      
+        params: {
+        
+          url: window.location.href
+        
+        },
+      
+      }).then((res) => {
+      
+        console.log(res.data)
+      
+        console.log('获取签名')
+      
+        self.wx.config({
+          debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+          appId: 'wxee620089167335f6', // 必填，公众号的唯一标识 - 测试版本
+          //appId: 'wx1c4f2e1dc540639e', // 必填，公众号的唯一标识 - 生产版本
+          timestamp: res.data.data.timestamp, // 必填，生成签名的时间戳
+          nonceStr: res.data.data.nonceStr, // 必填，生成签名的随机串
+          signature: res.data.data.signature,// 必填，签名
+          jsApiList: ['checkJsApi', 'openLocation', 'getLocation'], // 必填，需要使用的JS接口列表
+        });
+      
+      
+        self.wx.checkJsApi({
+          jsApiList: ['getLocation'],
+          success: function (res) {
+            if (res.checkResult.getLocation == false) {
+            
+              this.$messagebox({
+                title: '提示',
+                message: '你的微信版本太低，不支持微信JS接口，请升级到最新的微信版本！',
+                showCancelButton: false,
+                confirmButtonText: '我知道了',
+                confirmButtonClass: 'confirm_btn_orange',
+              }).then((action) => {
+              }).catch((res) => {
+              })
+              return;
+            }
+          }
+        });
+      
+        self.wx.ready(function () {
+        
+          console.log('获得地址详细')
+        
+          self.wx.getLocation({
+          
+            type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
+          
+            success: function (res) {
+            
+              this.latitude = res.latitude;// 纬度，浮点数，范围为90 ~ -90
+            
+              this.longitude = res.longitude// 经度，浮点数，范围为180 ~ -180
+            
+            
+              self.setStorage('pLatitude',res.latitude)
+            
+              self.setStorage('pLongitude',res.longitude)
+            
+            
+              console.log('纬度' + this.latitude)
+            
+              console.log('经度' + this.longitude)
+            
+              delete self.$http.defaults.headers.common.Authorization;
+            
+            
+            
+              //转gps
+              self.$http({
+              
+                method: 'get',
+              
+                url: 'https://restapi.amap.com/v3/assistant/coordinate/convert',
+              
+                params: {
+                
+                  key: '91346f1a20ac9f3db7691f94b8547873',//key值
+                
+                  locations: this.longitude + ',' + this.latitude,//key值
+                
+                  coordsys: 'gps',
+                
+                }
+              
+              }).then((res) => {
+              
+                console.log(res.data)
+              
+                this.gpsLocation = res.data.locations
+              
+                if (res.data.info == 'ok') {
+                
+                
+                  //逆编译
+                  self.$http({
+                  
+                    method: 'get',
+                  
+                    url: 'https://restapi.amap.com/v3/geocode/regeo',
+                  
+                    params: {
+                    
+                      key: '91346f1a20ac9f3db7691f94b8547873',//key值
+                    
+                      location: this.gpsLocation
+                    
+                    },
+                  
+                  }).then(function (res) {
+                  
+                    console.log(res.data);
+                  
+                  
+                    console.log(res.data.regeocode.formatted_address)
+                  
+                    self.place = res.data.regeocode.formatted_address;
+                  
+                    self.$http.defaults.headers.common.Authorization = localStorage.getItem('Authorization');
+                  
+                  
+                  
+                  
+                  }.bind(this)).catch((res) => {
+                  
+                    console.log(res);
+                  
+                  });
+                
+                }
+              
+              }).catch((res) => {
+              })
+            
+            
+            },
+            cancel: function () {
+            
+              console.log('不允许')
+            
+              this.place = '暂无位置'
+              // 用户取消后执行的回调函数
+            }
+          });
+        
+        
+        });
+      
+      
+      }).catch((res) => {
+      })
+    
+    
+    },
+    
+    
     //文件上传
     fileInput: function() {
       var file = event.currentTarget.files[0];
@@ -182,7 +356,7 @@ export default {
         * 入参： taskId, taskAddtionDetail, originalFileNamesAdd, taskAddtionFile
         * */
       this.$http({
-        url: process.env.API_ROOT + "addaddtionaltaskdetails",
+        url: process.env.API_ROOT + "user/task/addfeedback",
         method: "post",
         params: params
       }).then(res => {
