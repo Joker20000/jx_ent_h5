@@ -279,15 +279,19 @@ export default {
         method: "post",
         params
       }).then(res => {
-        this.$toast({
-          message: res.data.msg,
-          position: "middle",
-          duration: 1500
-        });
-
-        if (res.data.code == "0000") {
-          this.$router.push("/taskDetail");
+        
+        if(!!params.templateId || !!params.extEntId){
+          this.$toast({
+            message: res.data.msg,
+            position: "middle",
+            duration: 1500
+          });
+  
+          if (res.data.code == "0000") {
+            this.$router.push("/taskDetail");
+          }
         }
+
       });
     }
   },

@@ -150,6 +150,10 @@ export default {
                 fileList[length];
             }
           }
+         
+          var message = ''
+          
+          
         }
       });
     },

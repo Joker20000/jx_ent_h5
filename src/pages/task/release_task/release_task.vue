@@ -893,7 +893,7 @@ export default {
           message = "请选择合同模板";
         } else if (!this.templetName) {
           message = "请输入合同名称";
-        } else if (this.ext.length === 0) {
+        } else if (this.templetType == 2 &&this.ext.length === 0) {
           message = "请选择业务合作企业";
         } else if (!document.getElementsByClassName("agree")[0].checked) {
           message = "请同意《快捷签署服务委托协议书》";

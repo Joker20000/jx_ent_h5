@@ -164,10 +164,10 @@ export default {
       if (!this.check()) return;
 
       let workDetail = JSON.parse(localStorage.getItem("signDataEnt"));
-
+      
       var params = {};
 
-      // params.taskId = "100105331";
+      params.taskId = workDetail.taskId;
 
       params.taskAddtionDetail = this.additionText;
 
