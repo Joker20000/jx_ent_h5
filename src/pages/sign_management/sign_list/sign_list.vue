@@ -255,6 +255,8 @@
         this.taskName = "";
         
         this.selectTaskSearch = false;
+
+        this.selectTaskName='';
         
         this.pageNum = 1;
         
@@ -282,9 +284,9 @@
       },
       selectTaskSearchClick(){
         this.selectTaskSearch=true;
-        this.taskName='';
+        // this.taskName='';
         this.selectTaskShow=false;
-        this.selectTaskName='';
+        // this.selectTaskName='';
         this.selectTaskShowModel = false;
       },
       bgClick(){
