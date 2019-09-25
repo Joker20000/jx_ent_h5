@@ -21,6 +21,7 @@ import feedbackList from '@/pages/mine/feedback_list/feedback_list'
 import companyList from '@/pages/company_management/company_list/company_list'
 import companyDetail from '@/pages/company_management/company_detail/company_detail'
 import taskList from '@/pages/task_management/task_list/task_list'
+import taskEdit from '@/pages/task_management/task_edit/task_edit'
 import taskManagement from '@/pages/task_management/task_management'
 import taskDetail from '@/pages/task_management/task_detail/task_detail'
 import feedback from '@/pages/mine/feedback/feedback'
@@ -28,6 +29,7 @@ import additionInput from '@/pages/task_management/addition_input/addition_input
 import signList from '@/pages/sign_management/sign_list/sign_list'
 import signDetail from '@/pages/sign_management/sign_detail/sign_detail'
 import workCheck from '@/pages/sign_management/work_check/work_check'
+import workInput from '@/pages/sign_management/work_input/work_input'
 import loadingPage from '@/pages/login/loading_page/loading_page'
 import personInformation from '@/pages/sign_management/person_information/person_information'
 
@@ -217,6 +219,14 @@ export default new Router({
           component: taskList
         },
         {
+          path: '/taskEdit',
+          name: 'taskEdit',
+          meta: {
+            title: '合同信息'
+          },
+          component: taskEdit
+        },
+        {
           path: '/taskDetail',
           name: 'taskDetail',
           meta: {
@@ -257,6 +267,14 @@ export default new Router({
         title: '工作验收'
       },
       component: workCheck
+    },
+    {
+      path: '/workInput',
+      name: 'workInput',
+      meta: {
+        title: '工作反馈'
+      },
+      component: workInput
     },
     {
       path: '/loadingPage',
