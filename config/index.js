@@ -15,7 +15,7 @@ module.exports = {
         //设置你调用的接口域名和端口号
         target:'https://jxtest.99payroll.cn/jx-ent/',//测试
         //target:'http://172.18.1.62:8091/jx-ent/',
-        //target: 'https://ent.99payroll.cn/jx-ent',//生产
+        // target: 'https://ent.99payroll.cn/jx-ent',//生产
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/'

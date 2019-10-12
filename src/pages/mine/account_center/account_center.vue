@@ -153,8 +153,8 @@
         }).then(res=>{
 
           if(res.data.code === '0000'){
-
-            localStorage.clear();
+  
+            localStorage.removeItem('AuthorizationEnt');
             this.$router.push('/login');
             window.location.reload();
 

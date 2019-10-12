@@ -131,6 +131,9 @@
         selectTaskName: "",
         selectTaskSearch: false,
         selectTaskShowModel: false,
+        selectTaskId:'',
+        
+        using: true
       };
     },
     
@@ -144,6 +147,26 @@
         
         sessionStorage.removeItem("signListType");
       }
+  
+    if(!!sessionStorage.getItem('taskName')){
+      
+      this.taskName = sessionStorage.getItem('taskName');
+      
+      this.selectTaskSearch = true;
+      
+      sessionStorage.removeItem('taskName');
+      
+    }
+    
+    if(!!sessionStorage.getItem('taskId')){
+      
+      this.selectTaskName = sessionStorage.getItem('taskId');
+      
+      this.selectTaskId = sessionStorage.getItem('taskId');
+      
+      sessionStorage.removeItem('taskId');
+      
+    }
       
       this.getData();
       
@@ -152,9 +175,14 @@
     
     methods: {
       jumpTo: function(obj) {
+        
         localStorage.setItem("signDataEnt", JSON.stringify(obj));
         
         sessionStorage.setItem("signListType", this.selectState);
+        
+        sessionStorage.setItem('taskName', this.taskName);
+        
+        sessionStorage.setItem('taskId', this.selectTaskName);
         
         this.pageType === "work" && this.$router.push("/workCheck");
         
@@ -162,6 +190,10 @@
       },
       
       getData: function() {
+        
+        if(!this.using) return;
+        
+        this.using = false;
         var params = {};
         
         params.pageNum = this.pageNum;
@@ -169,6 +201,8 @@
         this.selectState !== "" &&
         this.pageType === "signup" &&
         (params.selectState = this.selectState);
+        
+        this.selectTaskId!==''&&(params.taskId=this.selectTaskId);
         
         this.selectState !== "" &&
         this.pageType === "work" &&
@@ -206,6 +240,7 @@
           this.list = this.list.concat(res.data.data.list);
           
           this.moreData = res.data.data.list.length >= 10 ? true : false;
+          this.using = true;
         });
       },
       
@@ -219,13 +254,16 @@
       
       getTaskData() {
         var params = {};
-        // 兼容两个接 默认查100条
+        
         this.$http({
           url: process.env.API_ROOT + "gettasknameinfo",
           method: "get",
           params: params
         }).then(res => {
+          
           this.taskList = res.data.data;
+          
+
         });
       },
       
@@ -255,8 +293,10 @@
         this.taskName = "";
         
         this.selectTaskSearch = false;
-
-        this.selectTaskName='';
+        
+        // this.selectTaskName='';
+        
+        // this.selectTaskId='';
         
         this.pageNum = 1;
         
@@ -265,14 +305,14 @@
         this.getData();
       },
       taskNameCilck(item) {
+        
         if (!item) {
           this.selectTaskName = "";
-          this.taskName = "";
+          this.selectTaskId='';
           this.selectTaskShow=false;
         } else {
           this.selectTaskName = item.taskId;
-          
-          this.taskName = item.taskName;
+          this.selectTaskId=item.taskId;
         }
         this.selectTaskShowModel = false;
       },
@@ -290,15 +330,21 @@
         this.selectTaskShowModel = false;
       },
       bgClick(){
-        this.taskName='';
         this.selectTaskShow=false;
-        this.selectTaskName='';
+        // this.selectTaskName='';
         this.selectTaskShowModel = false;
       }
     },
     
     watch: {
       taskName: function() {
+        this.list = [];
+        
+        this.pageNum = 1;
+        
+        this.getData();
+      },
+      selectTaskId:function(){
         this.list = [];
         
         this.pageNum = 1;
