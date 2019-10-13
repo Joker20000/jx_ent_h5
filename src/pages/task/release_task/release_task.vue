@@ -41,6 +41,13 @@
         </div>
       </div>
 
+      <!-- <div class="list must_input" v-on:click="pickerSelect('ext')" v-if="isCompanySelectShow"> -->
+      <div class="list must_input" v-on:click="pickerSelect('ext')" v-if="sendContract">
+        <div class="title">服务商</div>
+        <div class="content select" v-if="this.ext.length === 0">请选择服务商</div>
+        <div class="content select data" v-else>{{this.ext[0]}}</div>
+      </div>
+
       <div class="list must_input" v-on:click="pickerSelect('type')">
         <div class="title">任务类型</div>
         <div class="content select" v-if="this.type.length === 0">请选择任务类型</div>
@@ -157,12 +164,6 @@
         <div class="content">
           <input type="text" placeholder="请输入合同名称，不超过50个字" max="50" v-model="templetName" @blur="lostPointFn">
         </div>
-      </div>
-
-      <div class="list must_input" v-on:click="pickerSelect('ext')" v-if="isCompanySelectShow">
-        <div class="title">业务合作企业</div>
-        <div class="content select" v-if="this.ext.length === 0">请选择业务合作企业</div>
-        <div class="content select data" v-else>{{this.ext[0]}}</div>
       </div>
 
     </div>
@@ -306,6 +307,7 @@ export default {
       pageLoading: true,
 
       isCompanySelectShow: false,
+      templetListStroge: []
     };
   },
 
@@ -318,9 +320,11 @@ export default {
 
     //从任务详情编辑任务进入
     if (sessionStorage.getItem("change") === "1") {
-      setTimeout(()=>{
+
+      sessionStorage.setItem("select",1)
+      setTimeout(() => {
         this.setTaskData();
-      },300);
+      }, 300);
     }
 
     window.scrollTo(0, 0);
@@ -473,7 +477,18 @@ export default {
         url: process.env.API_ROOT + "get/ssh/templetList",
         method: "post"
       }).then(res => {
-        this.templetList = res.data.data.list;
+        this.templetListStroge = res.data.data.list;
+        if (this.ext && this.ext[0] == "无服务商") {
+          this.templetList = this.templetListStroge.filter(e => {
+            return e.templetType == 1;
+          });
+        } else if (this.ext && this.ext[0] != "无服务商") {
+          this.templetList = this.templetListStroge.filter(e => {
+            return e.templetType == 2;
+          });
+        } else {
+          this.templetList = this.templetListStroge;
+        }
       });
     },
 
@@ -658,7 +673,10 @@ export default {
 
     //选择合作企业
     extSelect: function() {
-      this.slot1.values = this.getArray(this.cooperate, "cooperateEntName");
+      let arr = this.getArray(this.cooperate, "cooperateEntName");
+      arr.splice(0, 0, "无服务商");
+
+      this.slot1.values = arr;
 
       this.slots.push(this.slot1);
 
@@ -847,6 +865,8 @@ export default {
         message = "请输入发布企业昵称";
       } else if (this.entName.length < 2 || this.entName.length > 32) {
         message = "企业名称为2-32个字符";
+      } else if (this.ext.length === 0) {
+        message = "请选择服务商";
       } else if (this.type.length === 0) {
         message = "请选择任务类型";
       } else if (this.place.length === 0) {
@@ -895,7 +915,7 @@ export default {
           message = "请选择合同模板";
         } else if (!this.templetName) {
           message = "请输入合同名称";
-        } else if (this.isCompanySelectShow &&this.ext.length === 0) {
+        } else if (this.isCompanySelectShow && this.ext.length === 0) {
           message = "请选择业务合作企业";
         } else if (!document.getElementsByClassName("agree")[0].checked) {
           message = "请同意《快捷签署服务委托协议书》";
@@ -1079,8 +1099,6 @@ export default {
     //从任务详情继续发布进入
     //获取任务数据
     setTaskData: function() {
-      sessionStorage.removeItem("change");
-
       var taskInfo = JSON.parse(sessionStorage.getItem("taskInfo"));
 
       sessionStorage.removeItem("taskInfo");
@@ -1179,15 +1197,15 @@ export default {
 
         //合同名称赋值
         this.templetName = taskInfo.contractName;
-        
+
         console.log(1);
-        
+
         var item = {};
         //合同类型赋值
         this.templetList.some(obj => {
           obj.templetName === this.templet[0] && (item = obj);
         });
-  
+
         if (item.templetType == 2) {
           this.isCompanySelectShow = true;
         } else {
@@ -1195,11 +1213,11 @@ export default {
         }
 
         //合作企业赋值
-        if(!!taskInfo.extEntName){
+        if (!!taskInfo.extEntName) {
           this.ext.push(taskInfo.extEntName);
         }
-        
       }
+      sessionStorage.removeItem("change");
     },
 
     //关闭任务描述模板
@@ -1311,6 +1329,26 @@ export default {
         this.isCompanySelectShow = true;
       } else {
         this.isCompanySelectShow = false;
+      }
+    },
+    ext: function() {
+
+
+
+      if (sessionStorage.getItem("select")==='1') {
+        console.log("测试测试");
+        sessionStorage.removeItem("select");
+      }else{
+        this.templet = [];
+      }
+      if (this.ext && this.ext[0] == "无服务商") {
+        this.templetList = this.templetListStroge.filter(e => {
+          return e.templetType == 1;
+        });
+      } else if (this.ext && this.ext[0] != "无服务商") {
+        this.templetList = this.templetListStroge.filter(e => {
+          return e.templetType == 2;
+        });
       }
     }
   }

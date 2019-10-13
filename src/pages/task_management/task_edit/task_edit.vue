@@ -15,11 +15,11 @@
         </div>
       </div>
 
-      <div class="list must_input" v-on:click="pickerSelect('ext')" v-show="isCompanySelectShow">
+      <!-- <div class="list must_input" v-on:click="pickerSelect('ext')" v-show="isCompanySelectShow">
         <div class="title">业务合作企业</div>
         <div class="content select" v-if="this.ext.length === 0">请选择业务合作企业</div>
         <div class="content select data" v-else>{{this.ext[0]}}</div>
-      </div>
+      </div> -->
 
     </div>
 
@@ -85,7 +85,7 @@ export default {
         values: [],
         textAlign: "center"
       },
-      isCompanySelectShow: false
+      // isCompanySelectShow: false
     };
   },
 
@@ -143,9 +143,9 @@ export default {
           case "templet":
             this.templetSelect();
             break;
-          case "ext":
-            this.extSelect();
-            break;
+          // case "ext":
+          //   this.extSelect();
+          //   break;
         }
       }
 
@@ -247,16 +247,16 @@ export default {
 
       return arr;
     },
-    //选择合作企业
-    extSelect: function() {
-      this.slot1.values = this.getArray(this.cooperate, "cooperateEntName");
+    // //选择合作企业
+    // extSelect: function() {
+    //   this.slot1.values = this.getArray(this.cooperate, "cooperateEntName");
 
-      this.slots.push(this.slot1);
+    //   this.slots.push(this.slot1);
 
-      this._ext && !this.ext && this.$refs.picker.setSlotValue(0, this._ext[0]);
+    //   this._ext && !this.ext && this.$refs.picker.setSlotValue(0, this._ext[0]);
 
-      this.ext && this.$refs.picker.setSlotValue(0, this.ext[0]);
-    },
+    //   this.ext && this.$refs.picker.setSlotValue(0, this.ext[0]);
+    // },
     submitTaskChange() {
 
       if(!this.checkAll()) return;
@@ -271,10 +271,10 @@ export default {
       // 改送自动发送任务合同
       params.isSendContract='1';
       //合作企业赋值
-      this.cooperate.some(obj => {
-        obj.cooperateEntName === this.ext[0] &&
-          (params.extEntId = obj.cooperateEntId);
-      });
+      // this.cooperate.some(obj => {
+      //   obj.cooperateEntName === this.ext[0] &&
+      //     (params.extEntId = obj.cooperateEntId);
+      // });
 
       this.$http({
         url: process.env.API_ROOT + "updateenttask",
@@ -282,7 +282,7 @@ export default {
         params
       }).then(res => {
 
-        if(!!params.templateId || !!params.extEntId){
+        if(!!params.templateId){
           this.$toast({
             message: res.data.msg,
             position: "middle",
@@ -304,9 +304,7 @@ export default {
         message = "请选择合同模板";
       } else if (!this.templetName) {
         message = "请输入合同名称";
-      } else if (this.isCompanySelectShow &&this.ext.length === 0) {
-        message = "请选择业务合作企业";
-      } else if (!document.getElementsByClassName("agree")[0].checked) {
+      }else if (!document.getElementsByClassName("agree")[0].checked) {
         message = "请同意《快捷签署服务委托协议书》";
       } else {
         return true;
@@ -329,11 +327,11 @@ export default {
         obj.templetName === this.templet[0] && (item = obj);
       });
 
-      if (item.templetType == 2) {
-        this.isCompanySelectShow = true;
-      } else {
-        this.isCompanySelectShow = false;
-      }
+      // if (item.templetType == 2) {
+      //   this.isCompanySelectShow = true;
+      // } else {
+      //   this.isCompanySelectShow = false;
+      // }
     }
   }
 };
