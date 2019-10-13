@@ -55,6 +55,8 @@
       //获取数据
       getData: function () {
 
+        this.$indicator.open();
+
         /**
          * 接口：获取企业账户发薪单位总额
          * 请求方式：GET
@@ -68,6 +70,8 @@
           url:process.env.API_ROOT+'ent/balance/allbalance',
 
         }).then(res=>{
+
+          this.$indicator.close();
 
           if(res.data.code === '0000'){
 

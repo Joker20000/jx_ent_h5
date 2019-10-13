@@ -83,6 +83,10 @@
         <span>发布企业：</span>
         <span>{{taskInfo.entName}}</span>
       </div>
+      <div class="task_info">
+        <span>服务商：</span>
+        <span>{{taskInfo.extEntName}}</span>
+      </div>
       <div class="task_info" v-if="taskInfo.state !== '1'">
         <span>发布时间：</span>
         <span>{{taskInfo.releaseDate | fmtTimeStr2}}</span>
@@ -317,7 +321,7 @@ export default {
       ) {
         this.$messagebox({
           title: "提示",
-          message: "开启自动发送合同，需先填写合同及发票信息",
+          message: "开启自动发送合同，需先填写合同信息",
           showCancelButton: true,
           confirmButtonText: "去填写",
           cancelButtonText: "取消",
