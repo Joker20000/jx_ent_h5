@@ -305,7 +305,7 @@ export default {
 
       pageLoading: true,
 
-      isCompanySelectShow: false
+      isCompanySelectShow: false,
     };
   },
 
@@ -318,7 +318,9 @@ export default {
 
     //从任务详情编辑任务进入
     if (sessionStorage.getItem("change") === "1") {
-      this.setTaskData();
+      setTimeout(()=>{
+        this.setTaskData();
+      },300);
     }
 
     window.scrollTo(0, 0);
@@ -893,7 +895,7 @@ export default {
           message = "请选择合同模板";
         } else if (!this.templetName) {
           message = "请输入合同名称";
-        } else if (this.templetType == 2 &&this.ext.length === 0) {
+        } else if (this.isCompanySelectShow &&this.ext.length === 0) {
           message = "请选择业务合作企业";
         } else if (!document.getElementsByClassName("agree")[0].checked) {
           message = "请同意《快捷签署服务委托协议书》";
@@ -1177,9 +1179,26 @@ export default {
 
         //合同名称赋值
         this.templetName = taskInfo.contractName;
+        
+        console.log(1);
+        
+        var item = {};
+        //合同类型赋值
+        this.templetList.some(obj => {
+          obj.templetName === this.templet[0] && (item = obj);
+        });
+  
+        if (item.templetType == 2) {
+          this.isCompanySelectShow = true;
+        } else {
+          this.isCompanySelectShow = false;
+        }
 
         //合作企业赋值
-        this.ext.push(taskInfo.extEntName);
+        if(!!taskInfo.extEntName){
+          this.ext.push(taskInfo.extEntName);
+        }
+        
       }
     },
 

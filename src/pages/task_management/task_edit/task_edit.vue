@@ -258,6 +258,8 @@ export default {
       this.ext && this.$refs.picker.setSlotValue(0, this.ext[0]);
     },
     submitTaskChange() {
+
+      if(!this.checkAll()) return;
       let params={};
       params.taskId = this.$route.query.taskId;
       //合同类型赋值
@@ -279,18 +281,42 @@ export default {
         method: "post",
         params
       }).then(res => {
-        
+
         if(!!params.templateId || !!params.extEntId){
           this.$toast({
             message: res.data.msg,
             position: "middle",
             duration: 1500
           });
-  
+
           if (res.data.code == "0000") {
-            this.$router.push("/taskDetail");
+            this.$router.go(-1);
           }
         }
+
+      });
+    },
+    checkAll: function () {
+
+      var message;
+
+      if (this.templet.length === 0) {
+        message = "请选择合同模板";
+      } else if (!this.templetName) {
+        message = "请输入合同名称";
+      } else if (this.isCompanySelectShow &&this.ext.length === 0) {
+        message = "请选择业务合作企业";
+      } else if (!document.getElementsByClassName("agree")[0].checked) {
+        message = "请同意《快捷签署服务委托协议书》";
+      } else {
+        return true;
+      }
+
+      this.$toast({
+
+        message: message,
+        position: 'middle',
+        duration: 1500
 
       });
     }

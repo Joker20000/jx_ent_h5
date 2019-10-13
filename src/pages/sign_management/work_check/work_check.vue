@@ -56,7 +56,7 @@
       </div>
       <div class="feedback_list">
 
-        <div class="feedword" v-if="this.feedbackList.length === 0">还没反馈工作哦~</div>
+        <div class="feedword" v-if="this.feedbackList.length === 0">还没有工作反馈哦~</div>
 
         <div class="feedback" v-else=" " v-for="feedback in feedbackList">
           <div class="title" v-if="feedback.type === '1'">
@@ -83,9 +83,9 @@
 
       </div>
 
-      <div class="feddback_line"></div>
-      <div class="feedback_add" v-on:click="buttonAdd">
-        <img src="../../../../static/image/work_add.png" alt=""> 添加工作反馈
+      <div class="feddback_line"  v-if="submitState.canSubmit === '1'"></div>
+      <div class="feedback_add" v-on:click="buttonAdd" v-if="submitState.canSubmit === '1'">
+        <img src="../../../../static/image/work_add.png" alt=""> <span>添加工作反馈</span>
       </div>
 
     </div>
@@ -106,7 +106,9 @@ export default {
 
       workState: { 1: "工作中", 2: "待验收", 3: "验收通过", 4: "验收中" },
 
-      feedbackList: []
+      feedbackList: [],
+      
+      submitState: {}
     };
   },
 
@@ -116,7 +118,29 @@ export default {
 
   methods: {
     getData: function() {
+
       this.workDetail = JSON.parse(localStorage.getItem("signDataEnt"));
+
+      console.log(this.workDetail);
+      
+      /*
+      * 接口： H5获取任务详情
+      * 请求方式： GET
+      * 接口： table/task/checkiscansubmit
+      * 入参： taskId, userId
+      * */
+      this.$http({
+        url: process.env.API_ROOT + 'table/task/checkiscansubmit',
+        method: 'get',
+        params: {
+          taskId: this.workDetail.taskId,
+          userId: this.workDetail.userId
+        }
+      }).then(res=>{
+        
+        this.submitState = res.data.data;
+        
+      });
 
       /*
         * 接口： 查看工作汇报
@@ -150,7 +174,7 @@ export default {
                 fileList[length];
             }
           }
-          
+
         }
       });
     },
@@ -158,9 +182,7 @@ export default {
     buttonAdd() {
       var message = "";
 
-      if (this.workDetail.workState == "3") {
-        message = "任务已完成";
-      } else if (this.workDetail.workState == "4") {
+  if (this.workDetail.workState == "4") {
         message = "任务已关闭";
       }
       if (message && message != "") {
@@ -192,7 +214,7 @@ export default {
         });
       } else {
         // 调用提交验收
-        this.submit();
+        this.HelpSubmit();
       }
     },
 
@@ -246,6 +268,33 @@ export default {
             this.workDetail.checkNum++;
           }
         });
+    },
+
+    HelpSubmit: function () {
+
+      /*
+      * 接口： 提交验收
+      * 请求方式： POST
+      * 接口： submitcheck
+      * 入参： relId, pRecordId
+      * */
+      this.$http({
+
+        url: process.env.API_ROOT + 'submitcheck',
+        method: 'post',
+        params: {
+          relId: this.workDetail.relId,
+          pRecordId: this.workDetail.recordId
+        }
+
+      }).then(res=>{
+
+        this.getData();
+
+        this.workDetail.workState = "2";
+
+      })
+
     }
   }
 };

@@ -4,7 +4,7 @@
     <div class="addition_text">
       <div class="title">
         <span class="must_input">*</span>反馈内容</div>
-      <textarea v-model="additionText" placeholder="请填写反馈内容 （200字以内）" maxlength="200"></textarea>
+      <textarea v-model="additionText" rows="6" placeholder="请填写反馈内容 （200字以内）" maxlength="200" ></textarea>
       <div class="show_number">{{additionText.length}}</div>
     </div>
 
@@ -59,8 +59,9 @@ export default {
       filesUrl: [], //文件链接列表
 
       filesName: [], //文件名称列表
-      
-      place: ''
+
+      place: '所在位置',
+
     };
   },
   mounted() {
@@ -68,54 +69,66 @@ export default {
   },
 
   methods: {
-  
+
     init: function () {
-    
+
       var self = this;
-    
+
       /*
        * 接口：获取微信签名
        * 请求方式：POST
        * 接口：jx/common/getweixinsign
        * 入参：url
        */
-    
+
       console.log(window.location.href);
-    
+
+      var url;
+
+      if(!!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)){
+
+        url = this.$store.state.firstUrl;
+
+      }else{
+
+        url = window.location.href;
+
+      }
+
       this.$http({
-      
+
         method: 'post',
-      
+
         url: process.env.API_ROOT + 'jx/common/getweixinsign',
-      
+
         params: {
-        
-          url: window.location.href
-        
+
+          url: url
+
         },
-      
+
       }).then((res) => {
-      
-        console.log(res.data)
-      
-        console.log('获取签名')
-      
+
+        console.log(res.data);
+
+        console.log('获取签名');
+
         self.wx.config({
           debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
           appId: 'wxee620089167335f6', // 必填，公众号的唯一标识 - 测试版本
-          //appId: 'wx1c4f2e1dc540639e', // 必填，公众号的唯一标识 - 生产版本
+          // appId: 'wx1c4f2e1dc540639e', // 必填，公众号的唯一标识 - 生产版本
           timestamp: res.data.data.timestamp, // 必填，生成签名的时间戳
           nonceStr: res.data.data.nonceStr, // 必填，生成签名的随机串
           signature: res.data.data.signature,// 必填，签名
           jsApiList: ['checkJsApi', 'openLocation', 'getLocation'], // 必填，需要使用的JS接口列表
         });
-      
-      
+
+
         self.wx.checkJsApi({
           jsApiList: ['getLocation'],
           success: function (res) {
             if (res.checkResult.getLocation == false) {
-            
+
               this.$messagebox({
                 title: '提示',
                 message: '你的微信版本太低，不支持微信JS接口，请升级到最新的微信版本！',
@@ -129,123 +142,122 @@ export default {
             }
           }
         });
-      
+
         self.wx.ready(function () {
-        
-          console.log('获得地址详细')
-        
+
+          console.log('获得地址详细');
+
           self.wx.getLocation({
-          
+
             type: 'wgs84', // 默认为wgs84的gps坐标，如果要返回直接给openLocation用的火星坐标，可传入'gcj02'
-          
+
             success: function (res) {
-            
+
               this.latitude = res.latitude;// 纬度，浮点数，范围为90 ~ -90
-            
+
               this.longitude = res.longitude// 经度，浮点数，范围为180 ~ -180
-            
-            
-              self.setStorage('pLatitude',res.latitude)
-            
-              self.setStorage('pLongitude',res.longitude)
-            
-            
-              console.log('纬度' + this.latitude)
-            
-              console.log('经度' + this.longitude)
-            
+              
+              self.setStorage('pLatitude',res.latitude);
+
+              self.setStorage('pLongitude',res.longitude);
+
+
+              console.log('纬度' + this.latitude);
+
+              console.log('经度' + this.longitude);
+
               delete self.$http.defaults.headers.common.Authorization;
-            
-            
-            
+
+
+
               //转gps
               self.$http({
-              
+
                 method: 'get',
-              
+
                 url: 'https://restapi.amap.com/v3/assistant/coordinate/convert',
-              
+
                 params: {
-                
+
                   key: '91346f1a20ac9f3db7691f94b8547873',//key值
-                
+
                   locations: this.longitude + ',' + this.latitude,//key值
-                
+
                   coordsys: 'gps',
-                
+
                 }
-              
+
               }).then((res) => {
-              
-                console.log(res.data)
-              
-                this.gpsLocation = res.data.locations
-              
+
+                console.log(res.data);
+
+                this.gpsLocation = res.data.locations;
+
                 if (res.data.info == 'ok') {
-                
-                
+
+
                   //逆编译
                   self.$http({
-                  
+
                     method: 'get',
-                  
+
                     url: 'https://restapi.amap.com/v3/geocode/regeo',
-                  
+
                     params: {
-                    
+
                       key: '91346f1a20ac9f3db7691f94b8547873',//key值
-                    
+
                       location: this.gpsLocation
-                    
+
                     },
-                  
+
                   }).then(function (res) {
-                  
+
                     console.log(res.data);
-                  
-                  
-                    console.log(res.data.regeocode.formatted_address)
-                  
+
+
+                    console.log(res.data.regeocode.formatted_address);
+
                     self.place = res.data.regeocode.formatted_address;
-                  
-                    self.$http.defaults.headers.common.Authorization = localStorage.getItem('Authorization');
-                  
-                  
-                  
-                  
+
+                    self.$http.defaults.headers.common.Authorization = localStorage.getItem('AuthorizationEnt');
+
+
+
+
                   }.bind(this)).catch((res) => {
-                  
+
                     console.log(res);
-                  
+
                   });
-                
+
                 }
-              
+
               }).catch((res) => {
               })
-            
-            
+
+
             },
             cancel: function () {
-            
+
               console.log('不允许')
-            
+
               this.place = '暂无位置'
               // 用户取消后执行的回调函数
             }
           });
-        
-        
+
+
         });
-      
-      
+
+
       }).catch((res) => {
       })
-    
-    
+
+
     },
-    
-    
+
+
     //文件上传
     fileInput: function() {
       var file = event.currentTarget.files[0];
@@ -277,8 +289,8 @@ export default {
           * 入参： file
           * */
         this.$http({
-          url: process.env.API_ROOT + "jx/upload/oss",
-          method: "post",
+          url: process.env.API_ROOT + 'jx/upload/oss',
+          method: 'post',
           data: param
         }).then(res => {
           toast.close();
@@ -306,6 +318,10 @@ export default {
             position: "middle",
             duration: 1500
           });
+        }).catch(res=>{
+
+          console.log(res);
+
         });
       }
 
@@ -337,30 +353,51 @@ export default {
     submit: function() {
       if (!this.check()) return;
 
-      let workDetail = JSON.parse(localStorage.getItem("signDataEnt"));
-      
+      var workDetail = JSON.parse(localStorage.getItem("signDataEnt"));
+
       var params = {};
 
       params.taskId = workDetail.taskId;
 
-      params.taskAddtionDetail = this.additionText;
+      params.pContent = this.additionText;
+
+      params.relId = workDetail.relId;
+
+      params.pRecordId = workDetail.recordId;
+
+      (this.place !== '所在位置') && (params.pPlace = this.place);
+
+      params.userId = workDetail.userId;
 
       this.fileList.length > 0 &&
-        ((params.originalFileNamesAdd = this.filesName.join(",")) &&
-          (params.taskAddtionFile = this.filesUrl.join(",")));
+        ((params.originalFileName = this.filesName.join(",")) &&
+          (params.pFiles = this.filesUrl.join(",")));
 
       /*
-        * 接口： 企业众包任务添加附加内容
+        * 接口： 添加任务反馈
         * 请求方式： POST
-        * 接口： addaddtionaltaskdetails
-        * 入参： taskId, taskAddtionDetail, originalFileNamesAdd, taskAddtionFile
+        * 接口： addfeedback
+        * 入参： taskId, relId, pRecordId, pContent, pPlace, pFiles, originalFileName, userId
         * */
       this.$http({
-        url: process.env.API_ROOT + "user/task/addfeedback",
+        url: process.env.API_ROOT + "addfeedback",
         method: "post",
         params: params
       }).then(res => {
         if (res.data.code === "0000") {
+          
+          if(workDetail.workState === '3'){
+            
+            workDetail.workState = '1';
+            
+          }
+          
+          workDetail.relId = res.data.data.relId;
+          
+          workDetail.recordId = res.data.data.recordId;
+  
+          localStorage.setItem('signDataEnt', JSON.stringify(workDetail));
+          
           this.$router.go(-1);
         }
       });
