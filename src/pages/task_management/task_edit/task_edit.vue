@@ -86,6 +86,10 @@ export default {
         textAlign: "center"
       },
       // isCompanySelectShow: false
+
+      templetListStroge:[]
+
+
     };
   },
 
@@ -112,7 +116,18 @@ export default {
         url: process.env.API_ROOT + "get/ssh/templetList",
         method: "post"
       }).then(res => {
-        this.templetList = res.data.data.list;
+        this.templetListStroge = res.data.data.list;
+
+      if(!this.$route.query.extEntId){
+        this.templetList = this.templetListStroge.filter(e=>{
+          return e.templetType == 1
+        })
+      }else{
+        this.templetList =  this.templetListStroge.filter(e =>{
+          return e.templetType == 2;
+        })
+      }
+
       });
     },
 

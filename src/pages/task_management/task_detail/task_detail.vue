@@ -83,7 +83,7 @@
         <span>发布企业：</span>
         <span>{{taskInfo.entName}}</span>
       </div>
-      <div class="task_info">
+      <div class="task_info" v-if="taskInfo.extEntName">
         <span>服务商：</span>
         <span>{{taskInfo.extEntName}}</span>
       </div>
@@ -330,7 +330,7 @@ export default {
           this.isSendContract = false;
           if (res === "confirm") {
 
-            this.$router.push({path: '/taskEdit', query: {taskId: this.$route.query.taskId}});
+            this.$router.push({path: '/taskEdit', query: {taskId: this.$route.query.taskId,extEntId:this.taskInfo.extEntId}});
 
           }
         });
