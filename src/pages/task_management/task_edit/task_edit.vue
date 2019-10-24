@@ -245,7 +245,7 @@ export default {
       this.slot1.values = this.getArray(this.templetList, "templetName");
 
       this.slots.push(this.slot1);
-
+      
       this._templet &&
         !this.templet &&
         this.$refs.picker.setSlotValue(0, this._templet[0]);
