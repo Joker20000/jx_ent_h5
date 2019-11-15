@@ -169,6 +169,10 @@ Vue.filter('dateChange', (value) => {
 
       return value;
 
+    }else if(value.indexOf('-')!=-1){
+      var arr=value.split('-')
+      arr.pop()
+      return arr.join('/')
     }else {
 
       var str = value.replace('月','');

@@ -27,8 +27,9 @@
           <div class="detail">{{signData.mobile}}</div>
         </div>
         <div class="list">
-          <div class="name">个人履历：</div>
-          <div class="detail color_text" v-on:click="$router.push({path: '/personInformation', query: {userId: signData.userId}})">点击查看</div>
+          <div class="name">个人简历：</div>
+          <!--<div class="detail color_text" v-on:click="$router.push({path: '/personInformation', query: {userId: signData.userId}})">点击查看</div>-->
+          <div class="detail color_text" v-on:click="changeLook()">点击查看</div>
         </div>
         <div class="list">
           <div class="name">报名时间：</div>
@@ -112,6 +113,55 @@
 
         this.signData = JSON.parse(localStorage.getItem('signDataEnt'));
 
+      },
+  
+      // changeLook:function(){
+      //   if(this.signData.userId){
+      //     this.$router.push({path: '/personInformation', query: {userId: this.signData.userId}});
+      //   }else{
+      //   this.$toast({
+      //     message:"该用户暂未填写履历信息",
+      //     position: 'middle',
+      //     duration: 1500
+      //   })
+      //   }
+      // },
+  
+      changeLook: function () {
+    
+        var userId = this.signData.userId;
+        /*
+        * 接口： 获取个人履历详情
+        * 请求方式： POST
+        * 接口： task/get/userresume
+        * 入参： userId
+        * */
+        this.$http({
+      
+          url: process.env.API_ROOT + 'task/get/userresume',
+          method: 'post',
+          params: {
+            userId: userId
+          }
+      
+        }).then(res=>{
+          
+          if(res.data.code === '0000'){
+  
+            this.$router.push({path: '/personInformation', query: {userId: userId}});
+        
+          }else {
+  
+            this.$toast({
+              message:"该用户暂未填写履历信息",
+              position: 'middle',
+              duration: 1500
+            })
+            
+          }
+      
+        })
+    
       },
 
       changeState: function (type) {

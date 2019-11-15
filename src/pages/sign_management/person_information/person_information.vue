@@ -1,5 +1,27 @@
 <template>
   <div class="person_information">
+  
+    <div class="person_user">
+      <div class="personal_detail person_desc">
+        <div class="introduce_title">
+          <span>工作经历</span>
+        </div>
+        <div class="introduce_list">
+          <i v-if="!personInformation.userImg"><img class="userImg" src="../../../../static/image/task_user_blue.png"></i>
+          <i v-else=""><img :src="personInformation.userImg" v-on:click="changeImg(personInformation.userImg)"></i>
+          <div class="list">
+            <div class="company company_user"><span>姓名：</span><span>{{personInformation.userName}}</span></div>
+            <div v-if="personInformation.sex" class="company"><span>性别：</span><span>{{personInformation.sex}}</span></div>
+            <div v-if="personInformation.birthday" class="company"><span>出生日期：</span><span>{{personInformation.birthday}}</span></div>
+            <div class="company"><span>手机号：</span><span>{{personInformation.mobile}}</span></div>
+            <div v-if="personInformation.liveAddr" class="company"><span>居住地：</span><span>{{personInformation.liveAddr}}</span></div>
+            <div v-if="personInformation.workStartDate" class="company"><span>开始工作时间：</span><span>{{personInformation.workStartDate}}</span></div>
+            <div v-if="personInformation.email" class="company"><span>邮箱：</span><span>{{personInformation.email}}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
       <div class="skill_part">
         <div class="skill_title">技能标签</div>
         <div class="skill_tags">
@@ -39,7 +61,7 @@
         <div class="introduce_title">
           <span>项目经验</span>
         </div>
-        <div class="introduce_list" v-if="!!personInformation.projectExperienceList">
+        <div class="introduce_list " v-if="!!personInformation.projectExperienceList">
           <div class="list" v-for="(workExperience, index) in personInformation.projectExperienceList">
             <div class="time">{{workExperience.startDate | dateChange}}-{{workExperience.endDate | dateChange}}</div>
             <div class="company"><span>项目名称：</span>{{workExperience.projectName}}</div>
@@ -50,6 +72,22 @@
           </div>
         </div>
       </div>
+  
+    <div class="personal_detail">
+      <div class="introduce_title">
+        <span>资格证书</span>
+      </div>
+      <div class="introduce_list instrocuce_position" v-if="!!personInformation.credentialsList">
+        <div class="list" v-for="(workExperience, index) in personInformation.credentialsList">
+          <div class="time">{{workExperience.certificateDate | dateChange}}</div>
+          <div class="company">{{workExperience.certificateName}}</div>
+          <div class="position" v-if="workExperience.certificateImage" v-for="imgItem in workExperience.certificateImage">
+              <img :src="imgItem" v-on:click="changeLook(imgItem)">
+          </div>
+        </div>
+      </div>
+    </div>
+    
       <div class="personal_detail">
         <div class="introduce_title">
           <span>自我介绍</span>
@@ -110,11 +148,37 @@
             this.tags = res.data.data.label.split(',');
 
             this.personInformation = res.data.data;
+  
+            if(this.personInformation.credentialsList){
+              this.personInformation.credentialsList.map(e=>{
+                if(e.certificateImage){
+                  e.certificateImage=e.certificateImage.split(",")
+                }
+              })
+            }
 
           }
 
         })
 
+      },
+  
+      changeLook:function (url) {
+        WeixinJSBridge.invoke('imagePreview', {
+          current: url,
+          urls: [url]
+        }, function(res) {
+          console.log(res.err_msg)
+        })
+      },
+  
+      changeImg:function (url) {
+        WeixinJSBridge.invoke('imagePreview', {
+          current: url,
+          urls: [url]
+        }, function(res) {
+          console.log(res.err_msg)
+        })
       }
 
     }
