@@ -54,6 +54,12 @@
         <div class="content select data" v-else>{{this.type.join('>')}}</div>
       </div>
       
+      <div class="list must_input" v-on:click="pickerSelect('industryType')">
+        <div class="title">行业分类</div>
+        <div class="content select" v-if="this.industryType.length === 0">请选择行业类型</div>
+        <div class="content select data" v-else>{{this.industryType[0]}}</div>
+      </div>
+      
       <div class="list must_input" v-on:click="pickerSelect('place')">
         <div class="title">工作地区</div>
         <div class="content select" v-if="this.place.length === 0">请选择工作地区</div>
@@ -61,9 +67,14 @@
       </div>
       
       <div class="list must_input">
-        <div class="title">任务名称</div>
+        <div class="title">任务名称<span class="title_img" v-on:click="tasknameShow = true"><img src="../../../../static/image/add_task_markb.png" alt=""></span></div>
         <div class="content">
           <input type="text" placeholder="请输入任务名称，4-50个字符" maxlength="50" minlength="4" v-model="taskName" @blur="lostPointFn">
+  
+          <div class="content_name">
+            <span><img src="../../../../static/image/add_task_marka.png" alt="">请尽量不要出现：设计等词</span>
+          </div>
+
         </div>
       </div>
       
@@ -71,8 +82,7 @@
         <div class="title">任务描述</div>
         <div class="content look_mould" v-on:click="mouldShow = true">查看模板</div>
         <div class="task_detail">
-          <textarea cols="30" rows="10" v-model="taskDetail" placeholder="请填写任务需求描述，4-10000个字符
-例如 1、本项目是一个骑手配送任务；需要由骑手自己配备智能手机和电动车；2、骑手能够熟练使用智能手机接单、导航、驾驶电动车，年龄在18-50周岁"></textarea>
+          <textarea cols="30" rows="10" v-model="taskDetail" placeholder="请填写任务需求描述，4-10000个字符"></textarea>
           <div class="text_length">{{taskDetail.length}}</div>
         </div>
       </div>
@@ -191,12 +201,17 @@
     <mt-datetime-picker ref="datetime" v-on:confirm="selectTime" type="date" v-bind:startDate="startDate" v-model="endDate"></mt-datetime-picker>
     
     <lookMould v-if="mouldShow" v-on:close="closeFn" v-on:useMould="useMouldFn"></lookMould>
+    
+    <lookTaskName v-if="tasknameShow" v-on:close="closeNameFn" v-on:useMould="useNameFn"></lookTaskName>
   
   </div>
 </template>
 
 <script>
   import lookMould from "../../../component/look_mould/look_mould";
+  
+  import lookTaskName from "../../../component/look_taskName/look_taskName";
+  
   export default {
     name: "release_task.vue",
     
@@ -273,6 +288,8 @@
         entName: "", //发布企业昵称
         
         taskName: "", //任务名称
+  
+        industryType: "", //行业分类
         
         taskFiles: [], //任务文件列表
         
@@ -298,6 +315,8 @@
         
         mouldShow: false, //任务描述模板显示状态
         
+        tasknameShow:false, //任务名称显示状态
+        
         hideName: false, //隐藏昵称
         
         pageType: "publish", //页面状态 发布任务还是任务继续发布
@@ -312,7 +331,8 @@
     },
     
     components: {
-      lookMould //任务描述模板组件
+      lookMould, //任务描述模板组件
+      lookTaskName //任务描述模板组件
     },
     
     mounted() {
@@ -351,6 +371,8 @@
         this.getTempletList();
         
         this.getAllCooperateInfo();
+        
+        this.getChooseList();
       },
       
       //获取账号下发薪企业列表
@@ -507,6 +529,22 @@
           this.cooperate = res.data.data;
         });
       },
+  
+      // 获取行业分类
+      getChooseList: function() {
+    
+        this.$http({
+          method: "get",
+      
+          url: process.env.API_ROOT + "taskindustrytype",
+      
+        })
+          .then(res => {
+              this.industryType = res.data.data;
+          })
+      
+          .catch(error => {});
+      },
       
       //选择框更换值事件
       onValueChange: function() {
@@ -566,6 +604,12 @@
             
             case "ext":
               this.extSelect();
+              
+              break;
+              
+            case "industryType":
+              
+              this.industryTypeSelect();
               
               break;
           }
@@ -683,6 +727,18 @@
         this._ext && !this.ext && this.$refs.picker.setSlotValue(0, this._ext[0]);
         
         this.ext && this.$refs.picker.setSlotValue(0, this.ext[0]);
+      },
+  
+      // 行业分类
+      industryTypeSelect:function(){
+        
+        this.slot1.values = this.getArray(this.industryType, "industryType");
+  
+        this.slots.push(this.slot1);
+  
+        this.industryType && !this.industryType && this.$refs.picker.setSlotValue(0, this.industryType[0]);
+  
+        this.industryType && this.$refs.picker.setSlotValue(0, this.industryType[0]);
       },
       
       //类型选择框一级列表数据变化事件
@@ -1231,11 +1287,22 @@
         this.mouldShow = false;
       },
       
+      closeNameFn:function(){
+        this.tasknameShow=false;
+      },
+      
       //使用任务描述模板
       useMouldFn: function(mouldArr) {
         this.taskDetail = mouldArr.join("\n");
         
         this.mouldShow = false;
+      },
+      
+      //使用任务名称模板
+      useNameFn: function(mouldArr) {
+        this.taskDetail = mouldArr.join("\n");
+        
+        this.tasknameShow = false;
       },
       
       //删除已上传的文件

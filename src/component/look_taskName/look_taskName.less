@@ -47,7 +47,7 @@
         .name{
           display: inline-block;
           position: relative;
-          color: #8a8a8a;
+          //color: #8a8a8a;
           padding-left: 5px;
           &:before, &:after{
             content: '';
@@ -73,14 +73,30 @@
         }
         .detail_list, .need_list{
           margin: 8px 0;
+          overflow: hidden;
+        }
+        .detail_list{
+          span{
+            display: inline-block;
+            &:first-child{
+              width: 45%;
+            }
+            &:last-child{
+              width: 55%;
+              float: right;
+            }
+          }
         }
       }
-      .title, .need{
+      .title{
+        margin-top: 15px;
+      }
+      .need{
         margin: 15px 0;
         .tips,.tips_list{
           color: #ff5050;
         }
-        .tips_list{
+        .tips_list,.tip_list{
           margin-top: 5px;
         }
       }
@@ -93,15 +109,6 @@
           flex-shrink: 0;
         }
       }
-    }
-    .button{
-      width: 200px;
-      line-height: 40px;
-      font-size: 15px;
-      color: #fff;
-      border-radius: 20px;
-      text-align: center;
-      margin: 15px auto 30px;
     }
   }
 }

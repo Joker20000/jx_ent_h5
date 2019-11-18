@@ -11,108 +11,150 @@
         <div class="swiper-wrapper">
 
           <div class="swiper-slide">
-            <div class="mould_title">软件开发</div>
+            <div class="mould_title">货物运输</div>
+  
+            <div class="need">
+              <div class="tips">温馨提示：根据国家相关规定，“劳务报酬所得”不得以众包任务形式结算，请注意如下内容：</div>
+              <div class="tips_list">设计、装潢、安装、制图、化验、测试、法律、会计、讲学、翻译、审稿、书画、雕刻、影视、录音、录像、演出、表演、广告、展览、技术服务、介绍服务、经纪服务、代办服务、招聘、医疗、咨询、制作等</div>
+            </div>
+            
             <div class="title">
               <span class="name">任务内容：</span>
-              <span>前端开发</span>
+              <span>本项目是关于生鲜肉类食品运输外包</span>
             </div>
             <div class="detail">
               <div class="name">任务描述：</div>
-              <div class="detail_list">1、应用平台：微信小程序</div>
-              <div class="detail_list">2、根据本公司提供的原型和设计图进行前端开发，并与后端联调接口；</div>
-              <div class="detail_list">3、联调完成提供页面测试并修改BUG，小程序成功上线无遗留BUG即可；</div>
+              <div class="detail_list">1、需要根据业务要求，从本市各地运输到集散地，包含装卸，搬运等工作；</div>
+              <div class="detail_list">2、要求承包者有相关生鲜食品运输经验；</div>
+              <div class="detail_list">3、按照成果结算费用；</div>
+            </div>
+ 
+          </div>
+
+          <div class="swiper-slide">
+            <div class="mould_title">建筑服务</div>
+  
+            <div class="need">
+              <div class="tips">温馨提示：根据国家相关规定，“劳务报酬所得”不得以众包任务形式结算，请注意如下内容：</div>
+              <div class="tips_list">设计、装潢、安装、制图、化验、测试、法律、会计、讲学、翻译、审稿、书画、雕刻、影视、录音、录像、演出、表演、广告、展览、技术服务、介绍服务、经纪服务、代办服务、招聘、医疗、咨询、制作等</div>
+            </div>
+            
+            <div class="title">
+              <span class="name">任务内容：</span>
+              <span>负责道路施工项目施工的图纸、工艺指导等</span>
+            </div>
+            <div class="detail">
+              <div class="name">任务描述：</div>
+              <div class="detail_list">1、负责施工图预算，准确计算工程量，合理分项采项，确定调整各项单价，计算工程预算造价；</div>
+              <div class="detail_list">2、负责现场签证，据技术变更或现场情况，现场核定工程量以及隐蔽工程数据，确定变更以及签证费用；</div>
+              <div class="detail_list">3、负责其他生产管理、计划管理、质量管理、安全管理、成本管理、文明施工管理等施工管理工作；</div>
+              <div class="detail_list">4、按照项目提交结果结算费用；</div>
+            </div>
+
+          </div>
+
+          <div class="swiper-slide">
+            <div class="mould_title">制造业、加工业</div>
+  
+            <div class="need">
+              <div class="tips">温馨提示：根据国家相关规定，“劳务报酬所得”不得以众包任务形式结算，请注意如下内容：</div>
+              <div class="tips_list">设计、装潢、安装、制图、化验、测试、法律、会计、讲学、翻译、审稿、书画、雕刻、影视、录音、录像、演出、表演、广告、展览、技术服务、介绍服务、经纪服务、代办服务、招聘、医疗、咨询、制作等</div>
+            </div>
+            
+            <div class="title">
+              <span class="name">任务内容：</span>
+              <span>数控车床加工项目</span>
+            </div>
+            <div class="detail">
+              <div class="name">任务描述：</div>
             </div>
             <div class="need">
-              <div class="name">要求：</div>
-              <div class="need_list">1、精通Javascript/CSS/HTML等前端技术；</div>
-              <div class="need_list">2、有微信小程序，H5和WEB的项目开发经验；</div>
-              <div class="need_list">3、熟悉主流浏览器的兼容性调试；</div>
+              <div class="need_list">1、根据承接任务分包不同，自主负责相应任务，保证质量；</div>
+              <div class="need_list">2、自主承担并负责数控车床及日常维护；</div>
+              <div class="need_list">3、根据任务合理编制数控加工程序，选择适宜刀具；</div>
+              <div class="need_list">4、严格按图纸、工艺文件要求加工产品，确保产品合格，并正确填写工序作业程序单和其他质量记录要求；</div>
             </div>
           </div>
 
           <div class="swiper-slide">
-            <div class="mould_title">设计</div>
-            <div class="title">
-              <span class="name">任务内容：</span>
-              <span>设计LOGO</span>
-            </div>
-            <div class="detail">
-              <div class="name">任务描述：</div>
-              <div class="detail_list">1、本司是一家智能科技公司，主要服务智能家居生态链，主营：智能家居，门锁等智能科技类产品的研发，销售等，现需设计一个企业logo；</div>
-              <div class="detail_list">2、设计要求：</div>
-              <div class="detail_list">a. 大气、简洁、能体现特色；</div>
-              <div class="detail_list">b.有视觉冲击力，醒目易识别，突出行业元素;</div>
-              <div class="detail_list">c.附上创意说明。</div>
-            </div>
+            <div class="mould_title">餐饮、娱乐</div>
+  
             <div class="need">
-              <div class="name">知识产权说明：</div>
-              <div class="need_list">1、所设计的作品为原创，为第一次发布，未侵犯他人的著作权，如有侵犯他人著作权，由设计者承担所有法律责任;</div>
-              <div class="need_list">2、我方支付设计费用，即拥有该作品的知识产权，包括著作权,使用权和发布权等,有权对设计作品进行修改,组合和应用;设计者不得再向其他任何地方使用该设计作品。</div>
+              <div class="tips">温馨提示：根据国家相关规定，“劳务报酬所得”不得以众包任务形式结算，请注意如下内容：</div>
+              <div class="tips_list">设计、装潢、安装、制图、化验、测试、法律、会计、讲学、翻译、审稿、书画、雕刻、影视、录音、录像、演出、表演、广告、展览、技术服务、介绍服务、经纪服务、代办服务、招聘、医疗、咨询、制作等</div>
+            </div>
+            
+            <div class="title">
+              <span class="name">任务内容：</span>
+              <span>抖音短视频营销推广</span>
+            </div>
+            <div class="detail">
+              <div class="name">任务描述：</div>
+              <div class="need_list">1、在线策划、制作、发布短视频，植入式营销；</div>
+              <div class="need_list">2、视频流量推广，拉新，按业绩结算费用 ；</div>
+              <div class="need_list">3、个人流量粉丝数1万以上；</div>
             </div>
           </div>
 
           <div class="swiper-slide">
-            <div class="mould_title">营销策划</div>
-            <div class="title">
-              <span class="name">任务内容：</span>
-              <span>市场调研</span>
-            </div>
-            <div class="detail">
-              <div class="name">任务描述：</div>
-            </div>
+            <div class="mould_title">批发、零售</div>
+  
             <div class="need">
-              <div class="name">要求：<span>全国区域的市场调研，贷后管理部门信息化现状的问卷，需要得到客户的资料，做个市场调研的报告。</span></div>
-              <div class="need_list">1、问卷的设计</div>
-              <div class="need_list">2、线上和线下相结合，提供人员去线下做调研，深入金融机构进行深访。</div>
-              <div class="need_list">3、需要将样本手机，出具一个调研报告（第二个诉求最重要）</div>
+              <div class="tips">温馨提示：根据国家相关规定，“劳务报酬所得”不得以众包任务形式结算，请注意如下内容：</div>
+              <div class="tips_list">设计、装潢、安装、制图、化验、测试、法律、会计、讲学、翻译、审稿、书画、雕刻、影视、录音、录像、演出、表演、广告、展览、技术服务、介绍服务、经纪服务、代办服务、招聘、医疗、咨询、制作等</div>
+            </div>
+            
+            <div class="title">
+              <span class="name">任务内容：</span>
+              <span>百草味小零食促销推广</span>
+            </div>
+            <div class="detail">
+              <div class="name">任务描述：</div>
+              <div class="need_list">1、依据指定门店及品牌的特点，负责门店销售执行及跟进，全力达成销售目标；</div>
+              <div class="need_list">2、独立负责指定门店促销相关事务，及时解决活动中出现的问题，确保促销活动的顺利进行；</div>
+              <div class="need_list">3、协助参与市场活动安排，并关注竞品的市场活动向，按时向销售负责人传达数据及市场反馈；</div>
+              <div class="need_list">4、按照业绩结算费用；</div>
             </div>
           </div>
 
           <div class="swiper-slide">
-            <div class="mould_title">服务业</div>
-            <div class="title">
-              <span class="name">任务内容：</span>
-              <span>家政服务</span>
-            </div>
-            <div class="detail">
-              <div class="name">任务描述：</div>
-              <div class="need_list">1、工作时间：每周六来家中进行两小时的保洁工作，</div>
-              <div class="need_list">2、工作内容：主要负责主次卧、客厅、厨房、卫生间的卫生清洁工作；</div>
-            </div>
+            <div class="mould_title">农、林、牧、渔</div>
+  
             <div class="need">
-              <div class="name">要求：</div>
-              <div class="need_list">1、希望家政从业人员有从业资格证；</div>
-              <div class="need_list">2、希望家政从业人员有相关家政工作经验；</div>
-              <div class="need_list">3、希望是由固定人员从事服务；</div>
+              <div class="tips">温馨提示：根据国家相关规定，“劳务报酬所得”不得以众包任务形式结算，请注意如下内容：</div>
+              <div class="tips_list">设计、装潢、安装、制图、化验、测试、法律、会计、讲学、翻译、审稿、书画、雕刻、影视、录音、录像、演出、表演、广告、展览、技术服务、介绍服务、经纪服务、代办服务、招聘、医疗、咨询、制作等</div>
             </div>
-          </div>
-
-          <div class="swiper-slide">
-            <div class="mould_title">物流配送</div>
+            
             <div class="title">
               <span class="name">任务内容：</span>
-              <span>货物配送</span>
+              <span>海鲜水产类养殖项目转包</span>
             </div>
             <div class="detail">
               <div class="name">任务描述：</div>
-              <div class="need_list">1、配送地点：由上海运送至杭州；</div>
-              <div class="need_list">2、配送时间：2019年4月13日当天送达；</div>
-              <div class="need_list">3、配送物：一批精密仪器；</div>
-              <div class="need_list">4、配送说明：需要有配送方提供物品的搬运装卸，保证物品准时运送到制定地点，由接收方确认货物完整方可完成订单；</div>
+              <div class="need_list">1、具有个体经营水产养殖资质，提供可养殖的水域；</div>
+              <div class="need_list">2、按照养殖对象的生态习性和对水域环境条件的要求，养殖指定品类的海鲜水产；</div>
+              <div class="need_list">3、按照约定采购价集中采购指定品类的海鲜水产；</div>
+              <div class="need_list">3、具有一定的水产养殖经验；</div>
             </div>
           </div>
-
+          
           <div class="swiper-slide">
-            <div class="mould_title">文化传媒</div>
+            <div class="mould_title">营销推广</div>
+  
+            <div class="need">
+              <div class="tips">温馨提示：根据国家相关规定，“劳务报酬所得”不得以众包任务形式结算，请注意如下内容：</div>
+              <div class="tips_list">设计、装潢、安装、制图、化验、测试、法律、会计、讲学、翻译、审稿、书画、雕刻、影视、录音、录像、演出、表演、广告、展览、技术服务、介绍服务、经纪服务、代办服务、招聘、医疗、咨询、制作等</div>
+            </div>
+            
             <div class="title">
               <span class="name">任务内容：</span>
-              <span>拍摄短视频</span>
+              <span>APP/聚合码市场地面推广</span>
             </div>
             <div class="detail">
-              <div class="name">任务描述：<span>征集抖音、快手小故事剧本，要求内容健康积极</span></div>
-              <div class="need_list">1、主要用于拍摄抖音、快手等平台视频；</div>
-              <div class="need_list">2、故事要交代场景，任务关系明确，对话不少于10句；</div>
-              <div class="need_list">3、内容不得违反法律法规；</div>
+              <div class="name">任务描述：</div>
+              <div class="need_list">1、负责上海区域商户聚合码（涵盖微信、支付宝、花呗、信用卡等各种付款类型的收款二维码）的地面推广；</div>
+              <div class="need_list">2、80元/户，工作时间自行安排；</div>
+              <div class="need_list">3、每个商户需完成5笔交易，支持日结、周结、月结；</div>
             </div>
           </div>
 
