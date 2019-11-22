@@ -54,10 +54,10 @@
         <div class="content select data" v-else>{{this.type.join('>')}}</div>
       </div>
       
-      <div class="list must_input" v-on:click="pickerSelect('industryType')">
+      <div class="list must_input" v-on:click="pickerSelect('industryTypeSelect')">
         <div class="title">行业分类</div>
-        <div class="content select" v-if="this.industryType.length === 0">请选择行业类型</div>
-        <div class="content select data" v-else>{{this.industryType[0]}}</div>
+        <div class="content select" v-if="this.industryTypeSelect.length === 0">请选择行业类型</div>
+        <div class="content select data" v-else>{{this.industryTypeSelect[0]}}</div>
       </div>
       
       <div class="list must_input" v-on:click="pickerSelect('place')">
@@ -69,12 +69,12 @@
       <div class="list must_input">
         <div class="title">任务名称<span class="title_img" v-on:click="tasknameShow = true"><img src="../../../../static/image/add_task_markb.png" alt=""></span></div>
         <div class="content">
-          <input type="text" placeholder="请输入任务名称，4-50个字符" maxlength="50" minlength="4" v-model="taskName" @blur="lostPointFn">
-  
-          <div class="content_name">
-            <span><img src="../../../../static/image/add_task_marka.png" alt="">请尽量不要出现：设计等词</span>
+          <input type="text" placeholder="请输入任务名称，4-50个字符" maxlength="50" ref='taskName' minlength="4" v-model="taskName" @blur="lostPointFn">
+          
+          <div class="content_name" v-show="showTaskNameTips">
+            <span><img src="../../../../static/image/add_task_marka.png" alt="">请尽量不要出现：{{showTaskNameText}}等词</span>
           </div>
-
+        
         </div>
       </div>
       
@@ -82,8 +82,11 @@
         <div class="title">任务描述</div>
         <div class="content look_mould" v-on:click="mouldShow = true">查看模板</div>
         <div class="task_detail">
-          <textarea cols="30" rows="10" v-model="taskDetail" placeholder="请填写任务需求描述，4-10000个字符"></textarea>
+          <textarea cols="30" rows="10" ref="taskDetail" v-model="taskDetail" placeholder="请填写任务需求描述，4-10000个字符"></textarea>
           <div class="text_length">{{taskDetail.length}}</div>
+        </div>
+        <div class="content_names" v-show="showTaskDetailTips">
+          <span><img src="../../../../static/image/add_task_marka.png" alt="">请尽量不要出现：{{showTaskDetailText}}等词</span>
         </div>
       </div>
       
@@ -259,11 +262,11 @@
         
         lastPickerClick: "", //点击显示选择框位置
         
-        _type: "", //点击取消时任务类型
+        _type: [], //点击取消时任务类型
         
         type: [], //点击确定时选择的任务类型
         
-        _place: "", //点击取消时选择的地区
+        _place: [], //点击取消时选择的地区
         
         place: [], //点击确定时选择的地区
         
@@ -288,8 +291,12 @@
         entName: "", //发布企业昵称
         
         taskName: "", //任务名称
-  
-        industryType: "", //行业分类
+        
+        industryTypeList: [], //行业分类
+        
+        industryTypeSelect:[], // 选择器确定选择的行业分类
+        
+        _industryTypeSelect:"", // 点击取消选择的行业分类
         
         taskFiles: [], //任务文件列表
         
@@ -326,7 +333,12 @@
         pageLoading: true,
         
         // isCompanySelectShow: false,
-        templetListStroge: []
+        templetListStroge: [],
+        sensetiveWord : ['设计','装潢','安装','制图','化验','测试','法律','会计','讲学','招聘','翻译','审稿','书画','雕刻','影视','录音','录像','演出','表演','广告','展览','医疗','咨询','制作','技术服务','介绍服务','经纪服务','代办服务'],
+        showTaskNameTips:false, // 任务名称是否展示过敏词提示
+        showTaskNameText:'',
+        showTaskDetailTips:false,// 任务详情否是展示过敏词提示
+        showTaskDetailText:''
       };
     },
     
@@ -358,6 +370,19 @@
       //备注失去焦点恢复页面（ios输入法）
       lostPointFn: function() {
         document.body.scrollTop = scrollY;
+      },
+      
+      checkeSensitiveWord(checkStr){
+        var arr=this.sensetiveWord.filter(obj=>{
+          if (checkStr.indexOf(obj)!=-1){
+            return obj;
+          }
+        })
+        if(arr.length != 0){
+          return arr.join();
+        }else{
+          return "";
+        }
       },
       
       //获取页面所需数据
@@ -529,20 +554,20 @@
           this.cooperate = res.data.data;
         });
       },
-  
+      
       // 获取行业分类
       getChooseList: function() {
-    
+        
         this.$http({
           method: "get",
-      
+          
           url: process.env.API_ROOT + "taskindustrytype",
-      
+          
         })
           .then(res => {
-              this.industryType = res.data.data;
+            this.industryTypeList = res.data.data;
           })
-      
+          
           .catch(error => {});
       },
       
@@ -606,10 +631,10 @@
               this.extSelect();
               
               break;
+            
+            case "industryTypeSelect":
               
-            case "industryType":
-              
-              this.industryTypeSelect();
+              this.industrySelect();
               
               break;
           }
@@ -647,6 +672,7 @@
       
       //选择任务类型
       typeSelect: function() {
+        
         this.slot1.values = this.getArray(this.industry, "name");
         
         this.slots.push(this.slot1);
@@ -655,15 +681,20 @@
         
         this.slots.push(this.slot2);
         
-        if (this.type) {
-          this.$refs.picker.setSlotValue(0, this.type[0]);
+        setTimeout(()=>{
           
-          this.$refs.picker.setSlotValue(1, this.type[1]);
-        } else if (this._type) {
-          this.$refs.picker.setSlotValue(0, this._type[0]);
+          if (this.type.length !== 0) {
+            this.$refs.picker.setSlotValue(0, this.type[0]);
+    
+            this.$refs.picker.setSlotValue(1, this.type[1]);
+          } else if (this._type.length !== 0) {
+            this.$refs.picker.setSlotValue(0, this._type[0]);
+    
+            this.$refs.picker.setSlotValue(1, this._type[1]);
+          }
           
-          this.$refs.picker.setSlotValue(1, this._type[1]);
-        }
+        },10)
+        
       },
       
       //选择地区
@@ -678,15 +709,19 @@
         
         this.slots.push(this.slot2);
         
-        if (this.place) {
-          this.$refs.picker.setSlotValue(0, this.place[0]);
+        setTimeout(()=>{
+  
+          if (this.place.length !== 0) {
+            this.$refs.picker.setSlotValue(0, this.place[0]);
+    
+            this.$refs.picker.setSlotValue(1, this.place[1]);
+          } else if (this._place.length !== 0) {
+            this.$refs.picker.setSlotValue(0, this._place[0]);
+    
+            this.$refs.picker.setSlotValue(1, this._place[1]);
+          }
           
-          this.$refs.picker.setSlotValue(1, this.place[1]);
-        } else if (this._place) {
-          this.$refs.picker.setSlotValue(0, this._place[0]);
-          
-          this.$refs.picker.setSlotValue(1, this._place[1]);
-        }
+        },10);
       },
       
       //选择发票类型
@@ -723,22 +758,29 @@
         this.slot1.values = arr;
         
         this.slots.push(this.slot1);
+  
+        setTimeout(()=>{
+          
+          this._ext && !this.ext && this.$refs.picker.setSlotValue(0, this._ext[0]);
+  
+          this.ext && this.$refs.picker.setSlotValue(0, this.ext[0]);
+          
+        },10)
         
-        this._ext && !this.ext && this.$refs.picker.setSlotValue(0, this._ext[0]);
-        
-        this.ext && this.$refs.picker.setSlotValue(0, this.ext[0]);
+  
       },
-  
+      
       // 行业分类
-      industryTypeSelect:function(){
+      industrySelect:function(){
         
-        this.slot1.values = this.getArray(this.industryType, "industryType");
-  
+        this.slot1.values = this.getArray(this.industryTypeList, "name");
+        
         this.slots.push(this.slot1);
-  
-        this.industryType && !this.industryType && this.$refs.picker.setSlotValue(0, this.industryType[0]);
-  
-        this.industryType && this.$refs.picker.setSlotValue(0, this.industryType[0]);
+        
+        
+        this._industryTypeSelect && !this.industryTypeSelect && this.$refs.picker.setSlotValue(0, this._industryTypeSelect[0]);
+        
+        this.industryTypeSelect && this.$refs.picker.setSlotValue(0, this.industryTypeSelect[0]);
       },
       
       //类型选择框一级列表数据变化事件
@@ -820,7 +862,6 @@
       //选择框确定事件
       pickerConfirm: function() {
         this.pickerShow = false;
-        
         this[this.lastPickerClick] = [this.$refs.picker.getSlotValue(0)];
         
         !!this.$refs.picker.getSlotValue(1) &&
@@ -927,7 +968,9 @@
           message = "请选择服务商";
         } else if (this.type.length === 0) {
           message = "请选择任务类型";
-        } else if (this.place.length === 0) {
+        }else if (this.industryTypeSelect.length===0){
+          message = "请选择行业分类";
+        }else if (this.place.length === 0) {
           message = "请选择工作地区";
         } else if (!this.taskName) {
           message = "请输入任务名称";
@@ -937,11 +980,23 @@
           !Number.isNaN(+this.taskName)
         ) {
           message = "任务名称为4-50个字符";
-        } else if (!this.taskDetail) {
+        }else if (this.checkeSensitiveWord(this.taskName)!=''){
+          this.showTaskNameTips=true;
+          this.showTaskNameText=this.checkeSensitiveWord(this.taskName);
+          this.$refs.taskName.focus();
+          return false;
+        }
+        else if (!this.taskDetail) {
           message = "请填写任务需求描述";
         } else if (this.taskDetail.length < 4 || this.taskDetail.length > 10000) {
           message = "任务需求为4-10000个字符";
-        } else if (!this.endDateShow && !this.noLimitTime) {
+        }else if (this.checkeSensitiveWord(this.taskDetail)!=''){
+          this.showTaskDetailTips=true;
+          this.showTaskDetailText=this.checkeSensitiveWord(this.taskDetail);
+          this.$refs.taskDetail.focus();
+          return false;
+        }
+        else if (!this.endDateShow && !this.noLimitTime) {
           message = "请选择报名截止时间";
         } else if (!this.taskMoney) {
           message = "请输入任务预算总金额";
@@ -1025,6 +1080,11 @@
         this.typeList.some(obj => {
           obj.name === this.type[1] && (params.type = obj.nodeId);
         });
+        
+        // 获取行业分类
+        this.industryTypeList.some(obj => {
+          obj.name === this.industryTypeSelect[0] && (params.industryType = obj.nodeId);
+        })
         
         //工作地区赋值
         if (this.place[0] !== "不限") {
@@ -1116,10 +1176,19 @@
           * 接口： pulluptask
           * 入参： 好多
           * */
+        
+        let param = new FormData();
+
+        Object.keys(params).forEach(e=>{
+  
+          param.append(e, params[e]); //通过append向form对象添加数据
+  
+        })
+        
         this.$http({
           url: process.env.API_ROOT + url,
           method: "post",
-          params: params
+          data: param,
         }).then(res => {
           if (res.data.code === "0000") {
             this.$router.push("/taskList");
@@ -1159,7 +1228,7 @@
       //获取任务数据
       setTaskData: function() {
         var taskInfo = JSON.parse(sessionStorage.getItem("taskInfo"));
-        
+
         sessionStorage.removeItem("taskInfo");
         
         //页面状态为继续发布任务
@@ -1252,6 +1321,12 @@
           this.ext.push(taskInfo.extEntName);
         }else{
           this.ext.push("无服务商")
+        }
+        
+        if(!!taskInfo.industryType){
+          this.industryTypeList.some(obj => {
+            obj.nodeId==taskInfo.industryType && this.industryTypeSelect.push(obj.name);
+          })
         }
         
         if (this.sendContract) {
@@ -1398,11 +1473,6 @@
           obj.templetName === this.templet[0] && (item = obj);
         });
         
-        // if (item.templetType == 2) {
-        //   this.isCompanySelectShow = true;
-        // } else {
-        //   this.isCompanySelectShow = false;
-        // }
       },
       ext: function() {
         if (sessionStorage.getItem("select")==='1') {
@@ -1420,6 +1490,12 @@
             return e.templetType == 2;
           });
         }
+      },
+      taskName:function() {
+        this.showTaskNameTips=false;
+      },
+      taskDetail: function() {
+        this.showTaskDetailTips=false;
       }
     }
   };

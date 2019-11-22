@@ -90,19 +90,7 @@
         this.$emit('close');
 
       },
-  
-  
-      useNameFn: function () {
-
-        var mouldText = document.getElementsByClassName('swiper-slide-active')[0].innerText;
-
-        var mouldArr = mouldText.split('\n');
-
-        mouldArr.shift();
-
-        this.$emit('useNameFn', mouldArr);
-
-      }
+      
 
     }
   }

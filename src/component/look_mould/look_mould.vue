@@ -11,7 +11,8 @@
         <div class="swiper-wrapper">
 
           <div class="swiper-slide">
-            <div class="mould_title">货物运输</div>
+            <div class="mould_title"> <span>货物运输</span>
+            </div>
   
             <div class="need">
               <div class="tips">温馨提示：根据国家相关规定，“劳务报酬所得”不得以众包任务形式结算，请注意如下内容：</div>
@@ -67,12 +68,10 @@
             </div>
             <div class="detail">
               <div class="name">任务描述：</div>
-            </div>
-            <div class="need">
-              <div class="need_list">1、根据承接任务分包不同，自主负责相应任务，保证质量；</div>
-              <div class="need_list">2、自主承担并负责数控车床及日常维护；</div>
-              <div class="need_list">3、根据任务合理编制数控加工程序，选择适宜刀具；</div>
-              <div class="need_list">4、严格按图纸、工艺文件要求加工产品，确保产品合格，并正确填写工序作业程序单和其他质量记录要求；</div>
+              <div class="detail_list">1、根据承接任务分包不同，自主负责相应任务，保证质量；</div>
+              <div class="detail_list">2、自主承担并负责数控车床及日常维护；</div>
+              <div class="detail_list">3、根据任务合理编制数控加工程序，选择适宜刀具；</div>
+              <div class="detail_list">4、严格按图纸、工艺文件要求加工产品，确保产品合格，并正确填写工序作业程序单和其他质量记录要求；</div>
             </div>
           </div>
 
@@ -90,7 +89,7 @@
             </div>
             <div class="detail">
               <div class="name">任务描述：</div>
-              <div class="need_list">1、在线策划、制作、发布短视频，植入式营销；</div>
+              <div class="need_list">1、在线策划、发布短视频，植入式营销；</div>
               <div class="need_list">2、视频流量推广，拉新，按业绩结算费用 ；</div>
               <div class="need_list">3、个人流量粉丝数1万以上；</div>
             </div>
@@ -201,13 +200,13 @@
 
 
       useMould: function () {
-
-        var mouldText = document.getElementsByClassName('swiper-slide-active')[0].innerText;
-
-        var mouldArr = mouldText.split('\n');
-
-        mouldArr.shift();
-
+        
+        var mouldText = document.getElementsByClassName('swiper-slide-active')[0].getElementsByClassName('title')[0].innerText;
+        
+        var mouldWord = document.getElementsByClassName('swiper-slide-active')[0].getElementsByClassName('detail')[0].innerText;
+        
+        var mouldArr = mouldText.split('\n').concat(mouldWord.split('\n'));
+        
         this.$emit('useMould', mouldArr);
 
       }
