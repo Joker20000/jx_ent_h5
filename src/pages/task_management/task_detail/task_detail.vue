@@ -9,6 +9,8 @@
         <img src="../../../../static/image/jx_task_detail_working.png" v-if="taskInfo.state === '2'">
         <img src="../../../../static/image/jx_task_detail_finish.png" v-if="taskInfo.state === '3'">
         <img src="../../../../static/image/jx_task_detail_close.png" v-if="taskInfo.state === '4'">
+        <img src="../../../../static/image/jx_task_detail_audited.png" v-if="taskInfo.state === '5'">
+        <img src="../../../../static/image/jx_task_detail_failed.png" v-if="taskInfo.state === '6'">
       </div>
       <div class="task_name">{{taskInfo.taskName}}</div>
       <div class="type_place">
@@ -41,12 +43,12 @@
           <div>报名状态</div>
         </div>
       </div>
-      <div class="show_all" v-if="taskInfo.state === '1' || taskInfo.state === '2'">
+      <div class="show_all" v-if="taskInfo.state === '1' || taskInfo.state === '2'|| taskInfo.state === '5'|| taskInfo.state === '6'">
         <span>发布到任务广场</span>
         <mt-switch v-model="taskShow"></mt-switch>
       </div>
       
-      <div class="show_all" v-if="taskInfo.state === '1' || taskInfo.state === '2'">
+      <div class="show_all" v-if="taskInfo.state === '1' || taskInfo.state === '2'|| taskInfo.state === '5'|| taskInfo.state === '6'">
         <span>自动发送合同</span>
         <mt-switch @change="changeBtn()" v-model="isSendContract"></mt-switch>
       </div>
@@ -170,6 +172,11 @@
       <div class="end" v-on:click="endTask" v-if="taskInfo.signupState === '2'">结束报名</div>
       <div class="close" v-on:click="closeTask">关闭任务</div>
       <div class="finish" v-on:click="finishTask">&nbsp;&nbsp;已完成&nbsp;&nbsp;</div>
+    </div>
+  
+    <div class="button" v-else-if="taskInfo.state === '6'">
+      <div class="delete" v-on:click="deleteTask">删除任务</div>
+      <div class="publish" v-on:click="publishTask">重新发布</div>
     </div>
   
   </div>
@@ -360,9 +367,15 @@
       
       //删除任务
       deleteTask: function() {
+        var message;
+        if(this.taskInfo.state == '6'){
+          message = "删除任务后，该任务将不能重新发布，确认删除？"
+        }else{
+          message = "删除任务后，该任务将不能继续发布，确认删除？"
+        }
         this.$messagebox({
           title: "确认删除任务",
-          message: "删除任务后，该任务将不能继续发布，确认删除？",
+          message: message,
           showCancelButton: true,
           confirmButtonText: "确定",
           cancelButtonText: "取消",

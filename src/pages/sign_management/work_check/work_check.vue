@@ -35,6 +35,19 @@
           <div class="detail">{{workDetail.taskName}}</div>
         </div>
         <div class="list">
+          <div class="name">任务编号：</div>
+          <div class="detail">{{workDetail.taskId}}</div>
+        </div>
+        <div class="list">
+          <div class="name">任务状态：</div>
+          <div class="detail" v-if='workDetail.state == 1'>待发布</div>
+          <div class="detail" v-else-if='workDetail.state == 2'>进行中</div>
+          <div class="detail" v-else-if='workDetail.state == 3'>已完成</div>
+          <div class="detail" v-else-if='workDetail.state == 4'>已关闭</div>
+          <div class="detail" v-else-if='workDetail.state == 5'>审核中</div>
+          <div class="detail" v-else-if='workDetail.state == 6'>审核不通过</div>
+        </div>
+        <div class="list">
           <div class="name">发布企业：</div>
           <div class="detail">{{workDetail.entName}}</div>
         </div>

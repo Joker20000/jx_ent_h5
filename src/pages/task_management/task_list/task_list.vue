@@ -25,6 +25,8 @@
       <div class="state_select" v-on:click="screen('task', '2')" v-bind:class="{'color_text': state === '2'}">进行中</div>
       <div class="state_select" v-on:click="screen('task', '3')" v-bind:class="{'color_text': state === '3'}">已完成</div>
       <div class="state_select" v-on:click="screen('task', '4')" v-bind:class="{'color_text': state === '4'}">已关闭</div>
+      <div class="state_select" v-on:click="screen('task', '5')" v-bind:class="{'color_text': state === '5'}">审核中</div>
+      <div class="state_select" v-on:click="screen('task', '6')" v-bind:class="{'color_text': state === '6'}">审核不通过</div>
     </div>
 
     <mt-loadmore :top-method="loadTop" ref="loadmore">
@@ -47,7 +49,7 @@
               <span>{{task.peopleCount}}</span>
               <span>需要人数</span>
             </div>
-            <div class="has_person" v-if="task.state === '2'">
+            <div class="has_person" v-if="task.state === '2'||task.state === '5'||task.state === '6'">
               <span>{{task.hireTotal}}</span>
               <span>已录用人数</span>
             </div>
@@ -102,7 +104,7 @@
 
         taskList: [],//任务列表
 
-        taskState: {'1': '待发布','2': '进行中','3': '已完成','4': '已关闭'},//任务状态
+        taskState: {'1': '待发布','2': '进行中','3': '已完成','4': '已关闭','5': '审核中','6': '审核不通过'},//任务状态
 
         signupState: {'1': '未开始', '2': '报名中', '3': '已结束'},//报名状态
 

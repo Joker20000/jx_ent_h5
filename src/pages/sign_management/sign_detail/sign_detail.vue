@@ -51,6 +51,21 @@
           <div class="name">任务名称：</div>
           <div class="detail">{{signData.taskName}}</div>
         </div>
+  
+        <div class="list">
+          <div class="name">任务编号：</div>
+          <div class="detail">{{signData.taskId}}</div>
+        </div>
+        <div class="list">
+          <div class="name">任务状态：</div>
+          <div class="detail" v-if='signData.state == 1'>待发布</div>
+          <div class="detail" v-else-if='signData.state == 2'>进行中</div>
+          <div class="detail" v-else-if='signData.state == 3'>已完成</div>
+          <div class="detail" v-else-if='signData.state == 4'>已关闭</div>
+          <div class="detail" v-else-if='signData.state == 5'>审核中</div>
+          <div class="detail" v-else-if='signData.state == 6'>审核不通过</div>
+        </div>
+        
         <div class="list">
           <div class="name">发布企业：</div>
           <div class="detail">{{signData.entName}}</div>
