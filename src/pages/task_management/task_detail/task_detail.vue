@@ -43,14 +43,14 @@
           <div>报名状态</div>
         </div>
       </div>
-      <div class="show_all" v-if="taskInfo.state === '1' || taskInfo.state === '2'|| taskInfo.state === '5'|| taskInfo.state === '6'">
+      <div @click="canotChange()" class="show_all" v-if="taskInfo.state === '1' || taskInfo.state === '2'|| taskInfo.state === '5'|| taskInfo.state === '6'">
         <span>发布到任务广场</span>
-        <mt-switch v-model="taskShow"></mt-switch>
+        <mt-switch :disabled='taskInfo.state==5' v-model="taskShow"></mt-switch>
       </div>
       
-      <div class="show_all" v-if="taskInfo.state === '1' || taskInfo.state === '2'|| taskInfo.state === '5'|| taskInfo.state === '6'">
+      <div @click="canotChange()" class="show_all" v-if="taskInfo.state === '1' || taskInfo.state === '2'|| taskInfo.state === '5'|| taskInfo.state === '6'">
         <span>自动发送合同</span>
-        <mt-switch @change="changeBtn(taskInfo)" v-model="isSendContract"></mt-switch>
+        <mt-switch :disabled='taskInfo.state==5' @change="changeBtn(taskInfo)" v-model="isSendContract"></mt-switch>
       </div>
       
       <!-- <div class="task_info" v-if="taskInfo.isSendContract === '1'">
@@ -132,7 +132,7 @@
     <div class="task_content">
       <div class="title">
         <div class="box_name">任务内容</div>
-        <div class="add" v-on:click="$router.push({path: '/additionInput', query: {taskId: $route.query.taskId}})" v-if="taskInfo.state === '2'">
+        <div class="add" v-on:click="$router.push({path: '/additionInput', query: {taskId: $route.query.taskId}})" v-if="taskInfo.state == '2' && addshow">
           <img src="../../../../static/image/jx_task_additional.png">
           <span>补充任务需求</span>
         </div>
@@ -158,7 +158,7 @@
             <div class="box_name">补充内容</div>
             <div class="additional_time" v-if="addTaskAdd.checkedState == '2'">
               <span @click="editShow(addTaskAdd)"><img src="../../../../static/image/task_content_edit.png" alt="">修改</span>
-              <span @click="deleteShow()"><img src="../../../../static/image/task_content_modify.png" alt="">删除</span></div>
+              <span @click="deleteShow(addTaskAdd)"><img src="../../../../static/image/task_content_modify.png" alt="">删除</span></div>
             <div class="additional_time" v-else="">{{addTaskAdd.createDate | fmtTimeStr2}}</div>
           </div>
   
@@ -173,12 +173,12 @@
               </p>
           </div>
   
-            <div class=" task_content_word" v-if="taskInfo.state == '5' ">
+            <div class=" task_content_word" v-if="addTaskAdd.checkedState == '0'">
               <img src="../../../../static/image/task_content_text.png" alt="">
               <span>审核中，审核通过后用户可查看</span>
             </div>
   
-            <div class=" task_content_word"   v-if="taskInfo.state == '3' ">
+            <div class=" task_content_word"   v-if="taskInfo.state == '3' && addTaskAdd.checkedState == '0' ">
               <p>
                 <img src="../../../../static/image/task_content_delete.png" alt="">
                 <span>审核不通过</span>
@@ -188,7 +188,7 @@
                 <span>不通过原因：任务已完成</span>
               </p>
             </div>
-            <div  class=" task_content_word"  v-if="taskInfo.state == '4' ">
+            <div  class=" task_content_word"  v-if="taskInfo.state == '4' && addTaskAdd.checkedState == '0'">
               <p>
                 <img src="../../../../static/image/task_content_delete.png" alt="">
                 <span>审核不通过</span>
@@ -355,7 +355,7 @@
         });
       },
       changeBtn: function(taskInfo) {
-        if(taskInfo.state == 5){
+        if(this.taskInfo.state == 5){
           this.$toast({
             message: "任务审核中，暂不支持该操作",
             position: "middle",
@@ -470,7 +470,7 @@
       },
       
       //删除补充需求
-      deleteShow: function() {
+      deleteShow: function(addTaskAdd) {
         
         this.$messagebox({
           title: "确认删除任务",
@@ -488,11 +488,11 @@
               * 入参： this.
               * */
             this.$http({
-              url: process.env.API_ROOT + "deltask",
-              method: "get",
+              url: process.env.API_ROOT + "deltaskadd",
+              method: "post",
               params: {
                 taskId: this.$route.query.taskId,
-                recdId:sessionStorage.getItem("recdId")
+                recdId:addTaskAdd.recdId
               }
             }).then(res => {
               this.$toast({
@@ -510,9 +510,9 @@
   },
   
       editShow(addTaskAdd) {
-        this.taskAddtionDetail=addTaskAdd.taskAddtionDetail;
-        sessionStorage.setItem("recdId",addTaskAdd.recdId)
-        this.$router.push("/additionInput");
+        console.log(addTaskAdd)
+        sessionStorage.setItem("addTaskAdd",JSON.stringify(addTaskAdd));
+        this.$router.push({path:"/additionInput",query:{taskId:this.taskInfo.taskId}});
       },
       
       //继续发布任务
@@ -654,9 +654,20 @@
             });
           }
         });
-      }
+      },
+      canotChange(){
+      if(this.taskInfo.state=='5'){
+            this.$toast({
+                message: '任务审核中，暂不支持该操作',
+                position: "middle",
+                duration: 1500
+              });
+          }
+    },
     },
     
+    
+
     destroyed() {
       this.$messagebox.close();
     },
@@ -665,6 +676,9 @@
       //更改任务广场发布状态
       taskShow: function() {
         if (this.dataState) {
+
+          
+
           /*
             * 接口： 任务是否展示
             * 请求方式： POST
@@ -690,6 +704,19 @@
             }
           });
         }
+      }
+    },
+    computed:{
+      addshow(){
+        if(this.taskInfo.entTaskAddList){
+
+          let flag = this.taskInfo.entTaskAddList[this.taskInfo.entTaskAddList.length - 1];
+          if(flag.checkedState == '0'){
+            return false;
+          }
+        }
+          return true;
+
       }
     }
   };
