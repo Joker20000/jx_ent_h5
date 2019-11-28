@@ -50,7 +50,7 @@
       
       <div class="show_all" v-if="taskInfo.state === '1' || taskInfo.state === '2'|| taskInfo.state === '5'|| taskInfo.state === '6'">
         <span>自动发送合同</span>
-        <mt-switch @change="changeBtn()" v-model="isSendContract"></mt-switch>
+        <mt-switch @change="changeBtn(taskInfo)" v-model="isSendContract"></mt-switch>
       </div>
       
       <!-- <div class="task_info" v-if="taskInfo.isSendContract === '1'">
@@ -98,6 +98,37 @@
         <span>{{taskInfo.createDate | fmtTimeStr2}}</span>
       </div>
     </div>
+  
+    <div class="task_state">
+    
+      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 1 }">
+        <div class="img"><img src="../../../../static/image/jx_task_publish.png"></div>
+        <div class="word">发布任务</div>
+      </div>
+      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 2 }">
+        <div class="img"><img src="../../../../static/image/jx_task_signup.png"></div>
+        <div class="word">用户报名</div>
+      </div>
+      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 3 , 'close':taskInfo.stateForTask === '7'}">
+        <div class="img"><img src="../../../../static/image/jx_task_working.png"></div>
+        <div class="word" v-if="taskInfo.stateForTask !== '7'">用户工作中</div>
+        <div class="word" v-else>任务已关闭</div>
+      </div>
+      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 4 && taskInfo.stateForTask !== '7'}">
+        <div class="img"><img src="../../../../static/image/jx_task_check.png"></div>
+        <div class="word">工作验收</div>
+      </div>
+      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 5 && taskInfo.stateForTask !== '7' }">
+        <div class="img"><img src="../../../../static/image/jx_task_check.png"></div>
+        <div class="word">任务结算</div>
+      </div>
+      <div class="state states" v-bind:class="{'select' : taskInfo.stateForTask >= 6 && taskInfo.stateForTask !== '7' }">
+        <div class="img "><img src="../../../../static/image/jx_task_finish.png"></div>
+        <div class="word ">完成</div>
+      </div>
+  
+    </div>
+  
     <div class="task_content">
       <div class="title">
         <div class="box_name">任务内容</div>
@@ -106,6 +137,11 @@
           <span>补充任务需求</span>
         </div>
       </div>
+      <div class=" task_content_word" v-if="taskInfo.state === '6'">
+          <img src="../../../../static/image/task_content_tips.png" alt="">
+          <span>不通过原因：{{taskInfo.checkedReason}}</span>
+      </div>
+      
       <div class="content_text" v-html="taskInfo.taskDetails"></div>
       <div class="file_list" v-if="!!taskInfo.taskFile">
         <a class="file" v-bind:href="fileSrc" v-for="(fileName, fileSrc) in fileList">
@@ -116,11 +152,54 @@
         </a>
       </div>
       <div class="addition_list" v-if="!!taskInfo.entTaskAddList">
+        
         <div class="additional" v-for="addTaskAdd in taskInfo.entTaskAddList">
           <div class="title">
             <div class="box_name">补充内容</div>
-            <div class="additional_time">{{addTaskAdd.createDate | fmtTimeStr2}}</div>
+            <div class="additional_time" v-if="addTaskAdd.checkedState == '2'">
+              <span @click="editShow(addTaskAdd)"><img src="../../../../static/image/task_content_edit.png" alt="">修改</span>
+              <span @click="deleteShow()"><img src="../../../../static/image/task_content_modify.png" alt="">删除</span></div>
+            <div class="additional_time" v-else="">{{addTaskAdd.createDate | fmtTimeStr2}}</div>
           </div>
+  
+          <div class=" task_content_word"   v-if="addTaskAdd.checkedState == '2' ">
+              <p>
+                <img src="../../../../static/image/task_content_delete.png" alt="">
+              <span>审核不通过，请修改后重新提交</span>
+              </p>
+              <p>
+                <img src="../../../../static/image/task_content_tips.png" alt="">
+              <span>不通过原因：{{addTaskAdd.checkedReason}}</span>
+              </p>
+          </div>
+  
+            <div class=" task_content_word" v-if="taskInfo.state == '5' ">
+              <img src="../../../../static/image/task_content_text.png" alt="">
+              <span>审核中，审核通过后用户可查看</span>
+            </div>
+  
+            <div class=" task_content_word"   v-if="taskInfo.state == '3' ">
+              <p>
+                <img src="../../../../static/image/task_content_delete.png" alt="">
+                <span>审核不通过</span>
+              </p>
+              <p>
+                <img src="../../../../static/image/task_content_tips.png" alt="">
+                <span>不通过原因：任务已完成</span>
+              </p>
+            </div>
+            <div  class=" task_content_word"  v-if="taskInfo.state == '4' ">
+              <p>
+                <img src="../../../../static/image/task_content_delete.png" alt="">
+                <span>审核不通过</span>
+              </p>
+              <p>
+                <img src="../../../../static/image/task_content_tips.png" alt="">
+                <span>不通过原因：任务已关闭</span>
+              </p>
+            </div>
+          
+          
           <div class="content_text">{{addTaskAdd.taskAddtionDetail}}</div>
           <div class="file_list" v-if="!!addTaskAdd.taskAddtionFile">
             <a class="file" v-bind:href="fileSrc" v-for="(fileName, fileSrc) in addTaskAdd.additionFile">
@@ -132,35 +211,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="task_state">
-      
-      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 1 }">
-        <div class="img"><img src="../../../../static/image/jx_task_publish.png"></div>
-        <div>发布任务</div>
-      </div>
-      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 2 }">
-        <div class="img"><img src="../../../../static/image/jx_task_signup.png"></div>
-        <div>用户报名</div>
-      </div>
-      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 3 , 'close':taskInfo.stateForTask === '7'}">
-        <div class="img"><img src="../../../../static/image/jx_task_working.png"></div>
-        <div v-if="taskInfo.stateForTask !== '7'">用户工作中</div>
-        <div v-else>任务已关闭</div>
-      </div>
-      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 4 && taskInfo.stateForTask !== '7'}">
-        <div class="img"><img src="../../../../static/image/jx_task_check.png"></div>
-        <div>工作验收</div>
-      </div>
-      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 5 && taskInfo.stateForTask !== '7' }">
-        <div class="img"><img src="../../../../static/image/jx_task_check.png"></div>
-        <div>任务结算</div>
-      </div>
-      <div class="state" v-bind:class="{'select' : taskInfo.stateForTask >= 6 && taskInfo.stateForTask !== '7' }">
-        <div class="img"><img src="../../../../static/image/jx_task_finish.png"></div>
-        <div>完成</div>
-      </div>
-    
     </div>
     
     <div class="button" v-if="taskInfo.state === '1'">
@@ -304,7 +354,15 @@
           }
         });
       },
-      changeBtn: function() {
+      changeBtn: function(taskInfo) {
+        if(taskInfo.state == 5){
+          this.$toast({
+            message: "任务审核中，暂不支持该操作",
+            position: "middle",
+            duration: 1500
+          });
+          return;
+        }
         let arr = this.companyList.filter(e => {
           return e.entId == this.taskInfo.entId && e.bestSignIsOpen == "1";
         });
@@ -409,6 +467,52 @@
             });
           }
         });
+      },
+      
+      //删除补充需求
+      deleteShow: function() {
+        
+        this.$messagebox({
+          title: "确认删除任务",
+          message: '确认删除该补充需求内容？',
+          showCancelButton: true,
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          closeOnClickModal: true
+        }).then(res => {
+          if (res === "confirm") {
+            /*
+              * 接口： 删除任务
+              * 请求方式： GET
+              * 接口： deltask
+              * 入参： this.
+              * */
+            this.$http({
+              url: process.env.API_ROOT + "deltask",
+              method: "get",
+              params: {
+                taskId: this.$route.query.taskId,
+                recdId:sessionStorage.getItem("recdId")
+              }
+            }).then(res => {
+              this.$toast({
+                message: res.data.msg,
+                position: "middle",
+                duration: 1500
+              });
+            
+              if (res.data.code === "0000") {
+                this.getData();
+              }
+            });
+          }
+        });
+  },
+  
+      editShow(addTaskAdd) {
+        this.taskAddtionDetail=addTaskAdd.taskAddtionDetail;
+        sessionStorage.setItem("recdId",addTaskAdd.recdId)
+        this.$router.push("/additionInput");
       },
       
       //继续发布任务

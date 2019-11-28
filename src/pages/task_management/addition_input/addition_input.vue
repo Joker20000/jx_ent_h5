@@ -1,5 +1,8 @@
 <template>
   <div class="addition_input">
+    <p class="addtion_word">
+      提交补充，等待审核通过方可补充成功
+    </p>
     
     <div class="addition_text">
       <textarea ref='additionText'  v-model="additionText" placeholder="请补充任务描述，4-10000个字符"></textarea>
@@ -50,7 +53,7 @@
         
         fileList: [], //上传文件列表
         
-        btnName: "确定", //按钮名称
+        btnName: "提交", //按钮名称
         
         filesUrl: [], //文件链接列表
         
