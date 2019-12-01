@@ -162,7 +162,7 @@
             <div class="additional_time" v-else="">{{addTaskAdd.createDate | fmtTimeStr2}}</div>
           </div>
   
-          <div class=" task_content_word"   v-if="addTaskAdd.checkedState == '2' ">
+          <div class=" task_content_word"   v-if="addTaskAdd.checkedState == '2' && taskInfo.state !='3' && taskInfo.state !='4' ">
               <p>
                 <img src="../../../../static/image/task_content_delete.png" alt="">
               <span>审核不通过，请修改后重新提交</span>
@@ -173,12 +173,12 @@
               </p>
           </div>
   
-            <div class=" task_content_word" v-if="addTaskAdd.checkedState == '0'">
+            <div class=" task_content_word" v-if="addTaskAdd.checkedState == '0' && taskInfo.state !='3' && taskInfo.state !='4' ">
               <img src="../../../../static/image/task_content_text.png" alt="">
               <span>审核中，审核通过后用户可查看</span>
             </div>
   
-            <div class=" task_content_word"   v-if="taskInfo.state == '3' && addTaskAdd.checkedState == '0' ">
+            <div class=" task_content_word"   v-if="taskInfo.state == '3' && addTaskAdd.checkedState != '1' ">
               <p>
                 <img src="../../../../static/image/task_content_delete.png" alt="">
                 <span>审核不通过</span>
@@ -188,7 +188,7 @@
                 <span>不通过原因：任务已完成</span>
               </p>
             </div>
-            <div  class=" task_content_word"  v-if="taskInfo.state == '4' && addTaskAdd.checkedState == '0'">
+            <div  class=" task_content_word"  v-if="taskInfo.state == '4' && addTaskAdd.checkedState != '1'">
               <p>
                 <img src="../../../../static/image/task_content_delete.png" alt="">
                 <span>审核不通过</span>
@@ -460,6 +460,7 @@
               });
               
               if (res.data.code === "0000") {
+                
                 sessionStorage.setItem("delete", "1");
                 
                 this.$router.go(-1);

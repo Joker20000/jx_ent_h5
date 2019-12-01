@@ -103,6 +103,24 @@ export default {
 
       this.additionText = addTaskAdd.taskAddtionDetail;
 
+
+
+      if(addTaskAdd.taskAddtionFile){
+        this.filesUrl=addTaskAdd.taskAddtionFile.split(',');
+      }
+
+      if(addTaskAdd.originalFileNamesAdd){
+        this.filesName=addTaskAdd.originalFileNamesAdd.split(",");
+        this.filesName.forEach(e=>{
+          let filename ={
+            name:e
+          }
+          this.fileList.push(filename)
+        })
+      }
+
+      
+
       this.recdId = addTaskAdd.recdId;
 
       sessionStorage.removeItem("addTaskAdd");
@@ -203,12 +221,16 @@ export default {
 
       var params = {};
 
+      let URL ="addaddtionaltaskdetails"
+
       params.taskId = this.$route.query.taskId;
 
       params.taskAddtionDetail = this.additionText;
 
       if (this.recdId && this.recdId != "") {
         params.recdId = this.recdId;
+        URL='updateaddtionaltaskdetails'
+
       }
 
       this.fileList.length > 0 &&
@@ -222,7 +244,7 @@ export default {
           * 入参： taskId, taskAddtionDetail, originalFileNamesAdd, taskAddtionFile
           * */
       this.$http({
-        url: process.env.API_ROOT + "addaddtionaltaskdetails",
+        url: process.env.API_ROOT + URL,
         method: "post",
         params: params
       }).then(res => {
