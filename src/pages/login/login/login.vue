@@ -3,8 +3,8 @@
   <div class="login">
 
     <div class="img">
-      <img src="../../../../static/image/login_background_img.png">
-      <!--<img :src="imgSrc">-->
+      <!-- <img src="../../../../static/image/login_background_img.png"> -->
+      <img :src="imgSrc">
     </div>
 
     <div class="input">
@@ -59,7 +59,7 @@
 
         password: '',//用户密码
   
-        // imgSrc:''
+        imgSrc:''
 
       }
 
@@ -68,15 +68,15 @@
 
     mounted () {
   
-      // this.imgSrc =' ../../../../static/image/login_background_img.png';
-      //
-      // var zhuochuan =  localStorage.getItem('zhuochuan');
-      //
-      // if(zhuochuan){
-      //
-      //     this.imgSrc = '../../../../static/image/zhuochuan_pic.png';
-      //
-      // }
+      this.imgSrc =' ../../../../static/image/login_background_img.png';
+      
+      var zhuochuan =  localStorage.getItem('zhuochuan');
+      
+      if(zhuochuan){
+      
+          this.imgSrc = '../../../../static/image/zhuochuan_pic.png';
+      
+      }
       
       this.focusFn();
 
