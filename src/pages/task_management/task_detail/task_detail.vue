@@ -132,7 +132,7 @@
     <div class="task_content">
       <div class="title">
         <div class="box_name">任务内容</div>
-        <div class="add" v-on:click="$router.push({path: '/additionInput', query: {taskId: $route.query.taskId}})" v-if="taskInfo.state == '2' && addshow">
+        <div class="add" v-on:click="$router.push({path: '/additionInput', query: {taskId: $route.query.taskId}})" v-if="taskInfo.state == '2' && addShowBtn">
           <img src="../../../../static/image/jx_task_additional.png">
           <span>补充任务需求</span>
         </div>
@@ -156,7 +156,7 @@
         <div class="additional" v-for="addTaskAdd in taskInfo.entTaskAddList">
           <div class="title">
             <div class="box_name">补充内容</div>
-            <div class="additional_time" v-if="addTaskAdd.checkedState == '2'">
+            <div class="additional_time" v-if="taskInfo.state == '2' &&addTaskAdd.checkedState == '2'">
               <span @click="editShow(addTaskAdd)"><img src="../../../../static/image/task_content_edit.png" alt="">修改</span>
               <span @click="deleteShow(addTaskAdd)"><img src="../../../../static/image/task_content_modify.png" alt="">删除</span></div>
             <div class="additional_time" v-else="">{{addTaskAdd.createDate | fmtTimeStr2}}</div>
@@ -167,9 +167,9 @@
                 <img src="../../../../static/image/task_content_delete.png" alt="">
               <span>审核不通过，请修改后重新提交</span>
               </p>
-              <p>
+              <p class="checkreason">
                 <img src="../../../../static/image/task_content_tips.png" alt="">
-              <span>不通过原因：{{addTaskAdd.checkedReason}}</span>
+              <span>不通过原因：</span><span class="task_content_reason">{{addTaskAdd.checkedReason}}</span>
               </p>
           </div>
   
@@ -247,7 +247,10 @@
         fileList: {}, //文件列表
         
         dataState: false, //数据状态（判断页面刚进入还是加载完毕）
-        companyList: []
+        
+        companyList: [],
+        
+        addshow:''
       };
     },
     
@@ -303,7 +306,14 @@
                   obj.originalFileNamesAdd
                 );
               }
-            }
+            };
+  
+            this.addshow = this.taskInfo.entTaskAddList[this.taskInfo.entTaskAddList.length-1];
+            
+          }else{
+            
+            this.addshow = '';
+            
           }
           
           setTimeout(
@@ -708,14 +718,12 @@
       }
     },
     computed:{
-      addshow(){
-        if(this.taskInfo.entTaskAddList){
-
-          let flag = this.taskInfo.entTaskAddList[this.taskInfo.entTaskAddList.length - 1];
-          if(flag.checkedState == '0'){
+      addShowBtn(){
+        
+        if(this.addshow&&this.addshow.checkedState&&(this.addshow.checkedState==='0'||this.addshow.checkedState==='2')){
+          
             return false;
           }
-        }
           return true;
 
       }

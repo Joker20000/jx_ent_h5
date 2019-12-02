@@ -188,10 +188,19 @@
       p{
         margin: 0;
         line-height: 22px;
+        &.checkreason{
+          overflow: hidden;
+          span{
+            float: left;
+            &.task_content_reason{
+              width: 65%;
+            }
+          }
+        }
       }
       span{
+        width: 85px;
         margin: 0;
-        display: inline-block;
       }
     }
     .content_text{
@@ -220,6 +229,7 @@
           width: 30px;
           height: 30px;
           display: flex;
+          flex-shrink: 0;
           border: 1px dashed #ddd;
           margin: 10px;
           img{
@@ -231,6 +241,8 @@
         span{
           color: #6a6a6a;
           font-size: 12px;
+          overflow: hidden;
+          word-break: break-all;;
         }
       }
     }
