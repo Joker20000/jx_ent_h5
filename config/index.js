@@ -15,7 +15,7 @@ module.exports = {
         //设置你调用的接口域名和端口号
         target:'https://jxtest.99payroll.cn/jx-ent/',//测试
         //target:'http://172.18.1.62:8091/jx-ent/',
-        //target: 'https://ent.99payroll.cn/jx-ent',//生产
+        // target: 'https://ent.99payroll.cn/jx-ent',//生产
         changeOrigin: true,
         pathRewrite: {
           '^/api': '/'
@@ -27,7 +27,7 @@ module.exports = {
     // Various Dev Server settings
     //host:'localhost',
     // host:'172.18.1.206',
-    host: '192.168.120.100', // can be overwritten by process.env.HOST
+    host: '127.0.0.1', // can be overwritten by process.env.HOST
     port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,

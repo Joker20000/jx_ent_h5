@@ -14,7 +14,7 @@
     name: 'app',
 
     mounted () {
-
+      this.$store.state.firstUrl = window.location.href;
     }
   }
 </script>

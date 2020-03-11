@@ -27,8 +27,9 @@
           <div class="detail">{{signData.mobile}}</div>
         </div>
         <div class="list">
-          <div class="name">个人履历：</div>
-          <div class="detail color_text" v-on:click="$router.push({path: '/personInformation', query: {userId: signData.userId}})">点击查看</div>
+          <div class="name">个人简历：</div>
+          <!--<div class="detail color_text" v-on:click="$router.push({path: '/personInformation', query: {userId: signData.userId}})">点击查看</div>-->
+          <div class="detail color_text" v-on:click="changeLook()">点击查看</div>
         </div>
         <div class="list">
           <div class="name">报名时间：</div>
@@ -50,6 +51,21 @@
           <div class="name">任务名称：</div>
           <div class="detail">{{signData.taskName}}</div>
         </div>
+  
+        <div class="list">
+          <div class="name">任务编号：</div>
+          <div class="detail">{{signData.taskId}}</div>
+        </div>
+        <div class="list">
+          <div class="name">任务状态：</div>
+          <div class="detail" v-if='signData.state == 1'>待发布</div>
+          <div class="detail" v-else-if='signData.state == 2'>进行中</div>
+          <div class="detail" v-else-if='signData.state == 3'>已完成</div>
+          <div class="detail" v-else-if='signData.state == 4'>已关闭</div>
+          <div class="detail" v-else-if='signData.state == 5'>审核中</div>
+          <div class="detail" v-else-if='signData.state == 6'>审核不通过</div>
+        </div>
+        
         <div class="list">
           <div class="name">发布企业：</div>
           <div class="detail">{{signData.entName}}</div>
@@ -59,7 +75,7 @@
 
     </div>
 
-    <div class="button" v-if="signData.selectState === '1'">
+    <div class="button" v-if="signData.selectState === '1'  && signData.state === '2'  ">
 
       <div class="out color_text" v-on:click="changeState('out')">淘汰</div>
 
@@ -67,13 +83,13 @@
 
     </div>
 
-    <div class="button" v-else-if="signData.selectState === '3'">
+    <div class="button" v-else-if="signData.selectState === '3' && signData.state === '2' ">
 
       <div class="out color_text" v-on:click="changeState('cancelUse')">取消录用</div>
 
     </div>
 
-    <div class="button" v-else-if="signData.selectState === '4'">
+    <div class="button" v-else-if="signData.selectState === '4'  && signData.state === '2' ">
 
       <div class="out color_text" v-on:click="changeState('cancel')">取消淘汰</div>
 
@@ -109,9 +125,58 @@
 
 
       init: function () {
-
+        
         this.signData = JSON.parse(localStorage.getItem('signDataEnt'));
-
+        
+      },
+  
+      // changeLook:function(){
+      //   if(this.signData.userId){
+      //     this.$router.push({path: '/personInformation', query: {userId: this.signData.userId}});
+      //   }else{
+      //   this.$toast({
+      //     message:"该用户暂未填写履历信息",
+      //     position: 'middle',
+      //     duration: 1500
+      //   })
+      //   }
+      // },
+  
+      changeLook: function () {
+    
+        var userId = this.signData.userId;
+        /*
+        * 接口： 获取个人履历详情
+        * 请求方式： POST
+        * 接口： task/get/userresume
+        * 入参： userId
+        * */
+        this.$http({
+      
+          url: process.env.API_ROOT + 'task/get/userresume',
+          method: 'post',
+          params: {
+            userId: userId
+          }
+      
+        }).then(res=>{
+          
+          if(res.data.code === '0000'){
+  
+            this.$router.push({path: '/personInformation', query: {userId: userId}});
+        
+          }else {
+  
+            this.$toast({
+              message:"该用户暂未填写履历信息",
+              position: 'middle',
+              duration: 1500
+            })
+            
+          }
+      
+        })
+    
       },
 
       changeState: function (type) {

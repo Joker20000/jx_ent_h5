@@ -159,6 +159,47 @@
       .additional_time{
         color: #8a8a8a;
         font-size: 12px;
+        span{
+          color: #026bff;
+          img{
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            margin-bottom: 3px;
+          }
+        }
+      }
+    }
+
+    .task_content_word{
+      border: 1px solid #ff4646;
+      background-color: #ffefef;
+      border-radius: 5px;
+      padding:5px 0;
+      margin-bottom: 10px;
+
+      img{
+        float: left;
+        width: 20px;
+        height: 20px;
+        vertical-align: middle;
+        margin: 0 5px;
+      }
+      p{
+        margin: 0;
+        line-height: 22px;
+      }
+      .checkreason{
+        display: flex;
+        line-height: 22px;
+        span{
+          display: inline-block;
+          flex-shrink: 0;
+        }
+      }
+      span{
+        //width: 85px;
+        margin: 0;
       }
     }
     .content_text{
@@ -187,6 +228,7 @@
           width: 30px;
           height: 30px;
           display: flex;
+          flex-shrink: 0;
           border: 1px dashed #ddd;
           margin: 10px;
           img{
@@ -198,6 +240,8 @@
         span{
           color: #6a6a6a;
           font-size: 12px;
+          overflow: hidden;
+          word-break: break-all;
         }
       }
     }
@@ -205,10 +249,14 @@
   .task_state{
     background-color: white;
     padding: 0 20px;
+    display: flex;
+
     .state{
       display: flex;
       align-items: center;
       padding: 15px 0;
+      display: inline-block;
+      flex: 1;
       &:first-child{
         .img:before{
           display: none;
@@ -219,41 +267,66 @@
           display: none;
         }
       }
+      .word{
+        font-size: 11px;
+        white-space: nowrap;
+        text-align: center;
+        padding-top: 2px;
+      }
+
       .img{
-        width: 28px;
-        height: 28px;
+        width: 29px;
+        height: 29px;
         border-radius: 50%;
         background-color: #b5b5b5;
         display: flex;
-        margin-right: 8px;
+       margin: auto;
         position: relative;
-        &:before, &:after{
+        &:after{
           content: '';
           position: absolute;
           display: block;
-          width: 1px;
-          height: 15px;
+          width: 18px;
+          height: 1px;
           background-color: #eee;
-          left: 50%;
-          transform: translateX(-50%);
+          right: -60%;
+          //left: 50%;
+          //transform: translateX(-50%);
         }
         &:before{
-          bottom: 100%;
+          content: '';
+          position: absolute;
+          display: block;
+          width: 18px;
+          height: 1px;
+          background-color: #eee;
+          left: -60%;
+        }
+        &:before{
+          top: 50%;
         }
         &:after{
-          top: 100%;
+          top: 50%;
         }
         img{
-          height: 60%;
-          width: 60%;
+          height: 50%;
+          width: 50%;
           margin: auto;
         }
       }
+
       div{
         font-size: 14px;
         color: #8a8a8a;
       }
     }
+
+    .states{
+      .word{
+        text-align: center;
+      }
+    }
+
     .select{
       .img{
         background: linear-gradient(to right, #0054ff, #06abff);

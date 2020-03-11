@@ -15,11 +15,11 @@
         </div>
       </div>
 
-      <div class="list must_input" v-on:click="pickerSelect('ext')" v-show="isCompanySelectShow">
+      <!-- <div class="list must_input" v-on:click="pickerSelect('ext')" v-show="isCompanySelectShow">
         <div class="title">业务合作企业</div>
         <div class="content select" v-if="this.ext.length === 0">请选择业务合作企业</div>
         <div class="content select data" v-else>{{this.ext[0]}}</div>
-      </div>
+      </div> -->
 
     </div>
 
@@ -85,7 +85,11 @@ export default {
         values: [],
         textAlign: "center"
       },
-      isCompanySelectShow: false
+      // isCompanySelectShow: false
+
+      templetListStroge:[]
+
+
     };
   },
 
@@ -112,7 +116,18 @@ export default {
         url: process.env.API_ROOT + "get/ssh/templetList",
         method: "post"
       }).then(res => {
-        this.templetList = res.data.data.list;
+        this.templetListStroge = res.data.data.list;
+
+      if(!this.$route.query.extEntId){
+        this.templetList = this.templetListStroge.filter(e=>{
+          return e.templetType == 1
+        })
+      }else{
+        this.templetList =  this.templetListStroge.filter(e =>{
+          return e.templetType == 2;
+        })
+      }
+
       });
     },
 
@@ -143,9 +158,9 @@ export default {
           case "templet":
             this.templetSelect();
             break;
-          case "ext":
-            this.extSelect();
-            break;
+          // case "ext":
+          //   this.extSelect();
+          //   break;
         }
       }
 
@@ -230,7 +245,7 @@ export default {
       this.slot1.values = this.getArray(this.templetList, "templetName");
 
       this.slots.push(this.slot1);
-
+      
       this._templet &&
         !this.templet &&
         this.$refs.picker.setSlotValue(0, this._templet[0]);
@@ -247,17 +262,19 @@ export default {
 
       return arr;
     },
-    //选择合作企业
-    extSelect: function() {
-      this.slot1.values = this.getArray(this.cooperate, "cooperateEntName");
+    // //选择合作企业
+    // extSelect: function() {
+    //   this.slot1.values = this.getArray(this.cooperate, "cooperateEntName");
 
-      this.slots.push(this.slot1);
+    //   this.slots.push(this.slot1);
 
-      this._ext && !this.ext && this.$refs.picker.setSlotValue(0, this._ext[0]);
+    //   this._ext && !this.ext && this.$refs.picker.setSlotValue(0, this._ext[0]);
 
-      this.ext && this.$refs.picker.setSlotValue(0, this.ext[0]);
-    },
+    //   this.ext && this.$refs.picker.setSlotValue(0, this.ext[0]);
+    // },
     submitTaskChange() {
+
+      if(!this.checkAll()) return;
       let params={};
       params.taskId = this.$route.query.taskId;
       //合同类型赋值
@@ -269,28 +286,50 @@ export default {
       // 改送自动发送任务合同
       params.isSendContract='1';
       //合作企业赋值
-      this.cooperate.some(obj => {
-        obj.cooperateEntName === this.ext[0] &&
-          (params.extEntId = obj.cooperateEntId);
-      });
+      // this.cooperate.some(obj => {
+      //   obj.cooperateEntName === this.ext[0] &&
+      //     (params.extEntId = obj.cooperateEntId);
+      // });
 
       this.$http({
         url: process.env.API_ROOT + "updateenttask",
         method: "post",
         params
       }).then(res => {
-        
-        if(!!params.templateId || !!params.extEntId){
+
+        if(!!params.templateId){
           this.$toast({
             message: res.data.msg,
             position: "middle",
             duration: 1500
           });
-  
+
           if (res.data.code == "0000") {
-            this.$router.push("/taskDetail");
+            this.$router.go(-1);
           }
         }
+
+      });
+    },
+    checkAll: function () {
+
+      var message;
+
+      if (this.templet.length === 0) {
+        message = "请选择合同模板";
+      } else if (!this.templetName) {
+        message = "请输入合同名称";
+      }else if (!document.getElementsByClassName("agree")[0].checked) {
+        message = "请同意《快捷签署服务委托协议书》";
+      } else {
+        return true;
+      }
+
+      this.$toast({
+
+        message: message,
+        position: 'middle',
+        duration: 1500
 
       });
     }
@@ -303,11 +342,11 @@ export default {
         obj.templetName === this.templet[0] && (item = obj);
       });
 
-      if (item.templetType == 2) {
-        this.isCompanySelectShow = true;
-      } else {
-        this.isCompanySelectShow = false;
-      }
+      // if (item.templetType == 2) {
+      //   this.isCompanySelectShow = true;
+      // } else {
+      //   this.isCompanySelectShow = false;
+      // }
     }
   }
 };

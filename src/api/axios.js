@@ -5,8 +5,6 @@ import { Toast } from 'mint-ui'
 
 var axios = Axios.create();
 
-var _axios = Axios.create();
-
 
 axios.install = (Vue) => {
 
@@ -72,7 +70,7 @@ axios.install = (Vue) => {
 
     }else if((error.response.data.code=='3001'||error.response.data.code=='3003')) {
 
-      localStorage.clear();
+      localStorage.removeItem('AuthorizationEnt');
 
 /*
       Toast({

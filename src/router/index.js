@@ -280,7 +280,7 @@ export default new Router({
       path: '/loadingPage',
       name: 'loadingPage',
       meta: {
-        title: '嘉薪'
+        title: ''
       },
       component: loadingPage
     },
@@ -288,7 +288,7 @@ export default new Router({
       path: '/personInformation',
       name: 'personInformation',
       meta: {
-        title: '个人信息'
+        title: '个人简历'
       },
       component: personInformation
     }

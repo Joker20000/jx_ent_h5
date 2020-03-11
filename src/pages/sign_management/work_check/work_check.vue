@@ -35,6 +35,19 @@
           <div class="detail">{{workDetail.taskName}}</div>
         </div>
         <div class="list">
+          <div class="name">任务编号：</div>
+          <div class="detail">{{workDetail.taskId}}</div>
+        </div>
+        <div class="list">
+          <div class="name">任务状态：</div>
+          <div class="detail" v-if='workDetail.state == 1'>待发布</div>
+          <div class="detail" v-else-if='workDetail.state == 2'>进行中</div>
+          <div class="detail" v-else-if='workDetail.state == 3'>已完成</div>
+          <div class="detail" v-else-if='workDetail.state == 4'>已关闭</div>
+          <div class="detail" v-else-if='workDetail.state == 5'>审核中</div>
+          <div class="detail" v-else-if='workDetail.state == 6'>审核不通过</div>
+        </div>
+        <div class="list">
           <div class="name">发布企业：</div>
           <div class="detail">{{workDetail.entName}}</div>
         </div>
@@ -56,7 +69,7 @@
       </div>
       <div class="feedback_list">
 
-        <div class="feedword" v-if="this.feedbackList.length === 0">还没反馈工作哦~</div>
+        <div class="feedword" v-if="this.feedbackList.length === 0">还没有工作反馈哦~</div>
 
         <div class="feedback" v-else=" " v-for="feedback in feedbackList">
           <div class="title" v-if="feedback.type === '1'">
@@ -83,15 +96,15 @@
 
       </div>
 
-      <div class="feddback_line"></div>
-      <div class="feedback_add" v-on:click="buttonAdd">
-        <img src="../../../../static/image/work_add.png" alt=""> 添加工作反馈
+      <div class="feddback_line"  v-if="submitState.canSubmit === '1'"></div>
+      <div class="feedback_add" v-on:click="buttonAdd" v-if="submitState.canSubmit === '1'">
+        <img src="../../../../static/image/work_add.png" alt=""> <span>添加工作反馈</span>
       </div>
 
     </div>
 
-    <div class="button button_help background_linear_gradient" v-on:click="buttonSend" v-if="workDetail.workState === '1'">帮助提交验收</div>
-    <div class="button background_linear_gradient" v-on:click="buttonClickFn" v-if="workDetail.workState === '2'">验收</div>
+    <div class="button button_help background_linear_gradient" v-on:click="buttonSend" v-if="workDetail.workState === '1' && workDetail.state == '2' ">帮助提交验收</div>
+    <div class="button background_linear_gradient" v-on:click="buttonClickFn" v-if="workDetail.workState === '2' && workDetail.state == '2' ">验收</div>
 
   </div>
 </template>
@@ -106,7 +119,9 @@ export default {
 
       workState: { 1: "工作中", 2: "待验收", 3: "验收通过", 4: "验收中" },
 
-      feedbackList: []
+      feedbackList: [],
+      
+      submitState: {}
     };
   },
 
@@ -116,7 +131,27 @@ export default {
 
   methods: {
     getData: function() {
+
       this.workDetail = JSON.parse(localStorage.getItem("signDataEnt"));
+      
+      /*
+      * 接口： H5获取任务详情
+      * 请求方式： GET
+      * 接口： table/task/checkiscansubmit
+      * 入参： taskId, userId
+      * */
+      this.$http({
+        url: process.env.API_ROOT + 'table/task/checkiscansubmit',
+        method: 'get',
+        params: {
+          taskId: this.workDetail.taskId,
+          userId: this.workDetail.userId
+        }
+      }).then(res=>{
+        
+        this.submitState = res.data.data;
+        
+      });
 
       /*
         * 接口： 查看工作汇报
@@ -150,7 +185,7 @@ export default {
                 fileList[length];
             }
           }
-          
+
         }
       });
     },
@@ -158,9 +193,7 @@ export default {
     buttonAdd() {
       var message = "";
 
-      if (this.workDetail.workState == "3") {
-        message = "任务已完成";
-      } else if (this.workDetail.workState == "4") {
+  if (this.workDetail.workState == "4") {
         message = "任务已关闭";
       }
       if (message && message != "") {
@@ -192,7 +225,7 @@ export default {
         });
       } else {
         // 调用提交验收
-        this.submit();
+        this.HelpSubmit();
       }
     },
 
@@ -246,6 +279,33 @@ export default {
             this.workDetail.checkNum++;
           }
         });
+    },
+
+    HelpSubmit: function () {
+
+      /*
+      * 接口： 提交验收
+      * 请求方式： POST
+      * 接口： submitcheck
+      * 入参： relId, pRecordId
+      * */
+      this.$http({
+
+        url: process.env.API_ROOT + 'submitcheck',
+        method: 'post',
+        params: {
+          relId: this.workDetail.relId,
+          pRecordId: this.workDetail.recordId
+        }
+
+      }).then(res=>{
+
+        this.getData();
+
+        this.workDetail.workState = "2";
+
+      })
+
     }
   }
 };

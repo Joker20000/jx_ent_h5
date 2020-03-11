@@ -44,89 +44,79 @@
 </template>
 
 <script>
+import { customerInit, customerClick } from "../../../../static/js/basic";
 
-  import { customerInit, customerClick } from "../../../../static/js/basic"
+export default {
+  name: "mine.vue",
 
-  export default {
-    name: "mine.vue",
+  data() {
+    return {
+      adminName: "",
 
-    data () {
+      logoPath: "",
 
-      return {
+      mobile: ""
+    };
+  },
 
-        adminName: '',
+  props: ["newMessage"],
 
-        logoPath: '',
+  mounted() {
+    //美恰初始化
+    customerInit({
+      name: this.getStorage("userNameEnt"), // 名字
+      tel: this.getStorage("mobileEnt") // 电话
+    });
 
-        mobile:  '',
+    this.$store.state.workDeskState = "mine"; //控制下方按钮状态
+    this.adminName = localStorage.getItem("adminNameEnt");
+    this.mobile = localStorage.getItem("mobileEnt");
+    !!localStorage.getItem("logoPathEnt") &&
+      (this.logoPath = localStorage.getItem("logoPathEnt"));
+  },
 
-      }
-
+  methods: {
+    customer: function() {
+      customerClick();
     },
 
-    props: ['newMessage'],
+    //拨打电话
+    call: function() {
+      let zhuochuan = localStorage.getItem("zhuochuan");
 
-    mounted () {
+      var message = "";
 
-      //美恰初始化
-      customerInit({
-        name:this.getStorage('userNameEnt'),// 名字
-        tel:this.getStorage('mobileEnt'),// 电话
-      });
+      let telPohoneNum = "";
 
-      this.$store.state.workDeskState = 'mine';//控制下方按钮状态
-      this.adminName = localStorage.getItem('adminNameEnt');
-      this.mobile = localStorage.getItem('mobileEnt');
-      (!!localStorage.getItem('logoPathEnt')) && (this.logoPath = localStorage.getItem('logoPathEnt'));
+      if (!zhuochuan) {
+        message = "确定拨打电话：4008216990吗？";
 
-
-    },
-
-    methods: {
-
-      customer: function () {
-
-        customerClick();
-
-      },
-
-
-      //拨打电话
-      call: function () {
-
-        if(!!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)){
-
-          window.location.href = 'tel: 4008216990';
-
-        }else {
-
-          this.$messagebox({
-
-            title: '提示',
-            message: '确定拨打电话：4008216990吗？',
-            showCancelButton:true,
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            closeOnClickModal: true,
-
-          }).then(res=>{
-
-            if(res === 'confirm'){
-
-              window.location.href = 'tel: 4008216990';
-
-            }
-
-          });
-
-        }
-
+        telPohoneNum = "tel: 4008216990";
+      } else {
+        message = "确定拨打电话：021-61911608吗？";
+        telPohoneNum = "tel: 021-61911608";
       }
-
+      if (!!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)) {
+        window.location.href = telPohoneNum;
+      } else {
+        this.$messagebox({
+          title: "提示",
+          message: message,
+          showCancelButton: true,
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          closeOnClickModal: true
+        }).then(res => {
+          if (res === "confirm") {
+            window.location.href = telPohoneNum;
+          }
+        });
+      }
     }
   }
+};
 </script>
 
 <style scoped lang="less">
-  @import "mine.less";
+@import "mine.less";
 </style>

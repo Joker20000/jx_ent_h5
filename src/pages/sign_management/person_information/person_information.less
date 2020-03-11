@@ -1,6 +1,50 @@
 .person_information{
   padding: 10px 0 0;
   background-color: white;
+
+  .person_user{
+    .personal_detail{
+      border-top: none;
+    }
+    .person_desc{
+      padding: 15px;
+      border-bottom: 1px solid #f5f5f5;
+      .introduce_list{
+        background-color: #fbfbfd;
+        border: 1px solid #dddddd;
+        margin-top: 10px;
+        border-radius: 5px;
+        padding-bottom: 10px;
+        width: 93%;
+        .list{
+          display: inline-block;
+          width: 75%;
+        }
+        img{
+          width: 40px;
+          height: 40px;
+          display: inline-block;
+          vertical-align: top;
+          margin: 10px 15px 0 0;
+        }
+        img.userImg{
+          border: 1px solid #aaccfc;
+        }
+        span:first-child{
+          width: 95px;
+          display: inline-block;
+          color: #ababab
+        }
+        span:last-child{
+          //width: 150px;
+          display: inline-block;
+          //float: right;
+          word-break: break-all;
+        }
+      }
+    }
+  }
+
   .skill_part{
     padding: 10px 15px;
     position: relative;
@@ -86,13 +130,17 @@
         }
         .company{
           font-size: 13px;
-          span{
-            color: #ababab;
-          }
         }
         .position{
           font-size: 13px;
           color: #8a8a8a;
+          img{
+            width: 25px;
+            height: 35px;
+            padding: 7px;
+            margin-top: 10px;
+            margin-right: 10px;
+          }
         }
         .introduce_detail{
           font-size: 13px;
@@ -108,4 +156,8 @@
       font-size: 13px;
     }
   }
+
+ .instrocuce_position .position{
+   display: inline-block;
+ }
 }
