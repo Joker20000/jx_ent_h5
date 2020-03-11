@@ -103,8 +103,8 @@
 
     </div>
 
-    <div class="button button_help background_linear_gradient" v-on:click="buttonSend" v-if="workDetail.workState === '1'">帮助提交验收</div>
-    <div class="button background_linear_gradient" v-on:click="buttonClickFn" v-if="workDetail.workState === '2'">验收</div>
+    <div class="button button_help background_linear_gradient" v-on:click="buttonSend" v-if="workDetail.workState === '1' && workDetail.state == '2' ">帮助提交验收</div>
+    <div class="button background_linear_gradient" v-on:click="buttonClickFn" v-if="workDetail.workState === '2' && workDetail.state == '2' ">验收</div>
 
   </div>
 </template>
@@ -133,8 +133,6 @@ export default {
     getData: function() {
 
       this.workDetail = JSON.parse(localStorage.getItem("signDataEnt"));
-
-      console.log(this.workDetail);
       
       /*
       * 接口： H5获取任务详情

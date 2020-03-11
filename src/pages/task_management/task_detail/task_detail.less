@@ -188,18 +188,17 @@
       p{
         margin: 0;
         line-height: 22px;
-        &.checkreason{
-          overflow: hidden;
-          span{
-            float: left;
-            &.task_content_reason{
-              width: 65%;
-            }
-          }
+      }
+      .checkreason{
+        display: flex;
+        line-height: 22px;
+        span{
+          display: inline-block;
+          flex-shrink: 0;
         }
       }
       span{
-        width: 85px;
+        //width: 85px;
         margin: 0;
       }
     }
@@ -242,7 +241,7 @@
           color: #6a6a6a;
           font-size: 12px;
           overflow: hidden;
-          word-break: break-all;;
+          word-break: break-all;
         }
       }
     }

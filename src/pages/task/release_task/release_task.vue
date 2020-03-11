@@ -1145,16 +1145,15 @@
         var url;
         
         if (this.pageType === "publish") {
-          //发布类型赋值
+          //发布类型赋值新发布任务
           params.submit = submit;
           
           url = "pulluptask";
         } else if (this.pageType === "update") {
           //更新任务状态
-          params.state = submit ? "2" : "1";
+          params.state = submit ? "5" : "1";
           
           params.taskId = this.taskId;
-          
           url = "updateenttask";
         }
         

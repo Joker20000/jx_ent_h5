@@ -149,7 +149,11 @@
 
         this.loadTop();
 
+      }else{
+        this.loadTop();
       }
+
+      
 
     },
 

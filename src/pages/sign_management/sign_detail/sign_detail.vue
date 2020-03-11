@@ -75,7 +75,7 @@
 
     </div>
 
-    <div class="button" v-if="signData.selectState === '1'">
+    <div class="button" v-if="signData.selectState === '1'  && signData.state === '2'  ">
 
       <div class="out color_text" v-on:click="changeState('out')">淘汰</div>
 
@@ -83,13 +83,13 @@
 
     </div>
 
-    <div class="button" v-else-if="signData.selectState === '3'">
+    <div class="button" v-else-if="signData.selectState === '3' && signData.state === '2' ">
 
       <div class="out color_text" v-on:click="changeState('cancelUse')">取消录用</div>
 
     </div>
 
-    <div class="button" v-else-if="signData.selectState === '4'">
+    <div class="button" v-else-if="signData.selectState === '4'  && signData.state === '2' ">
 
       <div class="out color_text" v-on:click="changeState('cancel')">取消淘汰</div>
 
@@ -125,9 +125,9 @@
 
 
       init: function () {
-
+        
         this.signData = JSON.parse(localStorage.getItem('signDataEnt'));
-
+        
       },
   
       // changeLook:function(){
